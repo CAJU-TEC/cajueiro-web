@@ -106,10 +106,10 @@ export default defineComponent({
         field: 'image',
       },
       {
-        name: 'description',
+        name: 'full_name',
         align: 'center',
-        label: 'Descrição',
-        field: 'description',
+        label: 'Me chamam!',
+        field: 'full_name',
       },
       {
         name: 'email',

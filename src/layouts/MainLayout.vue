@@ -75,6 +75,12 @@ const linksList = [
     route: { name: 'clients.list' },
   },
   {
+    title: 'Organizações',
+    caption: '',
+    icon: 'corporate_fare',
+    route: { name: 'corporates.list' },
+  },
+  {
     title: 'Tickets',
     caption: '',
     icon: 'local_activity',

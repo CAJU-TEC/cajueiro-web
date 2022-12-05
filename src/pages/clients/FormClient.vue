@@ -13,13 +13,23 @@
       @submit="onSubmit"
     >
       <q-input
-        v-model="form.description"
+        v-model="form.first_name"
         filled
-        label="Descrição *"
+        label="Primeiro Nome *"
         lazy-rules
-        class="col-lg-12 col-xs-12"
+        class="col-lg-6 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
+
+      <q-input
+        v-model="form.last_name"
+        filled
+        label="Último Nome *"
+        lazy-rules
+        class="col-lg-6 col-xs-12"
+        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
+      />
+
       <q-input
         v-model="form.email"
         filled
@@ -88,7 +98,8 @@ export default defineComponent({
     const route = useRoute();
 
     const form = ref({
-      description: '',
+      first_name: '',
+      last_name: '',
       email: '',
       image: '',
       address: '',
