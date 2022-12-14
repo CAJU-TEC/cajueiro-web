@@ -3,7 +3,7 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Clientes" :to="{ name: 'clients.list' }" />
+        <q-breadcrumbs-el label="Protocolos" :to="{ name: 'tickets.list' }" />
         <q-breadcrumbs-el label="Adicionar" />
       </q-breadcrumbs>
     </div>
@@ -12,35 +12,17 @@
       class="row q-col-gutter-sm"
       @submit="onSubmit"
     >
-      <q-input
-        v-model="form.first_name"
-        filled
-        label="Primeiro Nome *"
-        lazy-rules
-        class="col-lg-6 col-xs-12"
-        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
-      />
-
-      <q-input
-        v-model="form.last_name"
-        filled
-        label="Último Nome *"
-        lazy-rules
-        class="col-lg-6 col-xs-12"
-        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
-      />
-
       <q-select
         filled
-        label="Organização *"
-        v-model="form.corporate_id"
+        label="Cliente *"
+        v-model="form.client_id"
         use-input
         hide-selected
         fill-input
         input-debounce="0"
-        :options="options"
+        :options="optionsClient"
         @filter="filterFn"
-        class="col-lg-4 col-xs-12"
+        class="col-lg-12 col-xs-12"
         emit-value
         map-options
       >
@@ -49,7 +31,25 @@
             <q-item-section class="text-grey"> No results </q-item-section>
           </q-item>
         </template>
+
+        <template #after>
+          <q-btn
+            round
+            dense
+            flat
+            icon="add"
+            @click="dialogAddClient = !dialogAddClient"
+          />
+        </template>
       </q-select>
+      <q-input
+        v-model="form.last_name"
+        filled
+        label="Último Nome *"
+        lazy-rules
+        class="col-lg-6 col-xs-12"
+        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
+      />
 
       <q-input
         v-model="form.email"
@@ -81,7 +81,7 @@
           type="textarea"
         />
       </div>
-
+      Luizmagao dafads
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
           <q-btn
@@ -95,32 +95,39 @@
             push
             label="Cancelar"
             color="blue-10"
-            :to="{ name: 'clients.list' }"
+            :to="{ name: 'tickets.list' }"
             icon="logout"
           />
         </q-btn-group>
       </div>
     </q-form>
+    <AddClient
+      :dialog="dialogAddClient"
+      @return="(e) => (dialogAddClient = e)"
+    ></AddClient>
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import clientsService from 'src/services/clients';
-import corporatesService from 'src/services/corporate';
+import ticketsService from 'src/services/tickets';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
+import clientsService from 'src/services/clients';
+import AddClient from 'src/components/dialogs/clients/AddClient.vue';
 
 export default defineComponent({
   name: 'FormClient',
   setup() {
-    const { post, getById, update } = clientsService();
-    const { list } = corporatesService();
+    const { post, getById, update } = ticketsService();
+    const { list } = clientsService();
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
+    const dialogAddClient = ref(false);
 
     const form = ref({
+      client_id: '',
       corporate_id: '',
       first_name: '',
       last_name: '',
@@ -128,15 +135,14 @@ export default defineComponent({
       image: '',
       address: '',
     });
-    const corporates = ref();
-    const options = ref();
-    const stringOptions = ref(options);
+    const optionsClient = ref();
+    const stringOptionsClient = ref(optionsClient);
 
     onMounted(async () => {
       if (route.params.id) {
         getClient(route.params.id);
       }
-      getCorporate();
+      getClientSelect();
     });
 
     const getClient = async (id) => {
@@ -153,11 +159,14 @@ export default defineComponent({
       }
     };
 
-    const getCorporate = async () => {
+    const getClientSelect = async () => {
       try {
         const response = await list();
-        options.value = response.map((m) => {
-          return { value: m.id, label: m.first_name };
+        optionsClient.value = response.map((m) => {
+          return {
+            value: m.id,
+            label: `${m.full_name} (${m.email.description})`,
+          };
         });
       } catch (error) {
         $q.notify({
@@ -171,7 +180,7 @@ export default defineComponent({
     const filterFn = (val, update, abort) => {
       update(() => {
         const needle = val.toLowerCase();
-        options.value = stringOptions.value.filter(
+        optionsClient.value = stringOptionsClient.value.filter(
           (v) => v.label.toLowerCase().indexOf(needle) > -1
         );
       });
@@ -204,7 +213,7 @@ export default defineComponent({
           icon: 'check',
           color: 'positive',
         });
-        router.push({ name: 'clients.list' });
+        router.push({ name: 'tickets.list' });
       } catch (error) {
         $q.notify({
           icon: 'block',
@@ -217,13 +226,14 @@ export default defineComponent({
 
     return {
       form,
-      options,
+      dialogAddClient,
+      optionsClient,
+      stringOptionsClient,
       filterFn,
-      stringOptions,
-      corporates,
       onSubmit,
       onChange,
     };
   },
+  components: { AddClient },
 });
 </script>

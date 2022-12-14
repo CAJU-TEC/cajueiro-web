@@ -20,7 +20,7 @@ export default defineComponent({
   name: 'EssentialLink',
   props: {
     route: {
-      type: String,
+      type: Object,
       required: true,
     },
 

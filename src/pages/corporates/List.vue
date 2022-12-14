@@ -3,12 +3,12 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Clientes" />
+        <q-breadcrumbs-el label="Organizações" />
       </q-breadcrumbs>
     </div>
     <q-table
       v-model="pagination"
-      :rows="clients"
+      :rows="corporates"
       :columns="columns"
       row-key="full_name"
       no-data-label="Não existe dados no momento."
@@ -17,9 +17,9 @@
       :loading="loading"
     >
       <template #top>
-        <span class="text-h4">Clientes</span>
+        <span class="text-h4">Organizações</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'clients.form' }">
+        <q-btn color="primary" push :to="{ name: 'corporates.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
             <div class="text-center">Novo</div>
@@ -80,14 +80,14 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import clientsService from 'src/services/clients';
+import clientsService from 'src/services/corporate';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'ListPage',
   setup() {
-    const clients = ref([]);
+    const corporates = ref([]);
     const { list, remove } = clientsService();
     const pagination = ref({
       sortBy: 'description',
@@ -129,7 +129,7 @@ export default defineComponent({
     const getClients = async () => {
       try {
         const data = await list();
-        clients.value = data;
+        corporates.value = data;
         loading.value = false;
       } catch (error) {
         $q.notify({
@@ -166,11 +166,11 @@ export default defineComponent({
     };
 
     const handleEditClient = async (id) => {
-      router.push({ name: 'clients.form', params: { id } });
+      router.push({ name: 'corporates.form', params: { id } });
     };
 
     return {
-      clients,
+      corporates,
       columns,
       handleDeleteClient,
       handleEditClient,

@@ -13,7 +13,7 @@
 
         <q-toolbar-title> Cajueiro App </q-toolbar-title>
 
-        <div>Quasar v{{ $q.version }}</div>
+        <div>Quasar versão{{ $q.version }}</div>
       </q-toolbar>
     </q-header>
 
@@ -60,6 +60,7 @@
 <script>
 import { defineComponent, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
+import { useDrawerRightStore } from 'src/stores/drawerRight';
 
 const linksList = [
   {
@@ -81,7 +82,7 @@ const linksList = [
     route: { name: 'corporates.list' },
   },
   {
-    title: 'Tickets',
+    title: 'Protocolos',
     caption: '',
     icon: 'local_activity',
     route: { name: 'tickets.list' },
@@ -121,10 +122,11 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
-
+    const rightDrawerOpen = useDrawerRightStore();
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
+      rightDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },

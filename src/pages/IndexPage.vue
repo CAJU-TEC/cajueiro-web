@@ -4,6 +4,7 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" />
       </q-breadcrumbs>
+      test
     </div>
   </q-page>
 </template>

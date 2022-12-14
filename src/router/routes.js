@@ -1,7 +1,9 @@
 import clients from '../router/clients.js';
 import impacts from '../router/impacts.js';
 import collaborators from './collaborators.js';
+import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
+import tickets from './tickets.js';
 
 const routes = [
   {
@@ -16,7 +18,9 @@ const routes = [
       ...clients,
       ...impacts,
       ...collaborators,
-      ...jobPlans
+      ...jobPlans,
+      ...corporates,
+      ...tickets
     ]
   },
 

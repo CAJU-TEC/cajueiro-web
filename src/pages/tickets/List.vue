@@ -3,12 +3,12 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Clientes" />
+        <q-breadcrumbs-el label="Protocolos" />
       </q-breadcrumbs>
     </div>
     <q-table
       v-model="pagination"
-      :rows="clients"
+      :rows="tickets"
       :columns="columns"
       row-key="full_name"
       no-data-label="Não existe dados no momento."
@@ -17,9 +17,9 @@
       :loading="loading"
     >
       <template #top>
-        <span class="text-h4">Clientes</span>
+        <span class="text-h4">Protocolos</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'clients.form' }">
+        <q-btn color="primary" push :to="{ name: 'tickets.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
             <div class="text-center">Novo</div>
@@ -34,17 +34,51 @@
             :key="col.name"
             :props="props"
           >
-            <span v-if="col.name != 'image'">{{ col.value }}</span>
-            <q-avatar v-if="col.name == 'image' && props.row.image">
-              <img
-                :src="`http://localhost:8000/storage/images/${props.row.image.uri}`"
-              />
-            </q-avatar>
-            <q-avatar
-              v-if="col.name == 'image' && !props.row.image"
-              color="primary"
-              >{{ props.row.letter }}</q-avatar
+            <span v-if="col.name === 'code'" class="text-weight-bold"
+              >#{{ col.value }}</span
             >
+            <span v-if="col.name === 'subject'">
+              <q-badge rounded :color="`${priority[props.row.priority].color}`">
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <span v-if="props.row.priority === 'yes'">PRIORIDADE</span>
+                  <span v-else-if="props.row.priority === 'no'"
+                    >RELEVÂNCIA BAIXA</span
+                  >
+                </q-tooltip>
+              </q-badge>
+              {{ col.value }}
+            </span>
+            <span v-if="col.name === 'collaborator'">
+              <q-chip>
+                <q-avatar v-if="props.row.collaborator.image">
+                  <img
+                    :src="`http://localhost:8000/storage/images/${props.row.collaborator.image.uri}`"
+                  />
+                </q-avatar>
+                {{ props.row.collaborator.first_name }}
+              </q-chip>
+            </span>
+            <span v-if="col.name === 'impact'">
+              <q-tooltip
+                :offset="[10, 10]"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                {{ col.value.description }}
+              </q-tooltip>
+              <q-badge rounded :style="`background:${col.value.color}`" />
+            </span>
+            <span v-if="col.name === 'status'">
+              <q-badge
+                rounded
+                :style="`background:${status[col.value].color}`"
+                :label="`${status[col.value].title}`"
+              />
+            </span>
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -80,15 +114,17 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import clientsService from 'src/services/clients';
+import ticketsService from 'src/services/tickets';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
+import status from 'src/support/tickets/status';
+import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'ListPage',
   setup() {
-    const clients = ref([]);
-    const { list, remove } = clientsService();
+    const tickets = ref([]);
+    const { list, remove } = ticketsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -99,16 +135,34 @@ export default defineComponent({
 
     const columns = [
       {
-        name: 'image',
+        name: 'code',
         align: 'center',
         label: '#',
-        field: 'image',
+        field: 'code',
       },
       {
-        name: 'full_name',
+        name: 'subject',
         align: 'center',
-        label: 'Me chamam!',
-        field: 'full_name',
+        label: 'Tem pra fazer?',
+        field: 'subject',
+      },
+      {
+        name: 'collaborator',
+        align: 'center',
+        label: 'Eu que mando!',
+        field: 'collaborator',
+      },
+      {
+        name: 'impact',
+        align: 'center',
+        label: 'Impacto',
+        field: 'impact',
+      },
+      {
+        name: 'status',
+        align: 'center',
+        label: 'Situação',
+        field: 'status',
       },
       {
         name: 'actions',
@@ -129,7 +183,7 @@ export default defineComponent({
     const getClients = async () => {
       try {
         const data = await list();
-        clients.value = data;
+        tickets.value = data;
         loading.value = false;
       } catch (error) {
         $q.notify({
@@ -166,11 +220,13 @@ export default defineComponent({
     };
 
     const handleEditClient = async (id) => {
-      router.push({ name: 'clients.form', params: { id } });
+      router.push({ name: 'tickets.form', params: { id } });
     };
 
     return {
-      clients,
+      status,
+      priority,
+      tickets,
       columns,
       handleDeleteClient,
       handleEditClient,

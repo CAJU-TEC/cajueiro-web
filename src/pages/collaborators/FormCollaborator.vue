@@ -152,6 +152,7 @@ export default defineComponent({
       egress: '',
       cpf: '',
       cnpj: '',
+      email: '',
     });
     const loading = ref('true');
 
@@ -176,6 +177,7 @@ export default defineComponent({
       try {
         const response = await getById(id);
         form.value = response;
+        form.value.email = response.email?.description;
         loading.value = true;
       } catch (error) {
         $q.notify({
