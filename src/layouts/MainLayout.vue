@@ -13,7 +13,7 @@
 
         <q-toolbar-title> Cajueiro App </q-toolbar-title>
 
-        <div>Quasar versão{{ $q.version }}</div>
+        <div>Cajueiro versão 1.0.0</div>
       </q-toolbar>
     </q-header>
 
@@ -70,16 +70,16 @@ const linksList = [
     route: { name: 'home' },
   },
   {
-    title: 'Clientes',
-    caption: '',
-    icon: 'groups',
-    route: { name: 'clients.list' },
-  },
-  {
     title: 'Organizações',
     caption: '',
     icon: 'corporate_fare',
     route: { name: 'corporates.list' },
+  },
+  {
+    title: 'Clientes',
+    caption: '',
+    icon: 'groups',
+    route: { name: 'clients.list' },
   },
   {
     title: 'Protocolos',

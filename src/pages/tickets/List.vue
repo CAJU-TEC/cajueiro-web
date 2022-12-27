@@ -35,9 +35,7 @@
             :props="props"
           >
             <span v-if="col.name === 'code'" class="text-weight-bold"
-              >#{{ col.value }}</span
-            >
-            <span v-if="col.name === 'subject'">
+              >#{{ col.value }}
               <q-badge rounded :color="`${priority[props.row.priority].color}`">
                 <q-tooltip
                   :offset="[10, 10]"
@@ -50,16 +48,21 @@
                   >
                 </q-tooltip>
               </q-badge>
+            </span>
+            <span v-if="col.name === 'subject'">
               {{ col.value }}
             </span>
             <span v-if="col.name === 'collaborator'">
               <q-chip>
-                <q-avatar v-if="props.row.collaborator.image">
-                  <img
-                    :src="`http://localhost:8000/storage/images/${props.row.collaborator.image.uri}`"
-                  />
-                </q-avatar>
-                {{ props.row.collaborator.first_name }}
+                <template v-if="props.row?.collaborator?.image">
+                  <q-avatar>
+                    <img
+                      :src="`http://localhost:8000/storage/images/${props.row.collaborator.image.uri}`"
+                    />
+                  </q-avatar>
+                  {{ props.row.collaborator?.first_name }}
+                </template>
+                <template v-else> Sem colaborador </template>
               </q-chip>
             </span>
             <span v-if="col.name === 'impact'">
@@ -75,7 +78,7 @@
             <span v-if="col.name === 'status'">
               <q-badge
                 rounded
-                :style="`background:${status[col.value].color}`"
+                :style="`background:${status[col.value].hex}`"
                 :label="`${status[col.value].title}`"
               />
             </span>

@@ -14,7 +14,7 @@
                 filled
                 label="Primeiro Nome *"
                 lazy-rules
-                class="col-lg-6 col-md-6 col-xs-6"
+                class="col-lg-6 col-md-6 col-xs-12"
                 :rules="[
                   (val) => (val && val.length > 0) || 'Preencha o campo acima',
                 ]"
@@ -51,6 +51,7 @@
               @click="$.emit('return', false)"
             />
             <q-btn
+              :disabled="openSubmit"
               flat
               label="Salvar"
               color="primary"
@@ -65,7 +66,9 @@
 </template>
 
 <script>
-import { ref, toRef, watch } from 'vue';
+import { reactive, ref, toRef, watch } from 'vue';
+import clientsService from 'src/services/clients';
+import { useQuasar } from 'quasar';
 
 export default {
   props: {
@@ -74,12 +77,16 @@ export default {
       default: false,
     },
   },
-  setup(props) {
+  emits: ['return'],
+  setup(props, { emit }) {
     const open = ref(false);
     const propDialog = toRef(props, 'dialog');
+    const { storeSimplied } = clientsService();
+    const $q = useQuasar();
     open.value = propDialog.value;
+    const openSubmit = ref(true);
 
-    const form = ref({
+    const form = reactive({
       first_name: '',
       last_name: '',
       email: '',
@@ -89,13 +96,38 @@ export default {
       open.value = newCurrent;
     });
 
+    watch(form, (newCurrent, oldCurrent) => {
+      if (!form.first_name || !form.last_name || !form.email) {
+        openSubmit.value = true;
+      } else {
+        openSubmit.value = false;
+      }
+    });
+
     // onSubmit
-    const onSubmit = () => {
-      console.log(form);
+    const onSubmit = async () => {
+      emit('ticket', true);
+      try {
+        await storeSimplied(form);
+
+        $q.notify({
+          message: 'Dados salvos com sucesso',
+          icon: 'check',
+          color: 'positive',
+        });
+      } catch (error) {
+        $q.notify({
+          icon: 'block',
+          message: 'Ops! Ocorreu um erro.',
+          caption: error.message,
+          color: 'negative',
+        });
+      }
     };
 
     return {
       open,
+      openSubmit,
       form,
       onSubmit,
     };
