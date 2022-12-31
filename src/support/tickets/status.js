@@ -1,5 +1,5 @@
 export default {
-  'backlog': {'color': 'green-11', 'hex': '#DAF7A6', 'title': 'LANÇADO'},
+  'backlog': {'color': 'green-11', 'hex': '#DAF7A6', 'title': 'AGUARDANDO'},
   'todo': {'color': 'orange', 'hex': '#FFC300', 'title': 'A FAZER'},
   'analyze': {'color': 'deep-orange-4', 'hex': '#FF5733', 'title': 'ANALISE'},
   'development': {'color': 'deep-orange-14', 'hex': '#C70039', 'title': 'DESENVOLVIMENTO'},

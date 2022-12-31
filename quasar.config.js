@@ -70,7 +70,7 @@ module.exports = configure(function (ctx) {
       // analyze: true,
       env: {
         API_URL: ctx.dev
-          ? 'http://localhost:8000/api/'
+          ? 'http://localhost:8000/'
           : 'https://cajueiro.cajutec.com.br'
       }
       // rawDefine: {}

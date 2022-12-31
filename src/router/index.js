@@ -6,6 +6,8 @@ import {
   createWebHashHistory
 } from 'vue-router';
 import routes from './routes';
+import usersService from '../services/users.js';
+import { Notify } from 'quasar';
 
 /*
  * If not building with SSR mode, you can
@@ -31,6 +33,18 @@ export default route(function (/* { store, ssrContext } */) {
     // quasar.conf.js -> build -> vueRouterMode
     // quasar.conf.js -> build -> publicPath
     history: createHistory(process.env.VUE_ROUTER_BASE)
+  });
+
+  const { getAccessToken } = usersService();
+  Router.beforeEach((to, from) => {
+    if(to.name !== 'users.login' && getAccessToken() === null) {
+      Notify.create({
+        type: 'negative',
+        message: 'Que pena! Acho que já deu por hoje. 😭'
+      });
+      return { name: 'users.login' };
+    }
+    return true;
   });
 
   return Router;

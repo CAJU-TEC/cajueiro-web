@@ -2,7 +2,7 @@ import useApi from 'src/composables/UseApi';
 import { api } from 'boot/axios';
 
 export default function clientsService() {
-  const endpoint = 'clients';
+  const endpoint = 'api/clients';
   const { list, getById, post, update, remove } = useApi(endpoint);
 
   const storeSimplied = async (form) => {

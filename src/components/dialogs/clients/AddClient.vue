@@ -106,7 +106,6 @@ export default {
 
     // onSubmit
     const onSubmit = async () => {
-      emit('ticket', true);
       try {
         await storeSimplied(form);
 

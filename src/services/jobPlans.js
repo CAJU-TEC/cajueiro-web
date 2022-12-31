@@ -1,7 +1,7 @@
 import useApi from 'src/composables/UseApi';
 
 export default function jobPlansService() {
-  const { list, getById, post, update, remove } = useApi('jobPlans');
+  const { list, getById, post, update, remove } = useApi('api/jobPlans');
 
   return {
     list,

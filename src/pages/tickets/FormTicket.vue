@@ -19,7 +19,7 @@
             v-model="form.priority"
             push
             glossy
-            toggle-color="red"
+            :toggle-color="`${priority[form.priority].color}`"
             :options="[
               { label: 'Prioridade', value: 'yes' },
               { label: 'Não prioridade', value: 'no' },
@@ -248,6 +248,7 @@ import clientsService from 'src/services/clients';
 import AddClient from 'src/components/dialogs/clients/AddClient.vue';
 import impactsService from 'src/services/impacts';
 import status from 'src/support/tickets/status';
+import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'FormClient',
@@ -394,6 +395,7 @@ export default defineComponent({
     return {
       form,
       status,
+      priority,
       dialogAddClient,
       optionsClient,
       optionsImpacts,

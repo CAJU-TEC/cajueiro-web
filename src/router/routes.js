@@ -1,11 +1,20 @@
-import clients from '../router/clients.js';
-import impacts from '../router/impacts.js';
+import clients from './clients.js';
+import impacts from './impacts.js';
 import collaborators from './collaborators.js';
 import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
 import tickets from './tickets.js';
+import users from './users.js';
 
 const routes = [
+  // path for login
+  {
+    path: '/login',
+    component: () => import('layouts/LoginLayout.vue'),
+    children: [
+      ...users,
+    ]
+  },
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
@@ -20,8 +29,8 @@ const routes = [
       ...collaborators,
       ...jobPlans,
       ...corporates,
-      ...tickets
-    ]
+      ...tickets,
+    ],
   },
 
   // Always leave this as last one,
