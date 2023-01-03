@@ -3,23 +3,23 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Colaboradores" />
+        <q-breadcrumbs-el label="Usuários" />
       </q-breadcrumbs>
     </div>
     <q-table
       v-model="pagination"
-      :rows="collaborators"
+      :rows="users"
       :columns="columns"
-      row-key="description"
+      row-key="full_name"
       no-data-label="Não existe dados no momento."
       rows-per-page-label="10"
       :rows-per-page-options="[10, 15, 20]"
       :loading="loading"
     >
       <template #top>
-        <span class="text-h4">Colaboradores</span>
+        <span class="text-h4">Usuários</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'collaborators.form' }">
+        <q-btn color="primary" push :to="{ name: 'users.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
             <div class="text-center">Novo</div>
@@ -45,12 +45,6 @@
               color="primary"
               >{{ props.row.letter }}</q-avatar
             >
-
-            <span v-if="col.name === 'full_name'">
-              {{ props.row.full_name }}
-              <q-tooltip> Login: {{ props.row.user.email }} </q-tooltip>
-            </span>
-
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -86,15 +80,15 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
+import usersService from 'src/services/users';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
-import collaboratorsService from 'src/services/collaborators';
 
 export default defineComponent({
   name: 'ListPage',
   setup() {
-    const collaborators = ref([]);
-    const { list, remove } = collaboratorsService();
+    const users = ref([]);
+    const { list, remove } = usersService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -105,27 +99,22 @@ export default defineComponent({
 
     const columns = [
       {
-        name: 'image',
+        name: 'name',
         align: 'center',
         label: '#',
-        field: 'image',
+        field: 'name',
       },
       {
-        name: 'full_name',
+        name: 'email',
         align: 'center',
-        label: 'Me chamam!',
+        label: 'E-mail',
+        field: 'email',
       },
       {
-        name: 'cpf',
+        name: 'grupos',
         align: 'center',
-        label: 'CPF',
-        field: 'cpf',
-      },
-      {
-        name: 'cnpj',
-        align: 'center',
-        label: 'CNPJ',
-        field: 'cnpj',
+        label: 'Grupos',
+        field: '',
       },
       {
         name: 'actions',
@@ -139,14 +128,14 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      getClients();
+      getUsers();
       loading.value = true;
     });
 
-    const getClients = async () => {
+    const getUsers = async () => {
       try {
         const data = await list();
-        collaborators.value = data;
+        users.value = data;
         loading.value = false;
       } catch (error) {
         $q.notify({
@@ -171,7 +160,7 @@ export default defineComponent({
             icon: 'check',
             color: 'positive',
           });
-          await getClients();
+          await getUsers();
         });
       } catch (error) {
         $q.notify({
@@ -183,11 +172,11 @@ export default defineComponent({
     };
 
     const handleEditClient = async (id) => {
-      router.push({ name: 'collaborators.form', params: { id } });
+      router.push({ name: 'users.form', params: { id } });
     };
 
     return {
-      collaborators,
+      users,
       columns,
       handleDeleteClient,
       handleEditClient,

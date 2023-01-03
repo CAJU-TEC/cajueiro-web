@@ -1,13 +1,13 @@
 
 export default [
   {
-    path: '/login',
-    name: 'users.login',
-    component: () => import('src/pages/users/Login.vue')
+    path: 'users/',
+    name: 'users.list',
+    component: () => import('src/pages/users/List.vue')
   },
   {
-    path: '/logout',
-    name: 'users.logout',
-    component: () => import('src/pages/users/Logout.vue')
+    path: 'users/form-client/:id?',
+    name: 'users.form',
+    component: () => import('src/pages/users/FormClient.vue')
   },
 ];

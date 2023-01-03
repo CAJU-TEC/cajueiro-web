@@ -5,6 +5,8 @@ import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
 import tickets from './tickets.js';
 import users from './users.js';
+import auth from './auth.js';
+import groups from './groups.js';
 
 const routes = [
   // path for login
@@ -12,7 +14,7 @@ const routes = [
     path: '/login',
     component: () => import('layouts/LoginLayout.vue'),
     children: [
-      ...users,
+      ...auth,
     ]
   },
   {
@@ -30,6 +32,8 @@ const routes = [
       ...jobPlans,
       ...corporates,
       ...tickets,
+      ...users,
+      ...groups,
     ],
   },
 

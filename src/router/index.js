@@ -6,7 +6,7 @@ import {
   createWebHashHistory
 } from 'vue-router';
 import routes from './routes';
-import usersService from '../services/users.js';
+import usersService from '../services/auth.js';
 import { Notify } from 'quasar';
 
 /*
@@ -37,12 +37,12 @@ export default route(function (/* { store, ssrContext } */) {
 
   const { getAccessToken } = usersService();
   Router.beforeEach((to, from) => {
-    if(to.name !== 'users.login' && getAccessToken() === null) {
+    if(to.name !== 'auth.login' && getAccessToken() === null) {
       Notify.create({
         type: 'negative',
         message: 'Que pena! Acho que já deu por hoje. 😭'
       });
-      return { name: 'users.login' };
+      return { name: 'auth.login' };
     }
     return true;
   });

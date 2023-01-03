@@ -8,12 +8,15 @@
           round
           icon="menu"
           aria-label="Menu"
+          class="q-mr-sm"
           @click="toggleLeftDrawer"
         />
-
+        <q-separator dark vertical inset />
         <q-toolbar-title> Cajueiro App </q-toolbar-title>
 
-        <div>Cajueiro versão 1.0.0</div>
+        <div>
+          <nav-bar-perfil></nav-bar-perfil>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -61,6 +64,7 @@
 import { defineComponent, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import { useDrawerRightStore } from 'src/stores/drawerRight';
+import NavBarPerfil from '../components/buttons/users/NavBarPerfil.vue';
 
 const linksList = [
   {
@@ -111,6 +115,18 @@ const linksList = [
     icon: 'bar_chart',
     route: { name: 'tickets.list' },
   },
+  {
+    title: 'Usuários',
+    caption: '',
+    icon: 'manage_accounts',
+    route: { name: 'users.list' },
+  },
+  {
+    title: 'Grupos & Permissões',
+    caption: '',
+    icon: 'verified_user',
+    route: { name: 'groups.list' },
+  },
 ];
 
 export default defineComponent({
@@ -118,6 +134,7 @@ export default defineComponent({
 
   components: {
     EssentialLink,
+    NavBarPerfil,
   },
 
   setup() {

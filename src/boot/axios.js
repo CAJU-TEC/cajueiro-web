@@ -1,6 +1,8 @@
 import { boot } from 'quasar/wrappers';
 import axios from 'axios';
-import usersService from '../services/users.js';
+import usersService from '../services/auth.js';
+// import { Notify } from 'quasar';
+// import { useRouter } from 'vue-router';
 
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -24,11 +26,16 @@ api.interceptors.response.use(
     //   const currentRouteName = router.currentRoute.value.name;
     //   if (currentRouteName !== 'login' && currentRouteName !== 'logout') {
     //     removeAccessToken();
-    //     router().push({ name: 'users.logout' });
+    //     router().push({ name: 'auth.logout' });
     //   }
     //   return Promise.reject(new Error('Sua sessão expirou'));
     // }
+    // console.log(error.response);
     if (error.response && error.response.status === 401) {
+      // Notify.create({
+      //   type: 'negative',
+      //   message: 'Que pena! Acho que já deu por hoje. 😭'
+      // });
       return Promise.reject(new Error('Que pena! Acho que já deu por hoje. 😭'));
     }
     if (error.response && error.response.status === 403) {
