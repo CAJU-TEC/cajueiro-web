@@ -4,12 +4,6 @@ import usersService from '../services/auth.js';
 // import { Notify } from 'quasar';
 // import { useRouter } from 'vue-router';
 
-// Be careful when using SSR for cross-request state pollution
-// due to creating a Singleton instance here;
-// If any client changes this (global) instance, it might be a
-// good idea to move this instance creation inside of the
-// "export default () => {}" function below (which runs individually
-// for each client)
 const api = axios.create({ baseURL: process.env.API_URL });
 const { getAccessToken } = usersService();
 
@@ -21,25 +15,11 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    // const {getAccessToken, removeAccessToken} = usersService();
-    // if (error.response && error.response.status === 401 && !getAccessToken()) {
-    //   const currentRouteName = router.currentRoute.value.name;
-    //   if (currentRouteName !== 'login' && currentRouteName !== 'logout') {
-    //     removeAccessToken();
-    //     router().push({ name: 'auth.logout' });
-    //   }
-    //   return Promise.reject(new Error('Sua sessão expirou'));
-    // }
-    // console.log(error.response);
     if (error.response && error.response.status === 401) {
-      // Notify.create({
-      //   type: 'negative',
-      //   message: 'Que pena! Acho que já deu por hoje. 😭'
-      // });
       return Promise.reject(new Error('Que pena! Acho que já deu por hoje. 😭'));
     }
     if (error.response && error.response.status === 403) {
-      return Promise.reject(new Error('Você não tem permissão para acessar esse recurso'));
+      return Promise.reject(new Error('Você não tem permissão para acessar esse recurso.'));
     }
     if (error.response) {
       return Promise.reject(new Error(error.response.data));

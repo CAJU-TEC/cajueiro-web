@@ -107,7 +107,7 @@ export default {
           router.push({ name: 'home' });
         });
         const user = await userStore.fetchUser();
-        userStore.setUser(user.data);
+        userStore.setUser(user.data.user);
       } catch (error) {
         userStore.clearUser();
         $q.notify({

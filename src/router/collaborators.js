@@ -3,6 +3,7 @@ export default [
   {
     path: 'collaborators/',
     name: 'collaborators.list',
+    meta: {permissions: ['collaborators.index', 'collaborators.*']},
     component: () => import('src/pages/collaborators/List.vue')
   },
   {

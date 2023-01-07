@@ -133,7 +133,7 @@ export default defineComponent({
         loading.value = false;
       } catch (error) {
         $q.notify({
-          message: 'Ops! Ocorreu algum erro',
+          message: error.message ?? 'Ops! Ocorreu algum erro',
           icon: 'block',
           color: 'negative',
         });

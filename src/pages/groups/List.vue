@@ -1,20 +1,30 @@
 <template>
   <q-page padding>
+    <q-ajax-bar
+      ref="bar"
+      color="primary"
+      size="5px"
+      skip-hijack
+      position="bottom"
+    />
+
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
         <q-breadcrumbs-el label="Grupos" />
       </q-breadcrumbs>
     </div>
+
     <q-table
-      v-model="pagination"
-      :rows="groups"
+      v-model:pagination="pagination"
+      :rows="groups.data"
       :columns="columns"
       row-key="full_name"
       no-data-label="Não existe dados no momento."
       rows-per-page-label="10"
       :rows-per-page-options="[10, 15, 20]"
       :loading="loading"
+      @request="handleRequest"
     >
       <template #top>
         <span class="text-h4">Grupos</span>
@@ -34,17 +44,17 @@
             :key="col.name"
             :props="props"
           >
-            <span v-if="col.name != 'image'">{{ col.value }}</span>
-            <q-avatar v-if="col.name == 'image' && props.row.image">
-              <img
-                :src="`http://localhost:8000/storage/images/${props.row.image.uri}`"
-              />
-            </q-avatar>
-            <q-avatar
-              v-if="col.name == 'image' && !props.row.image"
-              color="primary"
-              >{{ props.row.letter }}</q-avatar
-            >
+            <span v-if="col.name == 'name'">{{ col.value }}</span>
+            <span v-if="col.name == 'permissions'">
+              <div class="q-pa-md q-gutter-xs">
+                <q-badge
+                  v-for="badge in props.row.permissions.map((e) => e.name)"
+                  color="grey"
+                  :label="badge"
+                  :key="badge"
+                ></q-badge>
+              </div>
+            </span>
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -88,12 +98,14 @@ export default defineComponent({
   name: 'ListPage',
   setup() {
     const groups = ref([]);
-    const { list, remove } = groupsService();
+    const bar = ref(null);
+    const { index, remove } = groupsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
       page: 1,
       rowsPerPage: 15,
+      rowsNumber: 0,
     });
     const loading = ref();
 
@@ -101,19 +113,13 @@ export default defineComponent({
       {
         name: 'name',
         align: 'center',
-        label: '#',
+        label: 'Grupos',
         field: 'name',
       },
       {
-        name: 'email',
+        name: 'permissions',
         align: 'center',
-        label: 'E-mail',
-        field: 'email',
-      },
-      {
-        name: 'grupos',
-        align: 'center',
-        label: 'Grupos',
+        label: 'Permissões',
         field: '',
       },
       {
@@ -128,15 +134,21 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      getGroups();
       loading.value = true;
+      getGroups();
     });
 
-    const getGroups = async () => {
+    const getGroups = async (page) => {
+      const barRef = bar.value;
+      barRef.start();
       try {
-        const data = await list();
+        const data = await index(page);
+        pagination.value.page = data.current_page;
+        pagination.value.rowsPerPage = data.per_page;
+        pagination.value.rowsNumber = data.total;
         groups.value = data;
         loading.value = false;
+        barRef.stop();
       } catch (error) {
         $q.notify({
           message: 'Ops! Ocorreu algum erro',
@@ -171,17 +183,30 @@ export default defineComponent({
       }
     };
 
+    const handleRequest = async (props) => {
+      loading.value = true;
+      await getGroups(props.pagination.page);
+      loading.value = false;
+    };
+
     const handleEditClient = async (id) => {
       router.push({ name: 'groups.form', params: { id } });
     };
 
+    const showBagde = () => {
+      return '<q-badge rounded color="red" label="sfsdf" />';
+    };
+
     return {
+      bar,
       groups,
       columns,
       handleDeleteClient,
       handleEditClient,
       pagination,
       loading,
+      handleRequest,
+      showBagde,
     };
   },
 });

@@ -37,7 +37,7 @@ export default function usersService() {
 
   const removeAccessToken = () => {
     try {
-      localStorage.removeItem(ACCESS_TOKEN_NAME);
+      return localStorage.removeItem(ACCESS_TOKEN_NAME);
     } catch (error) {
       if(error) throw error;
     }
