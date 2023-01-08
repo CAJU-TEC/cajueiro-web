@@ -45,6 +45,16 @@
               color="primary"
               >{{ props.row.letter }}</q-avatar
             >
+            <span v-if="col.name == 'roles'">
+              <div class="q-pa-md q-gutter-xs">
+                <q-badge
+                  v-for="badge in props.row.roles.map((e) => e.name)"
+                  color="grey"
+                  :label="badge"
+                  :key="badge"
+                ></q-badge>
+              </div>
+            </span>
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -111,7 +121,7 @@ export default defineComponent({
         field: 'email',
       },
       {
-        name: 'grupos',
+        name: 'roles',
         align: 'center',
         label: 'Grupos',
         field: '',

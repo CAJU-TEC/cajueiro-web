@@ -1,11 +1,17 @@
 <template>
   <div class="q-pa-md">
     <q-btn-dropdown stretch flat label="Perfil">
-      <div class="row no-wrap q-pa-md">
+      <div class="row no-wrap q-pa-md" style="max-width: 400px">
         <div class="column">
-          <div class="text-h6 q-mb-md">Settings</div>
-          <q-toggle v-model="mobileData" label="Use Mobile Data" />
-          <q-toggle v-model="bluetooth" label="Bluetooth" />
+          <div class="q-pa-md q-gutter-xs">
+            <div class="text-h6 q-mb-md">Grupos</div>
+            <q-badge
+              v-for="badge in user.getRoles.map((e) => e.name)"
+              color="grey"
+              :label="badge"
+              :key="badge"
+            ></q-badge>
+          </div>
         </div>
 
         <q-separator vertical inset class="q-mx-lg" />
@@ -15,7 +21,7 @@
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
 
-          <div class="text-subtitle1 q-mt-md q-mb-xs">John Doe</div>
+          <div class="text-subtitle1 q-mt-md q-mb-xs">{{ user.getName }}</div>
 
           <q-btn
             @click="() => logout()"
@@ -33,19 +39,27 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { ref } from 'vue';
+import { useUserStore } from '../../../stores/user/user-store.js';
 
 export default {
   setup() {
     const router = useRouter();
+    const store = useUserStore();
+
+    const user = {
+      getId: store.id,
+      getName: store.name,
+      getEmail: store.email,
+      getPermisssion: store.permissions,
+      getRoles: store.roles,
+    };
 
     const logout = () => {
       router.push({ name: 'auth.logout' });
     };
     return {
       logout,
-      mobileData: ref(false),
-      bluetooth: ref(false),
+      user,
     };
   },
 };

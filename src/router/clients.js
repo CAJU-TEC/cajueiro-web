@@ -1,13 +1,18 @@
+import can from '../support/auth/can.js';
 
 export default [
   {
     path: 'clients/',
     name: 'clients.list',
-    component: () => import('src/pages/clients/List.vue')
+    meta: {permissions: ['clients.index', 'clients.*']},
+    component: () => import('src/pages/clients/List.vue'),
+    beforeEnter: [can]
   },
   {
     path: 'clients/form-client/:id?',
     name: 'clients.form',
-    component: () => import('src/pages/clients/FormClient.vue')
+    meta: {permissions: ['clients.store', 'clients.edit', 'clients.*']},
+    component: () => import('src/pages/clients/FormClient.vue'),
+    beforeEnter: [can]
   },
 ];

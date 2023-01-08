@@ -8,8 +8,6 @@ import users from './users.js';
 import auth from './auth.js';
 import groups from './groups.js';
 
-import can from '../support/auth/can.js';
-
 const routes = [
   // path for login
   {
@@ -22,10 +20,6 @@ const routes = [
   {
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
-    beforeEnter: (to, from, next) => {
-      console.log(can(to.meta.permissions));
-      next(true);
-    },
     children: [
       {
         path: '',

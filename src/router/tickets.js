@@ -1,13 +1,18 @@
+import can from '../support/auth/can.js';
 
 export default [
   {
     path: 'tickets/',
     name: 'tickets.list',
-    component: () => import('src/pages/tickets/List.vue')
+    meta: {permissions: ['tickets.index', 'tickets.*']},
+    component: () => import('src/pages/tickets/List.vue'),
+    beforeEnter: [can]
   },
   {
     path: 'tickets/form-ticket/:id?',
     name: 'tickets.form',
-    component: () => import('src/pages/tickets/FormTicket.vue')
+    meta: {permissions: ['tickets.create', 'tickets.edit', 'tickets.*']},
+    component: () => import('src/pages/tickets/FormTicket.vue'),
+    beforeEnter: [can]
   },
 ];
