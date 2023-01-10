@@ -43,5 +43,5 @@ jobs:
           server: "ftp.cajutec.com.br"
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: './dist'
-          server-dir: "cajueiro.cajutec.com.br/web/"
+          local-dir: '/dist/spa'
+          # server-dir: "cajueiro.cajutec.com.br/web/"
