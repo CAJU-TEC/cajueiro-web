@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [16.x, 18.x]
+        node-version: [18.x]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
 
     steps:
@@ -43,5 +43,5 @@ jobs:
           server: "ftp.cajutec.com.br"
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: './dist/spa'
+          local-dir: './dist/'
           server-dir: "cajueiro.cajutec.com.br/web/"
