@@ -4,7 +4,7 @@
       <div class="row no-wrap q-pa-md" style="max-width: 400px">
         <div class="column">
           <div class="q-pa-md q-gutter-xs">
-            <div class="text-h6 q-mb-md">Grupos</div>
+            <div class="text-h6 q-mb-md``">Grupos</div>
             <q-badge
               v-for="badge in user.getRoles.map((e) => e.name)"
               color="grey"
