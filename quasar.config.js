@@ -71,7 +71,7 @@ module.exports = configure(function (ctx) {
       env: {
         API_URL: ctx.dev
           ? 'http://localhost:8000/'
-          : 'https://cajueiro.cajutec.com.br/'
+          : 'https://cajueiroapi.cajutec.com.br/'
       }
       // rawDefine: {}
       // ignorePublicFolder: true,
