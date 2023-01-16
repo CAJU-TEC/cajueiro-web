@@ -1,8 +1,8 @@
 import useApi from 'src/composables/UseApi';
 import { api } from 'boot/axios';
 
-export default function groupsService() {
-  const endpoint = 'api/roles';
+export default function permissionsService() {
+  const endpoint = 'api/permissions';
   const { list, getById, post, update, remove } = useApi(endpoint);
 
   const index = async (page = 0) => {
