@@ -15,4 +15,11 @@ export default [
     component: () => import('src/pages/tickets/FormTicket.vue'),
     beforeEnter: [can]
   },
+  {
+    path: 'tickets/details/:id?',
+    name: 'tickets.details',
+    meta: {permissions: ['tickets.details', 'tickets.*']},
+    component: () => import('src/pages/tickets/DetailsView.vue'),
+    beforeEnter: [can]
+  },
 ];

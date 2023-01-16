@@ -296,7 +296,7 @@ export default defineComponent({
       try {
         const response = await getById(id);
         form.value = response;
-        // form.value.email = response.email?.description;
+        form.value.email = response.email?.description;
       } catch (error) {
         $q.notify({
           message: 'Ops! Ocorreu algum erro.',

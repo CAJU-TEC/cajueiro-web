@@ -53,17 +53,27 @@
               {{ col.value }}
             </span>
             <span v-if="col.name === 'collaborator'">
-              <q-chip>
-                <template v-if="props.row?.collaborator?.image">
+              <template v-if="props.row?.collaborator?.image">
+                <q-chip>
                   <q-avatar>
                     <img
                       :src="`http://localhost:8000/storage/images/${props.row.collaborator.image.uri}`"
                     />
                   </q-avatar>
                   {{ props.row.collaborator?.first_name }}
-                </template>
-                <template v-else> Sem colaborador </template>
-              </q-chip>
+                </q-chip>
+              </template>
+              <template v-else>
+                <q-btn
+                  unelevated
+                  size="xs"
+                  round
+                  color="primary"
+                  icon="card_giftcard"
+                  @click="addUserTicker(props.row.id)"
+                >
+                </q-btn>
+              </template>
             </span>
             <span v-if="col.name === 'impact'">
               <q-tooltip
@@ -85,10 +95,10 @@
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
-                icon="edit"
-                color="blue"
+                icon="list"
+                color="green"
                 size="xs"
-                @click="handleEditClient(props.row.id)"
+                @click="handleListClient(props.row.id)"
               />
               <q-btn
                 push
@@ -127,7 +137,7 @@ export default defineComponent({
   name: 'ListPage',
   setup() {
     const tickets = ref([]);
-    const { list, remove } = ticketsService();
+    const { list, addUserPatchTicket, remove } = ticketsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -197,6 +207,22 @@ export default defineComponent({
       }
     };
 
+    const addUserTicker = async (id) => {
+      try {
+        await addUserPatchTicket({
+          id,
+        });
+        getClients();
+        // tickets.value = data;
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível associar você a este protocolo.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
+
     const handleDeleteClient = async (id) => {
       try {
         $q.dialog({
@@ -222,17 +248,18 @@ export default defineComponent({
       }
     };
 
-    const handleEditClient = async (id) => {
-      router.push({ name: 'tickets.form', params: { id } });
+    const handleListClient = async (id) => {
+      router.push({ name: 'tickets.details', params: { id } });
     };
 
     return {
+      addUserTicker,
       status,
       priority,
       tickets,
       columns,
       handleDeleteClient,
-      handleEditClient,
+      handleListClient,
       pagination,
       loading,
     };
