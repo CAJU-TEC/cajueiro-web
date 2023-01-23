@@ -53,9 +53,9 @@
               {{ col.value }}
             </span>
             <span v-if="col.name === 'collaborator'">
-              <template v-if="props.row?.collaborator?.image">
+              <template v-if="props.row?.collaborator">
                 <q-chip>
-                  <q-avatar>
+                  <q-avatar v-if="props.row?.collaborator?.image">
                     <img
                       :src="`http://localhost:8000/storage/images/${props.row.collaborator.image.uri}`"
                     />
