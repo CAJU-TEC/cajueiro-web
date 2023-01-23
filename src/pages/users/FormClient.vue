@@ -96,6 +96,7 @@ export default defineComponent({
       name: '',
       email: '',
       roles: [],
+      permissions: [],
     });
     const roles = ref([]);
     const permissions = ref([]);

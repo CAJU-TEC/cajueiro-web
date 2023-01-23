@@ -385,6 +385,7 @@ export default defineComponent({
     const onSubmit = () => {
       try {
         post(formResponse.value);
+        getTicket(route.params.id);
         $q.notify({
           message: 'Dados salvos com sucesso',
           icon: 'check',

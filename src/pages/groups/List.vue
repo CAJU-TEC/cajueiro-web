@@ -45,16 +45,6 @@
             :props="props"
           >
             <span v-if="col.name == 'name'">{{ col.value }}</span>
-            <span v-if="col.name == 'permissions'">
-              <div class="q-pa-md q-gutter-xs">
-                <q-badge
-                  v-for="badge in props.row.permissions.map((e) => e.name)"
-                  color="grey"
-                  :label="badge"
-                  :key="badge"
-                ></q-badge>
-              </div>
-            </span>
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -115,12 +105,6 @@ export default defineComponent({
         align: 'center',
         label: 'Grupos',
         field: 'name',
-      },
-      {
-        name: 'permissions',
-        align: 'center',
-        label: 'Permissões',
-        field: '',
       },
       {
         name: 'actions',
