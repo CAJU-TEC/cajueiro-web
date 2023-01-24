@@ -99,7 +99,15 @@
                 color="green"
                 size="xs"
                 @click="handleListClient(props.row.id)"
-              />
+              >
+                <q-badge
+                  color="orange"
+                  floating
+                  v-if="props.row.comments.length > 0"
+                >
+                  {{ props.row.comments.length }}
+                </q-badge>
+              </q-btn>
               <q-btn
                 push
                 icon="delete_outline"
@@ -209,11 +217,23 @@ export default defineComponent({
 
     const addUserTicker = async (id) => {
       try {
-        await addUserPatchTicket({
-          id,
+        $q.dialog({
+          title: 'Quero assumir esse protocolo',
+          message: 'Desejo esse protocolo, blz?',
+          cancel: true,
+          persistent: true,
+        }).onOk(async () => {
+          await remove(id);
+          $q.notify({
+            message: 'Esse protocolo agora é meu, ninguém me toma!',
+            icon: 'check',
+            color: 'positive',
+          });
+          await addUserPatchTicket({
+            id,
+          });
+          getClients();
         });
-        getClients();
-        // tickets.value = data;
       } catch (error) {
         $q.notify({
           message: 'Ops! Não foi possível associar você a este protocolo.',

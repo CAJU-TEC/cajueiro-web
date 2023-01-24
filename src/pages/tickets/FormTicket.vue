@@ -108,7 +108,7 @@
         <q-file
           filled
           @update:model-value="onChange($event)"
-          v-model="form.imageInput"
+          v-model="form.image"
           label="Imagem"
           class="col-lg-6 col-xs-12"
           accept=".jpg, .png, .jpeg"
@@ -212,7 +212,6 @@
           min-height="15rem"
         />
       </div>
-
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
           <q-btn

@@ -125,7 +125,7 @@
               <span class="text-caption">Imagens</span>
               <p>
                 <a
-                  :href="`http://localhost:8000/storage/images/${form.image?.uri}`"
+                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${form.image?.uri}`"
                   target="_blank"
                 >
                   <q-img
@@ -199,11 +199,30 @@
             <div class="col">
               <span class="text-caption">Postado</span>
               <p class="text-subtitle2">
-                {{ dateFormat(comment.created_at) }}
+                {{ dateFormat(comment.created_at) }} -
+                {{ dateTimeFormat(comment.created_at) }}
               </p>
             </div>
           </div>
           <p v-html="comment.description"></p>
+          <div class="row" v-if="comment.image">
+            <div class="col">
+              <span class="text-caption">Imagens</span>
+              <p>
+                <a
+                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.image?.uri}`"
+                  target="_blank"
+                >
+                  <q-img
+                    :src="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.image?.uri}`"
+                    spinner-color="white"
+                    :ratio="16 / 9"
+                  />
+                </a>
+              </p>
+            </div>
+            <div class="col"></div>
+          </div>
           <q-separator />
         </q-card-section>
       </q-card>
@@ -212,7 +231,7 @@
     <div class="row items-start">
       <q-card class="my-card col bg-grey-1">
         <q-form enctype="multipart/form-data" @submit="onSubmit">
-          <q-card-section> <strong>Responder</strong> </q-card-section>
+          <q-card-section> <strong>Comentário</strong> </q-card-section>
           <q-separator />
           <q-card-section>
             <h6 class="q-mt-xs q-mb-md">Como protocolo está no momento?</h6>
@@ -223,7 +242,7 @@
               :toggle-color="`${status[formResponse.status].color}`"
               :options="optionsStatus"
             />
-            <h6 class="q-mt-lg q-mb-md">Responder</h6>
+            <h6 class="q-mt-lg q-mb-md">Comentário</h6>
             <div class="col-lg-12 col-xs-12 q-my-xs">
               <q-editor
                 v-model="formResponse.description"
@@ -322,6 +341,20 @@
                 min-height="15rem"
               />
             </div>
+            <div class="col-12 q-gutter-sm q-my-lg">
+              <q-file
+                filled
+                @update:model-value="onChange($event)"
+                v-model="form.imageInput"
+                label="Imagem"
+                class="col-lg-6 col-xs-12"
+                accept=".jpg, .png, .jpeg"
+              >
+                <template #prepend>
+                  <q-icon name="file_upload" />
+                </template>
+              </q-file>
+            </div>
           </q-card-section>
           <q-card-actions>
             <q-btn flat type="submit">Enviar resposta</q-btn>
@@ -335,7 +368,11 @@
 import { defineComponent, ref, onMounted } from 'vue';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
-import { dateFormat, betweenDates } from 'src/support/dates/dateFormat';
+import {
+  dateFormat,
+  dateTimeFormat,
+  betweenDates,
+} from 'src/support/dates/dateFormat';
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
 import { useQuasar } from 'quasar';
@@ -374,6 +411,7 @@ export default defineComponent({
       collaborator_id: ref(''),
       status: ref('backlog'),
       description: ref(''),
+      image: ref(''),
     });
 
     onMounted(async () => {
@@ -382,10 +420,24 @@ export default defineComponent({
       }
     });
 
-    const onSubmit = () => {
+    const onChange = (event) => {
+      createBase64Image(event);
+    };
+
+    const createBase64Image = (fileObject) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        formResponse.value.image = reader.result;
+      };
+
+      reader.readAsDataURL(fileObject);
+    };
+
+    const onSubmit = async () => {
       try {
-        post(formResponse.value);
-        getTicket(route.params.id);
+        await post(formResponse.value);
+        await getTicket(route.params.id);
         $q.notify({
           message: 'Dados salvos com sucesso',
           icon: 'check',
@@ -423,8 +475,10 @@ export default defineComponent({
 
     return {
       dateFormat,
+      dateTimeFormat,
       comments,
       onSubmit,
+      onChange,
       formResponse,
       optionsStatus,
       betweenDates,

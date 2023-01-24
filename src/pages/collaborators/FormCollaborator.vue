@@ -105,6 +105,28 @@
         mask="##.###.###/####-##"
       />
 
+      <q-input
+        v-model="form.address"
+        filled
+        label="Endereço *"
+        class="col-md-4 col-lg-4 col-xs-12"
+      />
+
+      <q-input
+        v-model="form.postal"
+        filled
+        label="CEP *"
+        class="col-md-4 col-lg-4 col-xs-12"
+        mask="##.###-###"
+      />
+
+      <q-input
+        v-model="form.number"
+        filled
+        label="Número *"
+        class="col-md-4 col-lg-4 col-xs-12"
+      />
+
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
           <q-btn
@@ -153,6 +175,9 @@ export default defineComponent({
       cpf: '',
       cnpj: '',
       email: '',
+      address: '',
+      postal: '',
+      number: '',
     });
     const loading = ref('true');
 

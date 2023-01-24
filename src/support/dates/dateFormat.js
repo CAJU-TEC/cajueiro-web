@@ -4,10 +4,15 @@ const dateFormat = (dateStr) => {
   return new Intl.DateTimeFormat('pt-BR').format(new Date(dateStr));
 };
 
+const dateTimeFormat = (dateStr) => {
+  if(!(dateStr)) return;
+  return new Intl.DateTimeFormat('pt-BR', {timeStyle: 'short'}).format(new Date(dateStr));
+};
+
 const betweenDates = (d1, d2) => {
   const diffInMs = new Date(d2) - new Date(d1);
   console.log(diffInMs);
   // const diffInDays = diffInMs / (1000*60*60*24);
 };
 
-export {dateFormat, betweenDates};
+export {dateFormat, dateTimeFormat, betweenDates};

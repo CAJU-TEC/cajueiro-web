@@ -157,7 +157,7 @@ export default defineComponent({
       try {
         const response = await list();
         options.value = response.map((m) => {
-          return { value: m.id, label: m.first_name };
+          return { value: m.id, label: m.full_name };
         });
       } catch (error) {
         $q.notify({
