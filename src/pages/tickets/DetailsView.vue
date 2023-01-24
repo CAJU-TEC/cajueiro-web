@@ -120,6 +120,20 @@
               </span>
             </div>
           </div>
+          <div class="row">
+            <div class="col">
+              <span class="text-caption">Assunto</span>
+              <p>
+                <strong>{{ form.subject }}</strong>
+              </p>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col">
+              <span class="text-caption">Mensagem</span>
+              <p v-html="form.message"></p>
+            </div>
+          </div>
           <div class="row" v-if="form.image">
             <div class="col">
               <span class="text-caption">Imagens</span>
@@ -137,20 +151,6 @@
               </p>
             </div>
             <div class="col"></div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <span class="text-caption">Assunto</span>
-              <p>
-                <strong>{{ form.subject }}</strong>
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <span class="text-caption">Mensagem</span>
-              <p v-html="form.message"></p>
-            </div>
           </div>
         </q-card-section>
       </q-card>
