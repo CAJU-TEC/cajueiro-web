@@ -55,7 +55,7 @@
                 <q-chip v-if="form.collaborator?.image">
                   <q-avatar>
                     <img
-                      :src="`http://localhost:8000/storage/images/${form.collaborator?.image?.uri}`"
+                      :src="`https://cajueiroapi.cajutec.com.br/api/storage/images/${form.collaborator?.image?.uri}`"
                     />
                   </q-avatar>
                   {{ form.collaborator?.full_name }}
@@ -129,7 +129,7 @@
                   target="_blank"
                 >
                   <q-img
-                    :src="`http://localhost:8000/storage/images/${form.image?.uri}`"
+                    :src="`https://cajueiroapi.cajutec.com.br/api/storage/images/${form.image?.uri}`"
                     spinner-color="white"
                     :ratio="16 / 9"
                   />
@@ -188,7 +188,7 @@
                 <q-chip v-if="comment.collaborator?.image">
                   <q-avatar>
                     <img
-                      :src="`http://localhost:8000/storage/images/${comment.collaborator?.image?.uri}`"
+                      :src="`https://cajueiroapi.cajutec.com.br/api/storage/images/${comment.collaborator?.image?.uri}`"
                     />
                   </q-avatar>
                   {{ comment.collaborator?.full_name }}

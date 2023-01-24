@@ -37,7 +37,7 @@
             <span v-if="col.name != 'image'">{{ col.value }}</span>
             <q-avatar v-if="col.name == 'image' && props.row.image">
               <img
-                :src="`http://localhost:8000/storage/images/${props.row.image.uri}`"
+                :src="`https://cajueiroapi.cajutec.com.br/api/storage/images/${props.row.image.uri}`"
               />
             </q-avatar>
             <q-avatar
