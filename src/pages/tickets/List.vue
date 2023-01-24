@@ -57,7 +57,7 @@
                 <q-chip>
                   <q-avatar v-if="props.row?.collaborator?.image">
                     <img
-                      :src="`https://cajueiroapi.cajutec.com.br/api/storage/images/${props.row.collaborator.image.uri}`"
+                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.collaborator.image.uri}`"
                     />
                   </q-avatar>
                   {{ props.row.collaborator?.first_name }}
