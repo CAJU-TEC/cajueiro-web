@@ -61,6 +61,7 @@
                   {{ form.collaborator?.full_name }}
                 </q-chip>
                 <span v-else>{{ form.collaborator?.full_name }}</span>
+                <span v-if="!form.collaborator">Sem colaborador</span>
               </p>
             </div>
           </div>
@@ -89,7 +90,7 @@
                   {{ dateFormat(form.dateFinishTicket ?? null) }}
                   {{ dateTimeFormat(form.dateFinishTicket ?? null) }}
                 </template>
-                <template v-else>
+                <template v-else-if="form.comments.length > 0">
                   {{
                     `à ${betweenDates(
                       form.created_at,
@@ -97,6 +98,7 @@
                     )} dias`
                   }}
                 </template>
+                <template v-else> Sem histórico </template>
               </p>
             </div>
           </div>
