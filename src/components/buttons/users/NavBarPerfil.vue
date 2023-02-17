@@ -18,7 +18,7 @@
 
         <div class="column items-center">
           <q-avatar size="72px">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            <img :src="getImage()" />
           </q-avatar>
 
           <div class="text-subtitle1 q-mt-md q-mb-xs">{{ user.name }}</div>
@@ -58,11 +58,20 @@ export default {
       user.value = dados.data.user;
     };
 
+    const getImage = () => {
+      if (!user.value.collaborator?.image?.uri) {
+        return 'https://cdn.quasar.dev/img/boy-avatar.png';
+      }
+
+      return `https://cajueiro.cajutec.com/storage/images/${user.value.collaborator?.image?.uri}`;
+    };
+
     const logout = () => {
       router.push({ name: 'auth.logout' });
     };
     return {
       logout,
+      getImage,
       user,
     };
   },

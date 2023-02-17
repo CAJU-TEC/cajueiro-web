@@ -46,7 +46,7 @@
       >
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
-            <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
+            <img :src="getImage()" />
           </q-avatar>
           <div class="text-weight-bold">{{ user.name }}</div>
           <div>{{ user.email }}</div>
@@ -154,11 +154,20 @@ export default defineComponent({
       user.value = dados.data.user;
     };
 
+    const getImage = () => {
+      if (!user.value.collaborator?.image?.uri) {
+        return 'https://cdn.quasar.dev/img/boy-avatar.png';
+      }
+
+      return `https://cajueiro.cajutec.com/storage/images/${user.value.collaborator?.image?.uri}`;
+    };
+
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       rightDrawerOpen,
       user,
+      getImage,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
