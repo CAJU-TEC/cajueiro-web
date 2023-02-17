@@ -68,21 +68,36 @@
             <div class="col">
               <span class="text-caption">Postado</span>
               <p class="text-subtitle2">
-                {{ form.created_at }}
+                {{ dateFormat(form.created_at ?? null) }}
+                {{ dateTimeFormat(form.created_at) }}
               </p>
             </div>
             <div class="col">
               <span class="text-caption">Iníciado</span>
               <p class="text-subtitle2">
-                {{ form.date_attribute_ticket }}
+                {{ dateFormat(form.date_attribute_ticket ?? null) }}
+                {{ dateTimeFormat(form.date_attribute_ticket) }}
               </p>
             </div>
             <div class="col">
-              <span class="text-caption">Finalizado</span>
+              <span class="text-caption" v-if="form.status === 'done'">
+                Finalizado
+              </span>
+              <span class="text-caption" v-else> Em atividade </span>
               <p class="text-subtitle2">
-                {{ form.date_finish_ticket ?? 'Em atividade' }}
+                <template v-if="form.status === 'done'">
+                  {{ dateFormat(form.dateFinishTicket ?? null) }}
+                  {{ dateTimeFormat(form.dateFinishTicket ?? null) }}
+                </template>
+                <template v-else>
+                  {{
+                    `à ${betweenDates(
+                      form.created_at,
+                      form.dateFinishTicket
+                    )} dias`
+                  }}
+                </template>
               </p>
-              {{ betweenDates(form.created_at, form.date_finish_ticket) }}
             </div>
           </div>
           <div class="row">
@@ -160,6 +175,9 @@
       <q-card class="my-card col bg-grey-3">
         <q-card-section> <strong>Histórico</strong> </q-card-section>
         <q-separator />
+        <q-card-section v-if="form.comments.length === 0"
+          >Não existe comentários no momento</q-card-section
+        >
         <q-card-section v-for="comment in form.comments" :key="comment.id">
           <div class="row">
             <div class="col">
@@ -437,6 +455,7 @@ export default defineComponent({
     const onSubmit = async () => {
       try {
         await post(formResponse.value);
+        formResponse.value.description = null;
         await getTicket(route.params.id);
         $q.notify({
           message: 'Dados salvos com sucesso',
@@ -456,13 +475,6 @@ export default defineComponent({
     const getTicket = async (id) => {
       try {
         const response = await getById(id);
-        response.date_attribute_ticket = dateFormat(
-          response.date_attribute_ticket ?? null
-        );
-        response.date_finish_ticket = dateFormat(
-          response.date_finish_ticket ?? null
-        );
-        response.created_at = dateFormat(response.created_at ?? null);
         form.value = response;
       } catch (error) {
         $q.notify({

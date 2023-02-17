@@ -11,8 +11,8 @@ const dateTimeFormat = (dateStr) => {
 
 const betweenDates = (d1, d2) => {
   const diffInMs = new Date(d2) - new Date(d1);
-  console.log(diffInMs);
-  // const diffInDays = diffInMs / (1000*60*60*24);
+  const diffInDays = Math.ceil(diffInMs / (1000*3600*24));
+  return diffInDays;
 };
 
 export {dateFormat, dateTimeFormat, betweenDates};

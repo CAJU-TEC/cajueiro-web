@@ -223,16 +223,15 @@ export default defineComponent({
           cancel: true,
           persistent: true,
         }).onOk(async () => {
-          await remove(id);
           $q.notify({
             message: 'Esse protocolo agora é meu, ninguém me toma!',
             icon: 'check',
             color: 'positive',
           });
-          await addUserPatchTicket({
+          addUserPatchTicket({
             id,
           });
-          getClients();
+          await getClients();
         });
       } catch (error) {
         $q.notify({

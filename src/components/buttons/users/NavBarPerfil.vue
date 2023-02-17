@@ -6,7 +6,7 @@
           <div class="q-pa-md q-gutter-xs">
             <div class="text-h6 q-mb-md``">Grupos</div>
             <q-badge
-              v-for="badge in user.getRoles.map((e) => e.name)"
+              v-for="badge in user.roles.map((e) => e.name)"
               color="grey"
               :label="badge"
               :key="badge"
@@ -21,7 +21,7 @@
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
 
-          <div class="text-subtitle1 q-mt-md q-mb-xs">{{ user.getName }}</div>
+          <div class="text-subtitle1 q-mt-md q-mb-xs">{{ user.name }}</div>
 
           <q-btn
             @click="() => logout()"
@@ -39,19 +39,23 @@
 
 <script>
 import { useRouter } from 'vue-router';
-import { useUserStore } from '../../../stores/user/user-store.js';
+import usersService from 'src/services/users';
+import { onMounted, ref } from 'vue';
 
 export default {
   setup() {
     const router = useRouter();
-    const store = useUserStore();
+    const { fetchUser } = usersService();
 
-    const user = {
-      getId: store.id,
-      getName: store.name,
-      getEmail: store.email,
-      getPermisssion: store.permissions,
-      getRoles: store.roles,
+    onMounted(async () => {
+      handleGetUser();
+    });
+
+    const user = ref({});
+
+    const handleGetUser = async () => {
+      const dados = await fetchUser();
+      user.value = dados.data.user;
     };
 
     const logout = () => {

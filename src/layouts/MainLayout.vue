@@ -48,8 +48,8 @@
           <q-avatar size="56px" class="q-mb-sm">
             <img src="https://cdn.quasar.dev/img/boy-avatar.png" />
           </q-avatar>
-          <div class="text-weight-bold">{{ user.getName }}</div>
-          <div>{{ user.getEmail }}</div>
+          <div class="text-weight-bold">{{ user.name }}</div>
+          <div>{{ user.email }}</div>
         </div>
       </q-img>
     </q-drawer>
@@ -61,11 +61,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import { useDrawerRightStore } from 'src/stores/drawerRight';
 import NavBarPerfil from '../components/buttons/users/NavBarPerfil.vue';
-import { useUserStore } from '../stores/user/user-store.js';
+import usersService from 'src/services/users';
 
 const linksList = [
   {
@@ -141,14 +141,17 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = useDrawerRightStore();
-    const store = useUserStore();
+    const { fetchUser } = usersService();
 
-    const user = {
-      getId: store.id,
-      getName: store.name,
-      getEmail: store.email,
-      getPermisssion: store.permissions,
-      getRoles: store.roles,
+    onMounted(async () => {
+      handleGetUser();
+    });
+
+    const user = ref({});
+
+    const handleGetUser = async () => {
+      const dados = await fetchUser();
+      user.value = dados.data.user;
     };
 
     return {

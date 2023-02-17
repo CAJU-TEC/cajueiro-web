@@ -64,4 +64,5 @@ export const useUserStore = defineStore('user', {
       this.roles = null;
     }
   },
+  persist: true,
 });
