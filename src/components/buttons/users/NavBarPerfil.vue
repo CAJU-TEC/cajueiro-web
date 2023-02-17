@@ -63,7 +63,7 @@ export default {
         return 'https://cdn.quasar.dev/img/boy-avatar.png';
       }
 
-      return `https://cajueiro.cajutec.com/storage/images/${user.value.collaborator?.image?.uri}`;
+      return `https://cajueiroapi.cajutec.com/storage/images/${user.value.collaborator?.image?.uri}`;
     };
 
     const logout = () => {
