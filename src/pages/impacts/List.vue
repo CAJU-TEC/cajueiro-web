@@ -31,6 +31,7 @@
               {{ col.value }}
             </q-badge>
             <span v-if="col.name == 'points'">{{ col.value }}</span>
+            <span v-if="col.name == 'days'">{{ col.value }}</span>
 
             <q-btn-group v-if="col.name == 'actions'" push size="˜xs">
               <q-btn
@@ -106,6 +107,12 @@ export default defineComponent({
         align: 'center',
         label: 'Pontuação',
         field: 'points',
+      },
+      {
+        name: 'days',
+        align: 'center',
+        label: 'Dias de atividade',
+        field: 'days',
       },
       {
         name: 'actions',
