@@ -103,15 +103,15 @@
           </template>
         </q-select>
       </div>
-
       <div class="col-12 q-gutter-sm q-mb-lg">
         <q-file
           filled
+          clearable
+          multiple
           @update:model-value="onChange($event)"
           v-model="form.imageName"
-          label="Imagem"
+          label="Arquivo"
           class="col-lg-6 col-xs-12"
-          accept=".jpg, .png, .jpeg"
         >
           <template #prepend>
             <q-icon name="file_upload" />
@@ -280,8 +280,8 @@ export default defineComponent({
       subject: ref(''),
       message: ref(''),
       status: ref('backlog'),
-      image: ref(''),
-      imageName: ref(''),
+      image: ref([]),
+      imageName: ref([]),
     });
 
     onMounted(async () => {
@@ -359,14 +359,16 @@ export default defineComponent({
     };
 
     const createBase64Image = (fileObject) => {
-      const reader = new FileReader();
-      form.value.imageName = fileObject.name;
+      for (let i = 0; i < fileObject.length; i++) {
+        const reader = new FileReader();
+        form.value.imageName = fileObject[i].name;
 
-      reader.onloadend = () => {
-        form.value.image = reader.result;
-      };
+        reader.onloadend = () => {
+          form.value.image[i] = reader.result;
+        };
 
-      reader.readAsDataURL(fileObject);
+        reader.readAsDataURL(fileObject[i]);
+      }
     };
 
     const onSubmit = async () => {
