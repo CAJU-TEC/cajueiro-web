@@ -1,4 +1,4 @@
-import { Notify } from 'quasar';
+// import { Notify } from 'quasar';
 
 const can = (to, from, next) => {
 
@@ -21,10 +21,10 @@ const can = (to, from, next) => {
   if(payload === true) {
     next(true);
   } else {
-    Notify.create({
-      type: 'negative',
-      message: 'Você não tem permissão para acessar esse recurso.'
-    });
+    // Notify.create({
+    //   type: 'negative',
+    //   message: 'Você não tem permissão para acessar esse recurso.'
+    // });
     next(false);
   }
 

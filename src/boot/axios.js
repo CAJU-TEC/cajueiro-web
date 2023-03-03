@@ -12,18 +12,26 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+// Intercepta as respostas da API e trata possíveis erros
 api.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
+    // Caso seja retornado um erro de autenticação
+    if (error.response?.status === 401) {
       return Promise.reject(new Error('Que pena! Acho que já deu por hoje. 😭'));
     }
-    if (error.response && error.response.status === 403) {
+
+    // Caso seja retornado um erro de permissão
+    if (error.response?.status === 403) {
       return Promise.reject(new Error('Você não tem permissão para acessar esse recurso.'));
     }
+
+    // Caso seja retornado outro tipo de erro
     if (error.response) {
-      return Promise.reject(new Error(error.response.data));
+      return Promise.reject(new Error(`${error.response.data}`));
     }
+
+    // Caso não seja retornado nenhum erro
     return Promise.reject(error);
   }
 );

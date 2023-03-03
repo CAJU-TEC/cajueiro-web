@@ -148,13 +148,21 @@ export default defineComponent({
           cancel: true,
           persistent: true,
         }).onOk(async () => {
-          await remove(id);
-          $q.notify({
-            message: 'Apagado com sucesso',
-            icon: 'check',
-            color: 'positive',
-          });
-          await getClients();
+          try {
+            await remove(id);
+            $q.notify({
+              message: 'Apagado com sucesso',
+              icon: 'check',
+              color: 'positive',
+            });
+            await getClients();
+          } catch (error) {
+            $q.notify({
+              message: error.message,
+              icon: 'announcement',
+              color: 'negative',
+            });
+          }
         });
       } catch (error) {
         $q.notify({

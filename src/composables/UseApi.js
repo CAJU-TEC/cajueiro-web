@@ -42,6 +42,7 @@ export default function useApi(url) {
       const { data } = await api.delete(`${url}/${id}`);
       return data;
     } catch (error) {
+      // console.error(error.message);
       throw (new Error(error.message));
     }
   };
