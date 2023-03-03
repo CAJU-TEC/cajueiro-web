@@ -64,6 +64,21 @@
                 <span v-if="!form.collaborator">Sem colaborador</span>
               </p>
             </div>
+            <div class="col">
+              <span class="text-caption">Criador do Protocolo</span>
+              <p class="text-subtitle2">
+                <q-chip v-if="form.user?.collaborator?.image">
+                  <q-avatar>
+                    <img
+                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.user?.collaborator?.image?.uri}`"
+                    />
+                  </q-avatar>
+                  {{ form.user?.collaborator?.full_name }}
+                </q-chip>
+                <span v-else>{{ form.user?.collaborator?.full_name }}</span>
+                <span v-if="!form.user?.collaborator">Sem colaborador</span>
+              </p>
+            </div>
           </div>
           <div class="row">
             <div class="col">
@@ -116,7 +131,7 @@
                   </q-tooltip>
                 </q-badge>
                 &nbsp;<strong
-                  >( {{ form.impact?.description ?? '[- - -]' }} )</strong
+                  >({{ form.impact?.description ?? '[- - -]' }})</strong
                 >&nbsp;-&nbsp; {{ form.impact?.classification }}
               </p>
             </div>
