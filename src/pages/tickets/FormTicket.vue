@@ -108,7 +108,7 @@
         <q-file
           filled
           @update:model-value="onChange($event)"
-          v-model="form.image"
+          v-model="form.imageName"
           label="Imagem"
           class="col-lg-6 col-xs-12"
           accept=".jpg, .png, .jpeg"
@@ -281,6 +281,7 @@ export default defineComponent({
       message: ref(''),
       status: ref('backlog'),
       image: ref(''),
+      imageName: ref(''),
     });
 
     onMounted(async () => {
@@ -359,6 +360,7 @@ export default defineComponent({
 
     const createBase64Image = (fileObject) => {
       const reader = new FileReader();
+      form.value.imageName = fileObject.name;
 
       reader.onloadend = () => {
         form.value.image = reader.result;

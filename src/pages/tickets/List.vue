@@ -83,7 +83,7 @@
               >
                 {{ col.value.description }}
               </q-tooltip>
-              <q-badge rounded :style="`background:${col.value.color}`" />
+              <q-badge rounded :style="`background:${col?.value?.color}`" />
             </span>
             <span v-if="col.name === 'status'">
               <q-badge
