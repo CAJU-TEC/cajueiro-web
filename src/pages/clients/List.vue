@@ -158,8 +158,9 @@ export default defineComponent({
             await getClients();
           } catch (error) {
             $q.notify({
-              message: error.message,
-              icon: 'announcement',
+              icon: 'block',
+              message: 'Ops! Ocorreu um erro.',
+              caption: error.message,
               color: 'negative',
             });
           }
