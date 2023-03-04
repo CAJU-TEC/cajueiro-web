@@ -6,6 +6,16 @@
         <q-breadcrumbs-el label="Protocolos" />
       </q-breadcrumbs>
     </div>
+    <div class="q-py-md">
+      <q-btn
+        v-if="pusherMessage.length > 0"
+        :label="`protocolos (${pusherMessage.length})`"
+        @click="getClients()"
+        push
+        class="full-width"
+        color="primary"
+      />
+    </div>
     <q-table
       v-model="pagination"
       :rows="tickets"
@@ -140,6 +150,7 @@ import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
+import Pusher from 'pusher-js';
 
 export default defineComponent({
   name: 'ListPage',
@@ -153,6 +164,7 @@ export default defineComponent({
       rowsPerPage: 15,
     });
     const loading = ref();
+    const pusherMessage = ref([]);
 
     const columns = [
       {
@@ -199,13 +211,28 @@ export default defineComponent({
     onMounted(() => {
       getClients();
       loading.value = true;
+      getPusher();
     });
+
+    const getPusher = () => {
+      const pusher = new Pusher('429c853a3dec3f30148c', {
+        cluster: 'sa1',
+      });
+
+      const channel = pusher.subscribe('tickets');
+      channel.bind('index', function (data) {
+        if (data) {
+          pusherMessage.value.push(data);
+        }
+      });
+    };
 
     const getClients = async () => {
       try {
         const data = await list();
         tickets.value = data;
         loading.value = false;
+        pusherMessage.value = [];
       } catch (error) {
         $q.notify({
           message: 'Ops! Ocorreu algum erro',
@@ -272,7 +299,9 @@ export default defineComponent({
     };
 
     return {
+      getClients,
       addUserTicker,
+      pusherMessage,
       status,
       priority,
       tickets,

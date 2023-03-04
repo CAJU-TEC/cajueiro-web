@@ -17,6 +17,7 @@
     "eslint-plugin-prettier": "^4.2.1",
     "pinia": "^2.0.28",
     "pinia-plugin-persistedstate": "^3.0.2",
+    "pusher-js": "^8.0.1",
     "quasar": "^2.6.0",
     "uuid": "^9.0.0",
     "vue": "^3.0.0",
