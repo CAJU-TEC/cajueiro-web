@@ -3,7 +3,6 @@
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
-
     <q-item-section>
       <q-item-label>{{ title }}</q-item-label>
       <q-item-label caption>
@@ -15,6 +14,7 @@
 
 <script>
 import { defineComponent } from 'vue';
+import { can } from 'src/middleware/authMiddleware';
 
 export default defineComponent({
   name: 'EssentialLink',
@@ -38,6 +38,12 @@ export default defineComponent({
       type: String,
       default: '',
     },
+  },
+
+  setup() {
+    return {
+      can,
+    };
   },
 });
 </script>

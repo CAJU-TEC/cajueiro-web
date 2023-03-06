@@ -67,69 +67,6 @@ import { useDrawerRightStore } from 'src/stores/drawerRight';
 import NavBarPerfil from '../components/buttons/users/NavBarPerfil.vue';
 import usersService from 'src/services/users';
 
-const linksList = [
-  {
-    title: 'Home',
-    caption: '',
-    icon: 'home',
-    route: { name: 'home' },
-  },
-  {
-    title: 'Organizações',
-    caption: '',
-    icon: 'corporate_fare',
-    route: { name: 'corporates.list' },
-  },
-  {
-    title: 'Clientes',
-    caption: '',
-    icon: 'groups',
-    route: { name: 'clients.list' },
-  },
-  {
-    title: 'Protocolos',
-    caption: '',
-    icon: 'local_activity',
-    route: { name: 'tickets.list' },
-  },
-  {
-    title: 'Colaboradores',
-    caption: '',
-    icon: 'groups',
-    route: { name: 'collaborators.list' },
-  },
-  {
-    title: 'Impactos',
-    caption: '',
-    icon: 'local_activity',
-    route: { name: 'impacts.list' },
-  },
-  {
-    title: 'Planos de trabalho',
-    caption: '',
-    icon: 'plans',
-    route: { name: 'jobPlans.list' },
-  },
-  {
-    title: 'Métricas',
-    caption: '',
-    icon: 'bar_chart',
-    route: { name: 'tickets.list' },
-  },
-  {
-    title: 'Usuários',
-    caption: '',
-    icon: 'manage_accounts',
-    route: { name: 'users.list' },
-  },
-  {
-    title: 'Grupos & Permissões',
-    caption: '',
-    icon: 'verified_user',
-    route: { name: 'groups.list' },
-  },
-];
-
 export default defineComponent({
   name: 'MainLayout',
 
@@ -142,6 +79,68 @@ export default defineComponent({
     const leftDrawerOpen = ref(false);
     const rightDrawerOpen = useDrawerRightStore();
     const { fetchUser } = usersService();
+    const linksList = [
+      {
+        title: 'Home',
+        caption: '',
+        icon: 'home',
+        route: { name: 'home' },
+      },
+      {
+        title: 'Organizações',
+        caption: '',
+        icon: 'corporate_fare',
+        route: { name: 'corporates.list' },
+      },
+      {
+        title: 'Clientes',
+        caption: '',
+        icon: 'groups',
+        route: { name: 'clients.list' },
+      },
+      {
+        title: 'Protocolos',
+        caption: '',
+        icon: 'local_activity',
+        route: { name: 'tickets.list' },
+      },
+      {
+        title: 'Colaboradores',
+        caption: '',
+        icon: 'groups',
+        route: { name: 'collaborators.list' },
+      },
+      {
+        title: 'Impactos',
+        caption: '',
+        icon: 'local_activity',
+        route: { name: 'impacts.list' },
+      },
+      {
+        title: 'Planos de trabalho',
+        caption: '',
+        icon: 'plans',
+        route: { name: 'jobPlans.list' },
+      },
+      {
+        title: 'Métricas',
+        caption: '',
+        icon: 'bar_chart',
+        route: { name: 'tickets.list' },
+      },
+      {
+        title: 'Usuários',
+        caption: '',
+        icon: 'manage_accounts',
+        route: { name: 'users.list' },
+      },
+      {
+        title: 'Grupos & Permissões',
+        caption: '',
+        icon: 'verified_user',
+        route: { name: 'groups.list' },
+      },
+    ];
 
     onMounted(async () => {
       handleGetUser();
