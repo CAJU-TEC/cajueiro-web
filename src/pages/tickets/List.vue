@@ -39,13 +39,16 @@
       <template #body="props">
         <q-tr :props="props">
           <q-td
-            class="q-gutter-sm"
+            class="q-gutter-sm text-center"
             v-for="col in props.cols"
             :key="col.name"
             :props="props"
           >
-            <span v-if="col.name === 'code'" class="text-weight-bold"
-              >#{{ col.value }}
+            <span
+              v-if="col.name === 'code'"
+              class="text-weight-bold text-center"
+            >
+              #{{ col.value }}
               <q-badge rounded :color="`${priority[props.row.priority].color}`">
                 <q-tooltip
                   :offset="[10, 10]"
@@ -59,9 +62,28 @@
                 </q-tooltip>
               </q-badge>
             </span>
-            <span v-if="col.name === 'subject'">
+            <div v-if="col.name === 'subject'" class="text-left">
+              <template v-if="props.row.client?.corporate">
+                <span>
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <span>{{ props.row.client?.corporate?.full_name }}</span>
+                  </q-tooltip>
+                  <q-chip>
+                    <q-avatar v-if="props.row.client?.corporate?.image">
+                      <img
+                        :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.client?.corporate?.image?.uri}`"
+                      />
+                    </q-avatar>
+                    {{ props.row.client?.corporate?.first_name }}
+                  </q-chip>
+                </span>
+              </template>
               {{ col.value }}
-            </span>
+            </div>
             <span v-if="col.name === 'collaborator'">
               <template v-if="props.row?.collaborator">
                 <q-chip>
