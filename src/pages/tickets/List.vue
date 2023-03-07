@@ -62,26 +62,30 @@
                 </q-tooltip>
               </q-badge>
             </span>
+            <div v-if="col.name === 'avatars'">
+              <div v-if="props.row.client?.corporate">
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <div>
+                    {{ props.row.client?.corporate?.full_name }}
+                  </div>
+                </q-tooltip>
+                <q-avatar size="sm" v-if="props.row.client?.corporate?.image">
+                  <img
+                    :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.client?.corporate?.image?.uri}`"
+                  />
+                </q-avatar>
+              </div>
+              <div v-else>
+                <q-avatar size="sm" color="primary">{{
+                  props.row.client?.letter
+                }}</q-avatar>
+              </div>
+            </div>
             <div v-if="col.name === 'subject'" class="text-left">
-              <template v-if="props.row.client?.corporate">
-                <span>
-                  <q-tooltip
-                    :offset="[10, 10]"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <span>{{ props.row.client?.corporate?.full_name }}</span>
-                  </q-tooltip>
-                  <q-chip>
-                    <q-avatar v-if="props.row.client?.corporate?.image">
-                      <img
-                        :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.client?.corporate?.image?.uri}`"
-                      />
-                    </q-avatar>
-                    {{ props.row.client?.corporate?.first_name }}
-                  </q-chip>
-                </span>
-              </template>
               {{ col.value }}
             </div>
             <span v-if="col.name === 'collaborator'">
@@ -194,6 +198,12 @@ export default defineComponent({
         align: 'center',
         label: '#',
         field: 'code',
+      },
+      {
+        name: 'avatars',
+        align: 'center',
+        label: '',
+        field: 'avatars',
       },
       {
         name: 'subject',
