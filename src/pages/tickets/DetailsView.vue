@@ -166,7 +166,7 @@
               <p v-html="form.message"></p>
             </div>
           </div>
-          <span class="text-caption" v-if="form.images.length > 0"
+          <span class="text-caption" v-if="form.images?.length > 0"
             >Arquivos</span
           >
           <div class="row" v-for="(image, i) in form.images" :key="i">
