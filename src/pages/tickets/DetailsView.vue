@@ -166,20 +166,17 @@
               <p v-html="form.message"></p>
             </div>
           </div>
-          <div class="row" v-for="(image, i) in form.image" :key="i">
+          <span class="text-caption" v-if="form.images.length > 0"
+            >Arquivos</span
+          >
+          <div class="row" v-for="(image, i) in form.images" :key="i">
             <div class="col">
-              <span class="text-caption">Imagens</span>
               <p>
                 <a
                   :href="`https://cajueiroapi.cajutec.com.br/storage/images/${form.image?.uri}`"
                   target="_blank"
                 >
-                  {{ image }}
-                  <!-- <q-img
-                    :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.image?.uri}`"
-                    spinner-color="white"
-                    :ratio="16 / 9"
-                  /> -->
+                  {{ image.uri }}
                 </a>
               </p>
             </div>
