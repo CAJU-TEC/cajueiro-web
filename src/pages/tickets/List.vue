@@ -105,7 +105,7 @@
                   size="xs"
                   round
                   color="primary"
-                  icon="card_giftcard"
+                  icon="rocket_launch"
                   @click="addUserTicker(props.row.id)"
                 >
                 </q-btn>
