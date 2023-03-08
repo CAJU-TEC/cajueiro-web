@@ -173,7 +173,7 @@
             <div class="col">
               <p>
                 <a
-                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${form.image?.uri}`"
+                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${image?.uri}`"
                   target="_blank"
                 >
                   {{ image.uri }}
