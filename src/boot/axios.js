@@ -28,7 +28,7 @@ api.interceptors.response.use(
 
     // Caso seja retornado outro tipo de erro
     if (error.response) {
-      return Promise.reject(new Error(`${error.response.data}`));
+      return Promise.reject(error.response.data);
     }
 
     // Caso não seja retornado nenhum erro
