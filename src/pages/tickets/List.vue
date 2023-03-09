@@ -146,6 +146,13 @@
               </q-btn>
               <q-btn
                 push
+                icon="picture_as_pdf"
+                color="orange"
+                size="xs"
+                @click="handleTicketReport(props.row.id)"
+              />
+              <q-btn
+                push
                 icon="delete_outline"
                 color="red"
                 size="xs"
@@ -155,6 +162,7 @@
           </q-td>
         </q-tr>
       </template>
+
       <template #loading>
         <q-inner-loading showing color="secondy"> </q-inner-loading>
       </template>
@@ -166,6 +174,11 @@
         </div>
       </template>
     </q-table>
+    <TicketReport
+      :dialog="dialog"
+      :report-pdf="reportPdf"
+      @receiveEvent="receiveEvent"
+    ></TicketReport>
   </q-page>
 </template>
 
@@ -177,12 +190,14 @@ import { useRouter } from 'vue-router';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
 import Pusher from 'pusher-js';
+import TicketReport from 'src/components/dialogs/tickets/TicketReport.vue';
 
 export default defineComponent({
   name: 'ListPage',
+  components: { TicketReport },
   setup() {
     const tickets = ref([]);
-    const { list, addUserPatchTicket, remove } = ticketsService();
+    const { list, addUserPatchTicket, remove, report } = ticketsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -259,6 +274,10 @@ export default defineComponent({
       });
     };
 
+    const receiveEvent = (event) => {
+      dialog.value = event;
+    };
+
     const getClients = async () => {
       try {
         const data = await list();
@@ -272,6 +291,14 @@ export default defineComponent({
           color: 'negative',
         });
       }
+    };
+
+    const dialog = ref(false);
+    const reportPdf = ref('');
+    const handleTicketReport = async (id) => {
+      dialog.value = true;
+      reportPdf.value = null;
+      reportPdf.value = await report(id);
     };
 
     const addUserTicker = async (id) => {
@@ -337,11 +364,15 @@ export default defineComponent({
       status,
       priority,
       tickets,
+      receiveEvent,
       columns,
       handleDeleteClient,
       handleListClient,
+      handleTicketReport,
       pagination,
       loading,
+      dialog,
+      reportPdf,
     };
   },
 });
