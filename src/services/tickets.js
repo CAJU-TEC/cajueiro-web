@@ -20,7 +20,7 @@ export default function ticketsService() {
   const report = async (id) => {
     try {
       const response = await api.get(`${endpoint}/kanban/${id}`, { responseType: 'arraybuffer' })
-        .then(response =>  Buffer.from(response.data, 'binary').toString('base64'));
+        .then(response => Buffer.from(response.data, 'binary').toString('base64'));
       return `data:application/pdf;base64, ${response}`;
     } catch (error) {
       throw (new Error(error.message));
