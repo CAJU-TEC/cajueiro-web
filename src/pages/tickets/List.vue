@@ -53,6 +53,7 @@
         >
           <q-tooltip> Recuperar/Listar meus protocolos </q-tooltip>
         </q-btn>
+        {{ recoverTickets }}
       </template>
       <template #body="props">
         <q-tr :props="props">
