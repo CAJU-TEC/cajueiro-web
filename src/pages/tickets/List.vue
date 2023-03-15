@@ -299,7 +299,7 @@ export default defineComponent({
       loading.value = true;
       try {
         const idLocal = recoverTickets.value ? '' : id;
-        // const data = await myTicketsService(idLocal);
+        const data = await myTicketsService(idLocal);
         recoverTickets.value = !recoverTickets.value;
         // tickets.value = data;
         loading.value = false;
