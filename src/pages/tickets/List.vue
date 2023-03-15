@@ -209,7 +209,7 @@
     <TicketReport
       :dialog="dialog"
       :report-pdf="reportPdf"
-      @receiveEvent="receiveEvent"
+      @receive-event="receiveEvent"
     ></TicketReport>
   </q-page>
 </template>
@@ -301,7 +301,7 @@ export default defineComponent({
         const idLocal = recoverTickets.value ? '' : id;
         const data = await myTicketsService(idLocal);
         recoverTickets.value = !recoverTickets.value;
-        // tickets.value = data;
+        tickets.value = data;
         loading.value = false;
         $q.notify({
           message: 'Listando meus/todos os protocolos',
