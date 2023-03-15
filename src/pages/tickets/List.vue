@@ -298,7 +298,7 @@ export default defineComponent({
     const myTickets = async (id) => {
       loading.value = true;
       try {
-        // const idLocal = recoverTickets.value ? '' : id;
+        const idLocal = recoverTickets.value ? '' : id;
         // const data = await myTicketsService(idLocal);
         recoverTickets.value = !recoverTickets.value;
         // tickets.value = data;
