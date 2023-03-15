@@ -17,6 +17,7 @@
       />
     </div>
     <q-table
+      dense
       v-model="pagination"
       :rows="tickets"
       :columns="columns"
@@ -29,11 +30,28 @@
       <template #top>
         <span class="text-h4">Protocolos</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'tickets.form' }">
-          <div class="row items-center no-wrap">
-            <q-icon left name="add" />
-            <div class="text-center">Novo</div>
-          </div>
+        <q-btn
+          push
+          color="white"
+          text-color="primary"
+          round
+          icon="add"
+          size="sm"
+          :to="{ name: 'tickets.form' }"
+        >
+          <q-tooltip> Criar protocolo </q-tooltip>
+        </q-btn>
+        &nbsp;&nbsp;
+        <q-btn
+          push
+          color="white"
+          text-color="primary"
+          round
+          icon="mdi-file-eye-outline"
+          size="sm"
+          @click="myTickets(user?.user?.collaborator?.id)"
+        >
+          <q-tooltip> Recuperar/Listar meus protocolos </q-tooltip>
         </q-btn>
       </template>
       <template #body="props">
@@ -47,6 +65,7 @@
             <span
               v-if="col.name === 'code'"
               class="text-weight-bold text-center"
+              style="font-size: 12px"
             >
               #{{ col.value }}
               <q-badge rounded :color="`${priority[props.row.priority].color}`">
@@ -62,35 +81,47 @@
                 </q-tooltip>
               </q-badge>
             </span>
-            <div v-if="col.name === 'avatars'">
-              <div v-if="props.row.client?.corporate">
-                <q-tooltip
-                  :offset="[10, 10]"
-                  anchor="top middle"
-                  self="bottom middle"
+            <template v-if="col.name === 'avatars'">
+              <template v-if="props.row.client?.corporate?.image">
+                <q-avatar
+                  class="q-ma-none"
+                  size="sm"
+                  v-if="props.row.client?.corporate?.image"
                 >
-                  <div>
-                    {{ props.row.client?.corporate?.full_name }}
-                  </div>
-                </q-tooltip>
-                <q-avatar size="sm" v-if="props.row.client?.corporate?.image">
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <div>
+                      {{ props.row.client?.corporate?.full_name }}
+                    </div>
+                  </q-tooltip>
                   <img
                     :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.client?.corporate?.image?.uri}`"
                   />
                 </q-avatar>
-              </div>
-              <div v-else>
-                <q-avatar size="sm" color="primary">{{
-                  props.row.client?.letter
+              </template>
+              <template v-else>
+                <q-avatar class="q-ma-none" size="sm" color="primary">{{
+                  props.row.client?.corporate?.letter
                 }}</q-avatar>
-              </div>
-            </div>
-            <div v-if="col.name === 'subject'" class="text-left">
-              {{ col.value }}
+              </template>
+            </template>
+            <div v-if="col.name === 'subject'" class="text-left q-ma-none">
+              <q-btn
+                class="q-ma-none"
+                flat
+                rounded
+                color="primary"
+                size="sm"
+                :label="col.value"
+                @click="handleListClient(props.row.id)"
+              />
             </div>
             <span v-if="col.name === 'collaborator'">
               <template v-if="props.row?.collaborator">
-                <q-chip>
+                <q-chip size="sm">
                   <q-avatar v-if="props.row?.collaborator?.image">
                     <img
                       :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.collaborator.image.uri}`"
@@ -124,12 +155,13 @@
             <span v-if="col.name === 'status'">
               <q-badge
                 rounded
-                :style="`background:${status[col.value].hex}`"
+                class="text-caption text-weight-regular"
+                :style="`background:${status[col.value].hex}; font-size: 10px;`"
                 :label="`${status[col.value].title}`"
               />
             </span>
             <q-btn-group v-if="col.name == 'actions'" push>
-              <q-btn
+              <!-- <q-btn
                 push
                 icon="list"
                 color="green"
@@ -143,7 +175,7 @@
                 >
                   {{ props.row.comments.length }}
                 </q-badge>
-              </q-btn>
+              </q-btn> -->
               <q-btn
                 push
                 icon="picture_as_pdf"
@@ -185,6 +217,7 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import ticketsService from 'src/services/tickets';
+import authService from 'src/services/auth';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import status from 'src/support/tickets/status';
@@ -197,15 +230,25 @@ export default defineComponent({
   components: { TicketReport },
   setup() {
     const tickets = ref([]);
-    const { list, addUserPatchTicket, remove, report } = ticketsService();
+    const {
+      list,
+      addUserPatchTicket,
+      remove,
+      report,
+      myTickets: myTicketsService,
+    } = ticketsService();
+    const { fetchUser } = authService();
+
     const pagination = ref({
-      sortBy: 'description',
       descending: false,
       page: 1,
       rowsPerPage: 15,
+      rowsNumber: 15,
     });
     const loading = ref();
     const pusherMessage = ref([]);
+    const user = ref({});
+    const recoverTickets = ref(false);
 
     const columns = [
       {
@@ -252,14 +295,51 @@ export default defineComponent({
       },
     ];
 
+    const myTickets = async (id) => {
+      loading.value = true;
+      try {
+        const idLocal = recoverTickets.value ? '' : id;
+        const data = await myTicketsService(idLocal);
+        recoverTickets.value = !recoverTickets.value;
+
+        tickets.value = data;
+        loading.value = false;
+        $q.notify({
+          message: 'Listando meus/todos os protocolos',
+          color: 'positive',
+        });
+      } catch (error) {
+        $q.notify({
+          message: error.message,
+          icon: 'block',
+          color: 'negative',
+        });
+        loading.value = false;
+      }
+    };
+
     const $q = useQuasar();
     const router = useRouter();
 
     onMounted(() => {
-      getClients();
       loading.value = true;
+      getClients();
       getPusher();
+      getFetchUser();
     });
+
+    const getFetchUser = async () => {
+      try {
+        const data = await fetchUser();
+        user.value = data.data;
+      } catch (error) {
+        $q.notify({
+          message: error.message,
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
 
     const getPusher = () => {
       const pusher = new Pusher('429c853a3dec3f30148c', {
@@ -373,6 +453,9 @@ export default defineComponent({
       loading,
       dialog,
       reportPdf,
+      myTickets,
+      user,
+      recoverTickets,
     };
   },
 });
