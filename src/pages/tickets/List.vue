@@ -53,7 +53,6 @@
         >
           <q-tooltip> Recuperar/Listar meus protocolos </q-tooltip>
         </q-btn>
-        {{ recoverTickets }}
       </template>
       <template #body="props">
         <q-tr :props="props">
@@ -299,11 +298,10 @@ export default defineComponent({
     const myTickets = async (id) => {
       loading.value = true;
       try {
-        const idLocal = recoverTickets.value ? '' : id;
-        const data = await myTicketsService(idLocal);
+        // const idLocal = recoverTickets.value ? '' : id;
+        // const data = await myTicketsService(idLocal);
         recoverTickets.value = !recoverTickets.value;
-
-        tickets.value = data;
+        // tickets.value = data;
         loading.value = false;
         $q.notify({
           message: 'Listando meus/todos os protocolos',
