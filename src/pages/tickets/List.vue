@@ -4,6 +4,7 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
         <q-breadcrumbs-el label="Protocolos" />
+        <q-chip dense size="xs" icon="search">control + K</q-chip>
       </q-breadcrumbs>
     </div>
     <div class="q-py-md">

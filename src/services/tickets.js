@@ -27,6 +27,17 @@ export default function ticketsService() {
     }
   };
 
+  const findTicketsAtCode = async (id) => {
+    try {
+      const url = `${endpoint}`;
+      // const { data } = await api.get(`${url}`);
+      const { data } = await api.get(`${url}?filter[code]=${id}`);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const report = async (id) => {
     try {
       const response = await api.get(`${endpoint}/kanban/${id}`, { responseType: 'arraybuffer' })
@@ -39,6 +50,7 @@ export default function ticketsService() {
 
   return {
     addUserPatchTicket,
+    findTicketsAtCode,
     report,
     myTickets,
     list,

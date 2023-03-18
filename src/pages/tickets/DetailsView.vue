@@ -58,9 +58,9 @@
                       :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.collaborator?.image?.uri}`"
                     />
                   </q-avatar>
-                  {{ form.collaborator?.full_name }}
+                  {{ form.collaborator?.first_name }}
                 </q-chip>
-                <span v-else>{{ form.collaborator?.full_name }}</span>
+                <span v-else>{{ form.collaborator?.first_name }}</span>
                 <span v-if="!form.collaborator">Sem colaborador</span>
               </p>
             </div>
@@ -73,14 +73,31 @@
                       :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.user?.collaborator?.image?.uri}`"
                     />
                   </q-avatar>
-                  {{ form.user?.collaborator?.full_name }}
+                  {{ form.user?.collaborator?.first_name }}
                 </q-chip>
-                <span v-else>{{ form.user?.collaborator?.full_name }}</span>
+                <span v-else>{{ form.user?.collaborator?.first_name }}</span>
                 <span v-if="!form.user?.collaborator">Sem colaborador</span>
               </p>
             </div>
           </div>
           <div class="row">
+            <div class="col">
+              <span class="text-caption">Impacto do protocolo</span>
+              <p class="q-mb-xs text-subtitle2">
+                <q-badge rounded :style="`background:${form?.impact?.color}`">
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <span> {{ form.impact?.description ?? '[- - -]' }} </span>
+                  </q-tooltip>
+                </q-badge>
+                &nbsp;<strong
+                  >({{ form.impact?.description ?? '[- - -]' }})</strong
+                >
+              </p>
+            </div>
             <div class="col">
               <span class="text-caption">Postado</span>
               <p class="text-subtitle2">
@@ -114,25 +131,6 @@
                   }}
                 </template>
                 <template v-else> Sem histórico </template>
-              </p>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col">
-              <span class="text-caption">Impacto do protocolo</span>
-              <p class="q-mb-xs text-subtitle2">
-                <q-badge rounded :color="`${form.impact}`">
-                  <q-tooltip
-                    :offset="[10, 10]"
-                    anchor="top middle"
-                    self="bottom middle"
-                  >
-                    <span> {{ form.impact?.description ?? '[- - -]' }} </span>
-                  </q-tooltip>
-                </q-badge>
-                &nbsp;<strong
-                  >({{ form.impact?.description ?? '[- - -]' }})</strong
-                >&nbsp;-&nbsp; {{ form.impact?.classification }}
               </p>
             </div>
           </div>
