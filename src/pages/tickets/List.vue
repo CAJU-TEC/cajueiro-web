@@ -37,6 +37,7 @@
       :tickets-in-tests="ticketsInTests"
       :tickets-in-pending="ticketsInPending"
       :tickets-in-done="ticketsInDone"
+      :tickets-in-my-tickets="ticketsInMyTickets"
       @addUserTicker="
         (id) => {
           addUserTicker(id);
@@ -299,6 +300,7 @@ export default defineComponent({
     const ticketsInTests = ref([]);
     const ticketsInPending = ref([]);
     const ticketsInDone = ref([]);
+    const ticketsInMyTickets = ref([]);
 
     const columns = [
       {
@@ -375,6 +377,7 @@ export default defineComponent({
       await getClients();
       await getPusher();
       await getFetchUser();
+      await getTicketsOpenMyTickets();
       await getTicketsOpenNoPriority();
       await getTicketsOpenYesPriority();
       await getTicketsInDevelop();
@@ -434,6 +437,18 @@ export default defineComponent({
       dialog.value = true;
       reportPdf.value = null;
       reportPdf.value = await report(id);
+    };
+
+    const getTicketsOpenMyTickets = async () => {
+      try {
+        const user = await fetchUser();
+        const data = await myTicketsService(
+          `?filter[collaborator_id]=${user.data.user.collaborator.id}`
+        );
+        ticketsInMyTickets.value = data;
+      } catch (error) {
+        console.log(error);
+      }
     };
 
     const getTicketsOpenNoPriority = async () => {
@@ -585,6 +600,7 @@ export default defineComponent({
       ticketsInTests,
       ticketsInPending,
       ticketsInDone,
+      ticketsInMyTickets,
     };
   },
 });
