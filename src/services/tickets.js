@@ -20,7 +20,7 @@ export default function ticketsService() {
     try {
       const url = `${endpoint}`;
       // const { data } = await api.get(`${url}`);
-      const { data } = await api.get(`${url}?filter[collaborator_id]=${id}`);
+      const { data } = await api.get(`${url}${id}`);
       return data;
     } catch (error) {
       throw (new Error(error.message));

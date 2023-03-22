@@ -7,6 +7,45 @@
         <q-chip dense size="xs" icon="search">control + K</q-chip>
       </q-breadcrumbs>
     </div>
+    <div class="row">
+      <div class="col text-right">
+        <q-btn
+          push
+          color="white"
+          text-color="primary"
+          icon="add"
+          size="sm"
+          :to="{ name: 'tickets.form' }"
+        >
+          <q-tooltip> Criar protocolo </q-tooltip>
+          Criar protocolo
+        </q-btn>
+      </div>
+    </div>
+    <TicketsOpen
+      v-if="
+        openNoPriority ||
+        openYesPriority ||
+        ticketsInDevelop ||
+        ticketsInTests ||
+        ticketsInPending
+      "
+      :tickets-open-no-priority="openNoPriority"
+      :tickets-open-yes-priority="openYesPriority"
+      :tickets-in-develop="ticketsInDevelop"
+      :tickets-in-tests="ticketsInTests"
+      :tickets-in-pending="ticketsInPending"
+      @addUserTicker="
+        (id) => {
+          addUserTicker(id);
+        }
+      "
+      @handleListClient="
+        (id) => {
+          handleListClient(id);
+        }
+      "
+    />
     <div class="q-py-md">
       <q-btn
         v-if="pusherMessage.length > 0"
@@ -18,6 +57,7 @@
       />
     </div>
     <q-table
+      v-if="false"
       dense
       v-model="pagination"
       :rows="tickets"
@@ -225,10 +265,11 @@ import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
 import Pusher from 'pusher-js';
 import TicketReport from 'src/components/dialogs/tickets/TicketReport.vue';
+import TicketsOpen from 'src/components/tickets/TicketsOpen.vue';
 
 export default defineComponent({
   name: 'ListPage',
-  components: { TicketReport },
+  components: { TicketReport, TicketsOpen },
   setup() {
     const tickets = ref([]);
     const {
@@ -250,6 +291,11 @@ export default defineComponent({
     const pusherMessage = ref([]);
     const user = ref({});
     const recoverTickets = ref(false);
+    const openNoPriority = ref([]);
+    const openYesPriority = ref([]);
+    const ticketsInDevelop = ref([]);
+    const ticketsInTests = ref([]);
+    const ticketsInPending = ref([]);
 
     const columns = [
       {
@@ -321,11 +367,16 @@ export default defineComponent({
     const $q = useQuasar();
     const router = useRouter();
 
-    onMounted(() => {
+    onMounted(async () => {
       loading.value = true;
-      getClients();
-      getPusher();
-      getFetchUser();
+      await getClients();
+      await getPusher();
+      await getFetchUser();
+      await getTicketsOpenNoPriority();
+      await getTicketsOpenYesPriority();
+      await getTicketsInDevelop();
+      await getTicketsInTests();
+      await getTicketsInPending();
     });
 
     const getFetchUser = async () => {
@@ -381,6 +432,61 @@ export default defineComponent({
       reportPdf.value = await report(id);
     };
 
+    const getTicketsOpenNoPriority = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=null&filter[priority]=no'
+        );
+        openNoPriority.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getTicketsOpenYesPriority = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=null&filter[priority]=yes'
+        );
+        openYesPriority.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getTicketsInDevelop = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=development'
+        );
+        ticketsInDevelop.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getTicketsInTests = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=test'
+        );
+        ticketsInTests.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    const getTicketsInPending = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=pending'
+        );
+        ticketsInPending.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const addUserTicker = async (id) => {
       try {
         $q.dialog({
@@ -398,6 +504,8 @@ export default defineComponent({
             id,
           });
           await getClients();
+          await getTicketsOpenNoPriority();
+          await handleListClient(id);
         });
       } catch (error) {
         $q.notify({
@@ -456,6 +564,11 @@ export default defineComponent({
       myTickets,
       user,
       recoverTickets,
+      openNoPriority,
+      openYesPriority,
+      ticketsInDevelop,
+      ticketsInTests,
+      ticketsInPending,
     };
   },
 });

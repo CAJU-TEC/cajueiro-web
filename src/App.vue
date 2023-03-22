@@ -1,6 +1,5 @@
 <template>
   <div>
-    {{ dialogTicketSearch }}
     <router-view />
     <TicketSearch v-model="dialogTicketSearch" />
   </div>
