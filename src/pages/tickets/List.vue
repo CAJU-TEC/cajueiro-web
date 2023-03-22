@@ -28,13 +28,15 @@
         openYesPriority ||
         ticketsInDevelop ||
         ticketsInTests ||
-        ticketsInPending
+        ticketsInPending ||
+        ticketsInDone
       "
       :tickets-open-no-priority="openNoPriority"
       :tickets-open-yes-priority="openYesPriority"
       :tickets-in-develop="ticketsInDevelop"
       :tickets-in-tests="ticketsInTests"
       :tickets-in-pending="ticketsInPending"
+      :tickets-in-done="ticketsInDone"
       @addUserTicker="
         (id) => {
           addUserTicker(id);
@@ -296,6 +298,7 @@ export default defineComponent({
     const ticketsInDevelop = ref([]);
     const ticketsInTests = ref([]);
     const ticketsInPending = ref([]);
+    const ticketsInDone = ref([]);
 
     const columns = [
       {
@@ -377,6 +380,7 @@ export default defineComponent({
       await getTicketsInDevelop();
       await getTicketsInTests();
       await getTicketsInPending();
+      await getTicketsInDone();
     });
 
     const getFetchUser = async () => {
@@ -487,6 +491,17 @@ export default defineComponent({
       }
     };
 
+    const getTicketsInDone = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=done'
+        );
+        ticketsInDone.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const addUserTicker = async (id) => {
       try {
         $q.dialog({
@@ -569,6 +584,7 @@ export default defineComponent({
       ticketsInDevelop,
       ticketsInTests,
       ticketsInPending,
+      ticketsInDone,
     };
   },
 });
