@@ -44,7 +44,7 @@
         :alert="ticketsInMyTickets?.length ? true : false"
         name="myTickets"
         icon="mdi-ticket"
-        label="Meus Protocolos"
+        label="Meus protocolos"
       >
       </q-tab>
     </q-tabs>
