@@ -27,7 +27,7 @@ module.exports = configure(function (ctx) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: ['axios'],
+    boot: ['axios', 'apexcharts', 'loadsh'],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
     css: ['app.css'],
@@ -104,7 +104,10 @@ module.exports = configure(function (ctx) {
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#framework
     framework: {
       config: {
-        notify: {}
+        notify: {},
+        apexcharts: {
+          colors: ['#008FFB', '#00E396', '#FEB019', '#FF4560', '#775DD0']
+        }
       },
 
       // iconSet: 'material-icons', // Quasar icon set
@@ -118,7 +121,10 @@ module.exports = configure(function (ctx) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ['Notify', 'Dialog']
+      plugins: [
+        'Notify',
+        'Dialog'
+      ]
     },
 
     // animations: 'all', // --- includes all animations

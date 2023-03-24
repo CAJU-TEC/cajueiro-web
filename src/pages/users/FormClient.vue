@@ -17,7 +17,7 @@
         filled
         label="Nome *"
         lazy-rules
-        class="col-lg-6 col-xs-12"
+        class="col-lg-4 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
@@ -26,7 +26,16 @@
         filled
         label="E-mail *"
         lazy-rules
-        class="col-lg-6 col-xs-12"
+        class="col-lg-4 col-xs-12"
+        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
+      />
+
+      <q-input
+        v-model="form.password"
+        filled
+        label="Password *"
+        lazy-rules
+        class="col-lg-4 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
