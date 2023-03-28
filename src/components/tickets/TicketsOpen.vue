@@ -118,6 +118,16 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  com estimativa: {{ ticket?.impact?.days }} dias. &nbsp;
+                  <q-badge
+                    v-if="
+                      betweenDates(new Date(), ticket?.created_at) >
+                      ticket?.impact?.days
+                    "
+                    rounded
+                    color="red"
+                    label="PRAZO ESTOURADO"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -221,6 +231,16 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  com estimativa: {{ ticket?.impact?.days }} dias. &nbsp;
+                  <q-badge
+                    v-if="
+                      betweenDates(new Date(), ticket?.created_at) >
+                      ticket?.impact?.days
+                    "
+                    rounded
+                    color="red"
+                    label="PRAZO ESTOURADO"
+                  />
                 </q-item-label>
               </q-item-section>
 
