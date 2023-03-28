@@ -1,52 +1,33 @@
 <template>
-  <apexchart
-    height="300"
-    type="bar"
-    :options="options"
-    :series="series"
-  ></apexchart>
+  <div>
+    <apexchart height="300" type="bar" :options="reactiveValue"></apexchart>
+    {{ reactiveValue }}
+  </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { getCssVar } from 'quasar';
+import { computed, defineComponent, reactive, ref, toRef, watch } from 'vue';
 export default defineComponent({
   name: 'ApexBar',
-  setup() {
-    const options = ref({
-      title: {
-        text: 'ApexBar',
-        align: 'left',
-      },
-      chart: {
-        id: 'apex-bar',
-      },
-      colors: [
-        getCssVar('primary'),
-        getCssVar('secondary'),
-        getCssVar('negative'),
-      ],
-      xaxis: {
-        categories: [1991, 1992, 1993, 1994, 1995, 1996, 1997, 1998],
-      },
-      plotOptions: {
-        bar: {
-          horizontal: true,
-          columnWidth: '55%',
-          endingShape: 'rounded',
-        },
-      },
-    });
-    const series = ref([
-      {
-        name: 'series-1',
-        data: [30, 40, 45, 50, 49, 60, 70, 91],
-      },
-    ]);
+  props: {
+    optionsProps: {
+      type: Object,
+      default: null,
+    },
+  },
+  setup(props) {
+    const reactiveValue = ref(props.optionsProps);
+
+    watch(
+      () => props.optionsProps,
+      (newValue, oldValue) => {
+        console.log(newValue, oldValue);
+        reactiveValue.value = newValue;
+      }
+    );
 
     return {
-      options,
-      series,
+      reactiveValue,
     };
   },
 });

@@ -48,6 +48,37 @@
           handleListClient(id);
         }
       "
+      @updateTicketsOpen="
+        () => {
+          getTicketsOpenYesPriority();
+          getTicketsOpenNoPriority();
+        }
+      "
+      @updateTicketsDevelop="
+        () => {
+          getTicketsInDevelop();
+        }
+      "
+      @updateTicketsTests="
+        () => {
+          getTicketsInTests();
+        }
+      "
+      @updateTicketsPending="
+        () => {
+          getTicketsInPending();
+        }
+      "
+      @updateTicketsDone="
+        () => {
+          getTicketsInDone();
+        }
+      "
+      @updateTicketsMy="
+        () => {
+          getTicketsOpenMyTickets();
+        }
+      "
     />
     <div class="q-py-md">
       <q-btn
@@ -372,18 +403,18 @@ export default defineComponent({
     const $q = useQuasar();
     const router = useRouter();
 
-    onMounted(async () => {
+    onMounted(() => {
       loading.value = true;
-      await getClients();
-      await getPusher();
-      await getFetchUser();
-      await getTicketsOpenMyTickets();
-      await getTicketsOpenNoPriority();
-      await getTicketsOpenYesPriority();
-      await getTicketsInDevelop();
-      await getTicketsInTests();
-      await getTicketsInPending();
-      await getTicketsInDone();
+      getClients();
+      getPusher();
+      getFetchUser();
+      getTicketsOpenMyTickets();
+      getTicketsOpenNoPriority();
+      getTicketsOpenYesPriority();
+      getTicketsInDevelop();
+      getTicketsInTests();
+      getTicketsInPending();
+      getTicketsInDone();
     });
 
     const getFetchUser = async () => {
@@ -601,6 +632,13 @@ export default defineComponent({
       ticketsInPending,
       ticketsInDone,
       ticketsInMyTickets,
+      getTicketsOpenYesPriority,
+      getTicketsOpenNoPriority,
+      getTicketsOpenMyTickets,
+      getTicketsInDevelop,
+      getTicketsInTests,
+      getTicketsInPending,
+      getTicketsInDone,
     };
   },
 });

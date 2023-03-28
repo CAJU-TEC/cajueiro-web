@@ -10,6 +10,7 @@
         name="ticketsOpen"
         icon="mdi-ticket-outline"
         label="Abertos"
+        @click="() => $emit('updateTicketsOpen', true)"
       >
       </q-tab>
       <q-tab
@@ -17,6 +18,7 @@
         name="ticketsDevelop"
         icon="mdi-ticket-account"
         label="Desenvolvimento"
+        @click="() => $emit('updateTicketsDevelop', true)"
       >
       </q-tab>
       <q-tab
@@ -24,6 +26,7 @@
         name="ticketsTests"
         icon="fa fa-bugs"
         label="Teste"
+        @click="() => $emit('updateTicketsTests', true)"
       >
       </q-tab>
       <q-tab
@@ -31,6 +34,7 @@
         name="ticketsPending"
         icon="fa fa-hourglass"
         label="Pendentes"
+        @click="() => $emit('updateTicketsPending', true)"
       >
       </q-tab>
       <q-tab
@@ -38,6 +42,7 @@
         name="ticketsDone"
         icon="mdi-check"
         label="Finalizados"
+        @click="() => $emit('updateTicketsDone', true)"
       >
       </q-tab>
       <q-tab
@@ -45,6 +50,7 @@
         name="myTickets"
         icon="mdi-ticket"
         label="Meus protocolos"
+        @click="() => $emit('updateTicketsMy', true)"
       >
       </q-tab>
     </q-tabs>
@@ -780,7 +786,15 @@ import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 const tab = ref('ticketsOpen');
 
 export default defineComponent({
-  emits: ['addUserTicker'],
+  emits: [
+    'addUserTicker',
+    'updateTicketsOpen',
+    'updateTicketsDevelop',
+    'updateTicketsTests',
+    'updateTicketsPending',
+    'updateTicketsDone',
+    'updateTicketsMy',
+  ],
   props: {
     ticketsOpenNoPriority: {
       type: Array,
