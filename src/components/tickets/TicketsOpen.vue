@@ -115,7 +115,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -218,7 +218,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -328,7 +328,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -427,7 +427,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -526,7 +526,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -635,7 +635,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>
@@ -734,7 +734,7 @@
                     <span class="text-weight-bold">{{
                       `${betweenDates(new Date(), ticket?.created_at)}`
                     }}</span>
-                    dia(s) }}</span
+                    dia(s)</span
                   >
                   <span v-else>Hoje</span>
                 </q-item-label>

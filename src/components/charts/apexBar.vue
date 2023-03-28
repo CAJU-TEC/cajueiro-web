@@ -52,7 +52,7 @@ export default defineComponent({
           },
           series: [
             {
-              data: recoverCollaborators().map((v) => v.count),
+              data: [...recoverCollaborators().map((v) => v.count)],
             },
           ],
         };
