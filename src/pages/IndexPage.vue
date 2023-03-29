@@ -51,7 +51,7 @@
       </div>
       <apex-bar class="column"></apex-bar>
       <div class="row q-gutter-sm">
-        <div class="col">
+        <!-- <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
@@ -73,7 +73,7 @@
               </ul>
             </q-card-section>
           </q-card>
-        </div>
+        </div> -->
         <!-- <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
@@ -116,7 +116,7 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      await getTicketsFinals();
+      // await getTicketsFinals();
       await getTicketsInDevelop();
     });
 
@@ -193,11 +193,11 @@ export default defineComponent({
       }
     };
 
-    const getTicketsFinals = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.count >= options.value.finals.averang;
-      });
-    };
+    // const getTicketsFinals = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.count >= options.value.finals.averang;
+    //   });
+    // };
 
     // const getTicketsPoints = () => {
     //   return _.filter(recoverCollaborators(), function (o) {
@@ -207,7 +207,7 @@ export default defineComponent({
 
     return {
       options,
-      getTicketsFinals,
+      // getTicketsFinals,
       // getTicketsPoints,
       averang,
       ticketsInDevelop,
