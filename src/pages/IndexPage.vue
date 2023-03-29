@@ -74,29 +74,29 @@
             </q-card-section>
           </q-card>
         </div> -->
-        <!-- <div class="col">
+        <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de somatório por pontos</div>
               <div class="text-subtitle2">
-                <h1 class="text-h1 q-pa-none q-ma-none">
+                <!-- <h1 class="text-h1 q-pa-none q-ma-none">
                   {{ options?.points?.averang }}
-                </h1>
+                </h1> -->
               </div>
             </q-card-section>
 
             <q-separator dark inset />
-
-            <q-card-section>
+            {{ getTicketsPoints() }}
+            <!-- <q-card-section>
               <ul>
                 <li v-for="item in getTicketsPoints()" :key="item">
                   {{ item.user }} |
                   {{ item.points }}
                 </li>
               </ul>
-            </q-card-section>
+            </q-card-section> -->
           </q-card>
-        </div> -->
+        </div>
       </div>
     </div>
   </q-page>
@@ -131,7 +131,7 @@ export default defineComponent({
 
     const recoverCollaborators = () => {
       const listCollaboratorGroupBy = ref(
-        _.chain(tickets.value)
+        _.chain(tickets?.value)
           .groupBy('collaborator_id')
           .map((value) => recoverUser(value))
           .filter((value) => value.user !== undefined)
@@ -195,20 +195,20 @@ export default defineComponent({
 
     // const getTicketsFinals = () => {
     //   return _.filter(recoverCollaborators(), function (o) {
-    //     return o.count >= options.value.finals.averang;
+    //     return o.count >= options.value.finals?.averang;
     //   });
     // };
 
-    // const getTicketsPoints = () => {
-    //   return _.filter(recoverCollaborators(), function (o) {
-    //     return o.points >= options.value.points.averang;
-    //   });
-    // };
+    const getTicketsPoints = () => {
+      return _.filter(recoverCollaborators(), function (o) {
+        return o.points >= options.value.points?.averang;
+      });
+    };
 
     return {
       options,
       // getTicketsFinals,
-      // getTicketsPoints,
+      getTicketsPoints,
       averang,
       ticketsInDevelop,
       status,
