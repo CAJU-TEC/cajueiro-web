@@ -116,8 +116,8 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      getTicketsFinals();
-      getTicketsInDevelop();
+      await getTicketsFinals();
+      await getTicketsInDevelop();
     });
 
     const options = ref();
