@@ -2,7 +2,7 @@
   <q-card flat bordered class="q-mt-lg q-ml-lg">
     <q-card-section>
       <apexchart
-        height="300"
+        height="400"
         type="bar"
         :options="options"
         :series="options.series"
@@ -32,7 +32,7 @@ export default defineComponent({
       ],
       chart: {
         type: 'bar',
-        height: 630,
+        height: 730,
       },
       plotOptions: {
         bar: {
