@@ -51,7 +51,7 @@
       </div>
       <apex-bar class="column"></apex-bar>
       <div class="row q-gutter-sm">
-        <div class="col">
+        <!-- <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
@@ -73,8 +73,8 @@
               </ul>
             </q-card-section>
           </q-card>
-        </div>
-        <div class="col">
+        </div> -->
+        <!-- <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de somatório por pontos</div>
@@ -96,7 +96,7 @@
               </ul>
             </q-card-section>
           </q-card>
-        </div>
+        </div> -->
       </div>
     </div>
   </q-page>
@@ -116,8 +116,7 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      await getTicketsFinals();
-      await getTicketsPoints();
+      // await getTicketsFinals();
       await getTicketsInDevelop();
     });
 
@@ -194,22 +193,22 @@ export default defineComponent({
       }
     };
 
-    const getTicketsFinals = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.count >= options.value.finals.averang;
-      });
-    };
+    // const getTicketsFinals = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.count >= options.value.finals.averang;
+    //   });
+    // };
 
-    const getTicketsPoints = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.points >= options.value.points.averang;
-      });
-    };
+    // const getTicketsPoints = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.points >= options.value.points.averang;
+    //   });
+    // };
 
     return {
       options,
-      getTicketsFinals,
-      getTicketsPoints,
+      // getTicketsFinals,
+      // getTicketsPoints,
       averang,
       ticketsInDevelop,
       status,
