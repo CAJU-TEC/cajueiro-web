@@ -116,7 +116,7 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      await getTicketsFinals();
+      // getTicketsFinals();
       // getTicketsInDevelop();
     });
 
@@ -193,11 +193,11 @@ export default defineComponent({
     //   }
     // };
 
-    const getTicketsFinals = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.count >= options.value.finals.averang;
-      });
-    };
+    // const getTicketsFinals = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.count >= options.value.finals.averang;
+    //   });
+    // };
 
     // const getTicketsPoints = () => {
     //   return _.filter(recoverCollaborators(), function (o) {
@@ -207,7 +207,7 @@ export default defineComponent({
 
     return {
       options,
-      getTicketsFinals,
+      // getTicketsFinals,
       // getTicketsPoints,
       averang,
       ticketsInDevelop,
