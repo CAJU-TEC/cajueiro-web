@@ -50,7 +50,7 @@
         </div>
       </div>
       <apex-bar class="column"></apex-bar>
-      <div class="row q-gutter-sm">
+      <!-- <div class="row q-gutter-sm">
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
@@ -97,7 +97,7 @@
             </q-card-section>
           </q-card>
         </div>
-      </div>
+      </div> -->
     </div>
   </q-page>
 </template>
@@ -109,7 +109,6 @@ import ticketsService from 'src/services/tickets';
 import _ from 'lodash';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
-import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 
 export default defineComponent({
   name: 'IndexPage',
@@ -183,33 +182,33 @@ export default defineComponent({
       }
     };
 
-    const getTicketsInDevelop = async () => {
-      try {
-        const data = await myTickets(
-          '?filter[collaborator_id]=&filter[status]=development'
-        );
-        ticketsInDevelop.value = data;
-      } catch (error) {
-        console.log(error);
-      }
-    };
+    // const getTicketsInDevelop = async () => {
+    //   try {
+    //     const data = await myTickets(
+    //       '?filter[collaborator_id]=&filter[status]=development'
+    //     );
+    //     ticketsInDevelop.value = data;
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
 
-    const getTicketsFinals = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.count >= options.value.finals.averang;
-      });
-    };
+    // const getTicketsFinals = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.count >= options.value.finals.averang;
+    //   });
+    // };
 
-    const getTicketsPoints = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.points >= options.value.points.averang;
-      });
-    };
+    // const getTicketsPoints = () => {
+    //   return _.filter(recoverCollaborators(), function (o) {
+    //     return o.points >= options.value.points.averang;
+    //   });
+    // };
 
     return {
       options,
-      getTicketsFinals,
-      getTicketsPoints,
+      // getTicketsFinals,
+      // getTicketsPoints,
       averang,
       ticketsInDevelop,
       status,
