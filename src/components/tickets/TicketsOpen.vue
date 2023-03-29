@@ -126,8 +126,23 @@
                     "
                     rounded
                     color="red"
-                    label="PRAZO ESTOURADO"
-                  />
+                    >PRAZO ESTOURADO</q-badge
+                  >
+                  &nbsp;
+                  <q-badge
+                    v-if="
+                      betweenDates(new Date(), ticket?.created_at) >
+                      ticket?.impact?.days
+                    "
+                    rounded
+                    color="info piscar"
+                  >
+                    {{
+                      betweenDates(new Date(), ticket?.created_at) -
+                      ticket?.impact?.days
+                    }}
+                    DIAS</q-badge
+                  >
                 </q-item-label>
               </q-item-section>
 
@@ -240,7 +255,21 @@
                     rounded
                     color="red"
                     label="PRAZO ESTOURADO"
-                  />
+                  />&nbsp;
+                  <q-badge
+                    v-if="
+                      betweenDates(new Date(), ticket?.created_at) >
+                      ticket?.impact?.days
+                    "
+                    rounded
+                    color="info piscar"
+                  >
+                    {{
+                      betweenDates(new Date(), ticket?.created_at) -
+                      ticket?.impact?.days
+                    }}
+                    DIAS</q-badge
+                  >
                 </q-item-label>
               </q-item-section>
 
@@ -857,4 +886,22 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="css" scoped>
+@keyframes animate {
+  0% {
+    opacity: 0;
+  }
+
+  50% {
+    opacity: 0.7;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.piscar {
+  animation: animate 1.5s linear infinite;
+}
+</style>

@@ -1,11 +1,14 @@
 <template>
-  <apexchart
-    class="col"
-    height="300"
-    type="bar"
-    :options="options"
-    :series="options.series"
-  ></apexchart>
+  <q-card flat bordered class="q-mt-lg q-ml-lg">
+    <q-card-section>
+      <apexchart
+        height="300"
+        type="bar"
+        :options="options"
+        :series="options.series"
+      ></apexchart>
+    </q-card-section>
+  </q-card>
 </template>
 
 <script>
@@ -23,19 +26,38 @@ export default defineComponent({
         {
           data: [],
         },
+        {
+          data: [],
+        },
       ],
       chart: {
         type: 'bar',
-        height: 350,
+        height: 630,
       },
       plotOptions: {
         bar: {
-          borderRadius: 4,
           horizontal: true,
+          dataLabels: {
+            position: 'top',
+          },
         },
       },
       dataLabels: {
-        enabled: false,
+        enabled: true,
+        offsetX: -6,
+        style: {
+          fontSize: '12px',
+          colors: ['#fff'],
+        },
+      },
+      stroke: {
+        show: true,
+        width: 1,
+        colors: ['#fff'],
+      },
+      tooltip: {
+        shared: true,
+        intersect: false,
       },
       xaxis: {
         categories: [],
@@ -44,18 +66,23 @@ export default defineComponent({
 
     const getTickets = async () => {
       try {
-        const data = list();
-        tickets.value = await data;
-        options.value = {
+        tickets.value = await list();
+        const data = ref({
           xaxis: {
             categories: [...recoverCollaborators().map((v) => v.user)],
           },
           series: [
             {
+              name: 'Total protocolos finalizados p/ usuários',
               data: [...recoverCollaborators().map((v) => v.count)],
             },
+            {
+              name: 'Total do somatório de pontos',
+              data: [...recoverCollaborators().map((v) => v.points)],
+            },
           ],
-        };
+        });
+        options.value = { ...data.value };
       } catch (error) {
         console.log(error);
       }
@@ -81,11 +108,13 @@ export default defineComponent({
       const payload = reactive({
         user: null,
         count: 0,
+        points: 0,
       });
 
       _.forEach(collaborator, function (value) {
         payload.user = value?.collaborator?.first_name;
         payload.count = collaborator?.length;
+        payload.points += parseFloat(value?.impact?.points);
       });
 
       return payload;
