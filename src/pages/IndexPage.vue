@@ -200,7 +200,7 @@ export default defineComponent({
     // };
 
     const getTicketsPoints = () => {
-      return recoverCollaborators();
+      return 'hello';
     };
 
     return {
