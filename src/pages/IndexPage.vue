@@ -86,7 +86,7 @@
             </q-card-section>
 
             <q-separator dark inset />
-            {{ getTicketsPoints() }}
+            <!-- {{ getTicketsPoints() }} -->
             <!-- <q-card-section>
               <ul>
                 <li v-for="item in getTicketsPoints()" :key="item">
@@ -116,7 +116,7 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      // await getTicketsFinals();
+      await getTicketsFinals();
       await getTicketsInDevelop();
     });
 
