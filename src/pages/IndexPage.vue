@@ -95,6 +95,7 @@
             </q-card-section> -->
           </q-card>
         </div>
+        {{ dataCollaborators }}
       </div>
     </div>
   </q-page>
@@ -191,15 +192,8 @@ export default defineComponent({
       }
     };
 
-    const getTicketsFinals = () => {
-      return _.filter(recoverCollaborators(), function (o) {
-        return o.count >= options.value.finals?.averang;
-      });
-    };
-
     return {
       options,
-      getTicketsFinals,
       dataCollaborators,
       averang,
       ticketsInDevelop,
