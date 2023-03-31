@@ -2,11 +2,16 @@
   <q-card flat bordered class="q-mt-lg q-ml-lg">
     <q-card-section>
       <apexchart
+        v-if="options.xaxis.categories.length"
         height="400"
         type="bar"
         :options="options"
         :series="options.series"
       ></apexchart>
+      <div v-else class="column items-center text-center q-ma-xl">
+        <q-spinner-cube color="blue" size="5.5em" />
+        <div class="text-caption q-ma-xl">Carregando dados...</div>
+      </div>
     </q-card-section>
   </q-card>
 </template>

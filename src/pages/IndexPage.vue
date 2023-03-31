@@ -8,35 +8,33 @@
         <div class="col">
           <q-card class="my-card" flat bordered>
             <q-card-section horizontal>
-              <q-card-section class="col">
+              <q-card-section class="col-6">
                 <h5 class="text-overline q-ma-none q-pb-sm">
                   EM DESENVOLVENDO:
                 </h5>
                 <div v-if="ticketsInDevelop">
                   <div
-                    class="text-grey-8 q-gutter-xs"
+                    class="row text-grey-8 q-gutter-xs"
                     v-for="ticket in ticketsInDevelop"
                     :key="ticket.id"
                   >
-                    <div>
-                      <q-chip size="sm" v-if="ticket?.collaborator">
-                        <q-avatar v-if="ticket?.collaborator?.image">
-                          <img
-                            :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                          />
-                        </q-avatar>
-                        {{ ticket.collaborator?.first_name }}
-                      </q-chip>
-                      <q-badge
-                        rounded
-                        flat
-                        class="text-caption text-weight-regular"
-                        :style="`background:${
-                          status[ticket?.status]?.hex
-                        }; font-size: 10px;`"
-                        :label="`#${ticket?.code}`"
-                      />
-                    </div>
+                    <q-chip size="sm" v-if="ticket?.collaborator">
+                      <q-avatar v-if="ticket?.collaborator?.image">
+                        <img
+                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
+                        />
+                      </q-avatar>
+                      {{ ticket.collaborator?.first_name }}
+                    </q-chip>
+                    <q-badge
+                      rounded
+                      flat
+                      class="text-caption text-weight-regular"
+                      :style="`background:${
+                        status[ticket?.status]?.hex
+                      }; font-size: 10px;`"
+                      :label="`#${ticket?.code}`"
+                    />
                   </div>
                 </div>
                 <div v-else class="items-center text-center q-pa-sm">
