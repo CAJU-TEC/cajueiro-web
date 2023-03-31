@@ -51,7 +51,7 @@
       </div>
       <apex-bar class="column"></apex-bar>
       <div class="row q-gutter-sm">
-        <!-- <div class="col">
+        <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
@@ -63,7 +63,6 @@
             </q-card-section>
 
             <q-separator dark inset />
-
             <q-card-section>
               <ul>
                 <li v-for="item in getTicketsFinals()" :key="item">
@@ -73,7 +72,7 @@
               </ul>
             </q-card-section>
           </q-card>
-        </div> -->
+        </div>
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
@@ -86,7 +85,6 @@
             </q-card-section>
 
             <q-separator dark inset />
-            {{ dataCollaborators }}
             <!-- <q-card-section>
               <ul>
                 <li v-for="item in getTicketsPoints()" :key="item">
@@ -130,16 +128,14 @@ export default defineComponent({
     };
 
     const recoverCollaborators = async () => {
-      console.log(tickets.value);
       dataCollaborators.value = await _.chain(tickets.value)
         .groupBy('collaborator_id')
         .map((value) => recoverUser(value))
         .filter((value) => value.user !== undefined)
         .value();
-      console.log(dataCollaborators.value);
     };
 
-    const recoverUser = async (collaborator) => {
+    const recoverUser = (collaborator) => {
       const payload = reactive({
         user: null,
         count: 0,
@@ -153,7 +149,7 @@ export default defineComponent({
         payload.points += parseFloat(value?.impact?.points);
       });
 
-      return await payload;
+      return payload;
     };
 
     const getTickets = async () => {
@@ -203,6 +199,7 @@ export default defineComponent({
 
     return {
       options,
+      getTicketsFinals,
       dataCollaborators,
       averang,
       ticketsInDevelop,
