@@ -57,7 +57,7 @@
               <div class="text-h6">Média de protocolos finalizados</div>
               <div class="text-subtitle2">
                 <h1 class="text-h1 q-pa-none q-ma-none">
-                  {{ getFinals.averang }}
+                  {{ getResults().averangCount }}
                 </h1>
               </div>
             </q-card-section>
@@ -65,7 +65,7 @@
             <q-separator dark inset />
             <q-card-section>
               <ul>
-                <li v-for="item in getFinals().upAverang" :key="item">
+                <li v-for="item in getResults().upCount" :key="item">
                   {{ item.user }} |
                   {{ item.count }}
                 </li>
@@ -76,23 +76,23 @@
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
-              <div class="text-h6">Média de somatório por pontos</div>
+              <div class="text-h6">Média de protocolos finalizados</div>
               <div class="text-subtitle2">
-                <!-- <h1 class="text-h1 q-pa-none q-ma-none">
-                  {{ options?.points?.averang }}
-                </h1> -->
+                <h1 class="text-h1 q-pa-none q-ma-none">
+                  {{ getResults().averangPoints }}
+                </h1>
               </div>
             </q-card-section>
 
             <q-separator dark inset />
-            <!-- <q-card-section>
+            <q-card-section>
               <ul>
-                <li v-for="item in getTicketsPoints()" :key="item">
+                <li v-for="item in getResults().upPoints" :key="item">
                   {{ item.user }} |
                   {{ item.points }}
                 </li>
               </ul>
-            </q-card-section> -->
+            </q-card-section>
           </q-card>
         </div>
       </div>
@@ -190,7 +190,7 @@ export default defineComponent({
       }
     };
 
-    const getFinals = () => {
+    const getResults = () => {
       const countSum = ref(
         averang(
           _.sumBy(dataCollaborators.value, function (value) {
@@ -200,10 +200,23 @@ export default defineComponent({
         )
       );
 
+      const pointsSum = ref(
+        averang(
+          _.sumBy(dataCollaborators.value, function (value) {
+            return value.points;
+          }),
+          _.size(dataCollaborators.value)
+        )
+      );
+
       return {
-        averang: countSum,
-        upAverang: _.filter(dataCollaborators.value, function (v) {
+        averangCount: countSum.value,
+        averangPoints: pointsSum.value,
+        upCount: _.filter(dataCollaborators.value, function (v) {
           return v.count >= countSum.value;
+        }),
+        upPoints: _.filter(dataCollaborators.value, function (v) {
+          return v.points >= pointsSum.value;
         }),
       };
     };
@@ -211,7 +224,7 @@ export default defineComponent({
     return {
       options,
       dataCollaborators,
-      getFinals,
+      getResults,
       averang,
       ticketsInDevelop,
       status,
