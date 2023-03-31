@@ -51,13 +51,13 @@
       </div>
       <apex-bar class="column"></apex-bar>
       <div class="row q-gutter-sm">
-        <!-- <div class="col">
+        <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
               <div class="text-subtitle2">
                 <h1 class="text-h1 q-pa-none q-ma-none">
-                  {{ options?.finals?.averang }}
+                  {{ getFinals.averang }}
                 </h1>
               </div>
             </q-card-section>
@@ -65,14 +65,14 @@
             <q-separator dark inset />
             <q-card-section>
               <ul>
-                <li v-for="item in getTicketsFinals()" :key="item">
+                <li v-for="item in getFinals().upAverang" :key="item">
                   {{ item.user }} |
                   {{ item.count }}
                 </li>
               </ul>
             </q-card-section>
           </q-card>
-        </div> -->
+        </div>
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
@@ -95,7 +95,6 @@
             </q-card-section> -->
           </q-card>
         </div>
-        {{ dataCollaborators }}
       </div>
     </div>
   </q-page>
@@ -141,7 +140,6 @@ export default defineComponent({
         user: null,
         count: 0,
         points: 0,
-        averang: 0,
       });
 
       _.forEach(collaborator, function (value) {
@@ -192,9 +190,28 @@ export default defineComponent({
       }
     };
 
+    const getFinals = () => {
+      const countSum = ref(
+        averang(
+          _.sumBy(dataCollaborators.value, function (value) {
+            return value.count;
+          }),
+          _.size(dataCollaborators.value)
+        )
+      );
+
+      return {
+        averang: countSum,
+        upAverang: _.filter(dataCollaborators.value, function (v) {
+          return v.count >= countSum.value;
+        }),
+      };
+    };
+
     return {
       options,
       dataCollaborators,
+      getFinals,
       averang,
       ticketsInDevelop,
       status,
