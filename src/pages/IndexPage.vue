@@ -4,7 +4,7 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" />
       </q-breadcrumbs>
-      <div class="row q-gutter-sm">
+      <div class="row">
         <div class="col">
           <q-card class="my-card" flat bordered>
             <q-card-section horizontal>
@@ -12,30 +12,35 @@
                 <h5 class="text-overline q-ma-none q-pb-sm">
                   EM DESENVOLVENDO:
                 </h5>
-                <div
-                  class="text-grey-8 q-gutter-xs"
-                  v-for="ticket in ticketsInDevelop"
-                  :key="ticket.id"
-                >
-                  <template v-if="ticket?.collaborator">
-                    <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
-                      {{ ticket.collaborator?.first_name }}
-                    </q-chip>
-                    <q-badge
-                      rounded
-                      flat
-                      class="text-caption text-weight-regular"
-                      :style="`background:${
-                        status[ticket?.status]?.hex
-                      }; font-size: 10px;`"
-                      :label="`#${ticket?.code}`"
-                    />
-                  </template>
+                <div v-if="ticketsInDevelop">
+                  <div
+                    class="text-grey-8 q-gutter-xs"
+                    v-for="ticket in ticketsInDevelop"
+                    :key="ticket.id"
+                  >
+                    <div>
+                      <q-chip size="sm" v-if="ticket?.collaborator">
+                        <q-avatar v-if="ticket?.collaborator?.image">
+                          <img
+                            :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
+                          />
+                        </q-avatar>
+                        {{ ticket.collaborator?.first_name }}
+                      </q-chip>
+                      <q-badge
+                        rounded
+                        flat
+                        class="text-caption text-weight-regular"
+                        :style="`background:${
+                          status[ticket?.status]?.hex
+                        }; font-size: 10px;`"
+                        :label="`#${ticket?.code}`"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div v-else class="items-center text-center q-pa-sm">
+                  <q-spinner-cube color="blue" size="3.5em" />
                 </div>
               </q-card-section>
 
