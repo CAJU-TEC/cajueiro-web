@@ -51,7 +51,7 @@
       </div>
       <apex-bar class="column"></apex-bar>
       <div class="row q-gutter-sm">
-        <div class="col">
+        <!-- <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
@@ -72,7 +72,7 @@
               </ul>
             </q-card-section>
           </q-card>
-        </div>
+        </div> -->
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
