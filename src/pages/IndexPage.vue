@@ -55,7 +55,10 @@
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
-              <div class="text-subtitle2">
+              <div
+                class="text-subtitle2"
+                v-if="!isNaN(getResults().averangCount)"
+              >
                 <h1 class="text-h1 q-pa-none q-ma-none">
                   {{ getResults().averangCount }}
                 </h1>
@@ -63,7 +66,7 @@
             </q-card-section>
 
             <q-separator dark inset />
-            <q-card-section>
+            <q-card-section v-if="!isNaN(getResults().averangCount)">
               <ul>
                 <li v-for="item in getResults().upCount" :key="item">
                   {{ item.user }} |
@@ -71,13 +74,22 @@
                 </li>
               </ul>
             </q-card-section>
+            <q-card-section
+              class="items-center text-center q-ma-lg"
+              v-if="isNaN(getResults().averangCount)"
+            >
+              <q-spinner-cube color="while" size="5.5em" />
+            </q-card-section>
           </q-card>
         </div>
         <div class="col">
           <q-card dark bordered class="bg-blue-9 my-card">
             <q-card-section>
               <div class="text-h6">Média de protocolos finalizados</div>
-              <div class="text-subtitle2">
+              <div
+                class="text-subtitle2"
+                v-if="!isNaN(getResults().averangCount)"
+              >
                 <h1 class="text-h1 q-pa-none q-ma-none">
                   {{ getResults().averangPoints }}
                 </h1>
@@ -85,13 +97,19 @@
             </q-card-section>
 
             <q-separator dark inset />
-            <q-card-section>
+            <q-card-section v-if="!isNaN(getResults().averangCount)">
               <ul>
                 <li v-for="item in getResults().upPoints" :key="item">
                   {{ item.user }} |
                   {{ item.points }}
                 </li>
               </ul>
+            </q-card-section>
+            <q-card-section
+              class="items-center text-center q-ma-lg"
+              v-if="isNaN(getResults().averangCount)"
+            >
+              <q-spinner-cube color="while" size="5.5em" />
             </q-card-section>
           </q-card>
         </div>
@@ -121,9 +139,12 @@ export default defineComponent({
     const tickets = ref();
     const ticketsInDevelop = ref();
     const dataCollaborators = ref();
+    const loading = reactive({
+      results: true,
+    });
     const { list, myTickets } = ticketsService();
 
-    const averang = (num, qntItem) => {
+    const averang = (num = null, qntItem = null) => {
       return parseFloat(num / qntItem);
     };
 
@@ -210,8 +231,8 @@ export default defineComponent({
       );
 
       return {
-        averangCount: countSum.value,
-        averangPoints: pointsSum.value,
+        averangCount: countSum.value.toFixed(2),
+        averangPoints: pointsSum.value.toFixed(2),
         upCount: _.filter(dataCollaborators.value, function (v) {
           return v.count >= countSum.value;
         }),
@@ -229,6 +250,7 @@ export default defineComponent({
       ticketsInDevelop,
       status,
       priority,
+      loading,
     };
   },
 });
