@@ -86,7 +86,7 @@
             </q-card-section>
 
             <q-separator dark inset />
-            {{ getTicketsPoints() }}
+            {{ dataCollaborators }}
             <!-- <q-card-section>
               <ul>
                 <li v-for="item in getTicketsPoints()" :key="item">
@@ -116,31 +116,30 @@ export default defineComponent({
   setup() {
     onMounted(async () => {
       await getTickets();
-      await getTicketsPoints();
       await getTicketsInDevelop();
     });
 
     const options = ref();
     const tickets = ref();
     const ticketsInDevelop = ref();
+    const dataCollaborators = ref();
     const { list, myTickets } = ticketsService();
 
     const averang = (num, qntItem) => {
       return parseFloat(num / qntItem);
     };
 
-    const recoverCollaborators = () => {
-      const listCollaboratorGroupBy = ref(
-        _.chain(tickets?.value)
-          .groupBy('collaborator_id')
-          .map((value) => recoverUser(value))
-          .filter((value) => value.user !== undefined)
-          .value()
-      );
-      return listCollaboratorGroupBy.value;
+    const recoverCollaborators = async () => {
+      console.log(tickets.value);
+      dataCollaborators.value = await _.chain(tickets.value)
+        .groupBy('collaborator_id')
+        .map((value) => recoverUser(value))
+        .filter((value) => value.user !== undefined)
+        .value();
+      console.log(dataCollaborators.value);
     };
 
-    const recoverUser = (collaborator) => {
+    const recoverUser = async (collaborator) => {
       const payload = reactive({
         user: null,
         count: 0,
@@ -154,29 +153,32 @@ export default defineComponent({
         payload.points += parseFloat(value?.impact?.points);
       });
 
-      return payload;
+      return await payload;
     };
 
     const getTickets = async () => {
       try {
         tickets.value = await list();
+        await recoverCollaborators();
         const data = ref({
           xaxis: {
-            categories: [...recoverCollaborators().map((v) => v.user)],
+            categories: [...dataCollaborators.value.map((v) => v.user)],
           },
           finals: {
-            sum: _.sum([...recoverCollaborators().map((v) => v.count)]),
-            averang: _.meanBy([...recoverCollaborators().map((v) => v.count)]),
-            elem: [...recoverCollaborators().map((v) => v.count)],
+            sum: _.sum([...dataCollaborators.value.map((v) => v.count)]),
+            averang: _.meanBy([...dataCollaborators.value.map((v) => v.count)]),
+            elem: [...dataCollaborators.value.map((v) => v.count)],
           },
           points: {
-            sum: _.sum([...recoverCollaborators().map((v) => v.points)]),
-            averang: _.meanBy([...recoverCollaborators().map((v) => v.points)]),
-            elem: [...recoverCollaborators().map((v) => v.points)],
+            sum: _.sum([...dataCollaborators.value.map((v) => v.points)]),
+            averang: _.meanBy([
+              ...dataCollaborators.value.map((v) => v.points),
+            ]),
+            elem: [...dataCollaborators.value.map((v) => v.points)],
           },
         });
 
-        options.value = { ...data.value };
+        options.value = await { ...data.value };
       } catch (error) {
         console.log(error);
       }
@@ -193,20 +195,15 @@ export default defineComponent({
       }
     };
 
-    // const getTicketsFinals = () => {
-    //   return _.filter(recoverCollaborators(), function (o) {
-    //     return o.count >= options.value.finals?.averang;
-    //   });
-    // };
-
-    const getTicketsPoints = () => {
-      return 'hello';
+    const getTicketsFinals = () => {
+      return _.filter(recoverCollaborators(), function (o) {
+        return o.count >= options.value.finals?.averang;
+      });
     };
 
     return {
       options,
-      // getTicketsFinals,
-      getTicketsPoints,
+      dataCollaborators,
       averang,
       ticketsInDevelop,
       status,
