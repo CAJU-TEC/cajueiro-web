@@ -1,5 +1,5 @@
 <template>
-  <q-card flat bordered class="q-mt-lg q-ml-lg">
+  <q-card flat bordered class="q-mt-lg">
     <q-card-section>
       <apexchart
         v-if="options.xaxis.categories.length"
