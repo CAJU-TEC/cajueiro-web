@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable :to="route" exact>
+  <q-item clickable :to="route" exact v-if="can(permissions)">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -14,7 +14,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { can } from 'src/middleware/authMiddleware';
+import can from 'src/middleware/authMiddleware';
 
 export default defineComponent({
   name: 'EssentialLink',
@@ -37,6 +37,13 @@ export default defineComponent({
     icon: {
       type: String,
       default: '',
+    },
+
+    permissions: {
+      type: Array,
+      default: function () {
+        return [];
+      },
     },
   },
 

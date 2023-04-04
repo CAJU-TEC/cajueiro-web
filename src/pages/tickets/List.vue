@@ -22,6 +22,16 @@
         </q-btn>
       </div>
     </div>
+    <div class="q-py-md">
+      <q-btn
+        v-if="pusherMessage.length > 0"
+        :label="`protocolos (${pusherMessage.length})`"
+        @click="getClients()"
+        push
+        class="full-width"
+        color="primary"
+      />
+    </div>
     <TicketsOpen
       v-if="
         openNoPriority ||
@@ -80,16 +90,7 @@
         }
       "
     />
-    <div class="q-py-md">
-      <q-btn
-        v-if="pusherMessage.length > 0"
-        :label="`protocolos (${pusherMessage.length})`"
-        @click="getClients()"
-        push
-        class="full-width"
-        color="primary"
-      />
-    </div>
+
     <q-table
       v-if="false"
       dense

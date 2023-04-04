@@ -1,20 +1,21 @@
-import chalk from 'chalk';
-
-const error = chalk.bold.red;
-const warning = chalk.hex('#FFA500');
+import _ from 'loadsh';
+import { LocalStorage } from 'quasar';
+import { useUserStore } from 'src/stores/user/user-store';
 
 function can(permissions) {
-  // if (!permissions) return false;
-  const permissionsUserLogger = JSON.parse(localStorage.getItem('permissions'))?.map((p) => p.name);
-  const roleViaPermissionsUserLogger = JSON.parse(localStorage.getItem('roles'))?.map((p) => p.name);
+  const local = useUserStore();
+
+  const permissionsUserLogger = _.map(local.getRoles, (v) => v.name);
+  const roleViaPermissionsUserLogger = _.map(local.getPermisssion, (v) => v.name);
+
   const permissionsOfUser = permissionsUserLogger?.concat(roleViaPermissionsUserLogger);
-  console.log(warning(permissionsOfUser));
+
   const payload = permissions?.map((e) => {
-    return permissionsOfUser?.includes(e);
+    return (e === true) ? true :  permissionsOfUser?.includes(e);
   }).filter((e) => e === true )
     .shift();
 
-  return (payload === true);
+  return (payload);
 }
 
-export { can };
+export default can;

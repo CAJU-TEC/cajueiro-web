@@ -24,7 +24,7 @@ import ticketsService from 'src/services/tickets';
 export default defineComponent({
   name: 'ApexBar',
   setup() {
-    const { list } = ticketsService();
+    const { myTickets } = ticketsService();
     const tickets = ref([]);
     const options = ref({
       series: [
@@ -71,7 +71,8 @@ export default defineComponent({
 
     const getTickets = async () => {
       try {
-        tickets.value = await list();
+        // tickets.value = await list();
+        tickets.value = await myTickets('?filter[status]=done');
         const data = ref({
           xaxis: {
             categories: [...recoverCollaborators().map((v) => v.user)],
@@ -114,12 +115,16 @@ export default defineComponent({
         user: null,
         count: 0,
         points: 0,
+        priotity: 0,
       });
 
       _.forEach(collaborator, function (value) {
         payload.user = value?.collaborator?.first_name;
         payload.count = collaborator?.length;
-        payload.points += parseFloat(value?.impact?.points);
+        payload.points +=
+          parseFloat(value?.impact?.points) +
+          (value.priority === 'yes' ? 1 : 0);
+        payload.priority += value.priority === 'yes' ? 1 : 0;
       });
 
       return payload;

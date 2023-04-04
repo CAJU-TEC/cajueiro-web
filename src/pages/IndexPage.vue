@@ -6,11 +6,11 @@
       </q-breadcrumbs>
       <div class="row">
         <div class="col">
-          <q-card class="my-card" flat bordered>
-            <q-card-section horizontal>
+          <q-card style="width: 100%" flat bordered>
+            <q-card-section horizontal style="width: 100%">
               <q-card-section class="col-6">
                 <h5 class="text-overline q-ma-none q-pb-sm">
-                  EM DESENVOLVENDO:
+                  GALERA NA ATIVA:
                 </h5>
                 <div v-if="ticketsInDevelop">
                   <div
@@ -53,69 +53,65 @@
         </div>
       </div>
       <apex-bar class="column"></apex-bar>
-      <div class="row q-gutter-sm">
-        <div class="col">
-          <q-card dark bordered class="bg-blue-9 my-card">
-            <q-card-section>
-              <div class="text-h6">Média de protocolos finalizados</div>
-              <div
-                class="text-subtitle2"
-                v-if="!isNaN(getResults().averangCount)"
-              >
-                <h1 class="text-h1 q-pa-none q-ma-none">
-                  {{ getResults().averangCount }}
-                </h1>
-              </div>
-            </q-card-section>
-
-            <q-separator dark inset />
-            <q-card-section v-if="!isNaN(getResults().averangCount)">
-              <ul>
-                <li v-for="item in getResults().upCount" :key="item">
-                  {{ item.user }} |
-                  {{ item.count }}
-                </li>
-              </ul>
-            </q-card-section>
-            <q-card-section
-              class="items-center text-center q-ma-lg"
-              v-if="isNaN(getResults().averangCount)"
+      <div class="row q-gutter-md">
+        <q-card dark bordered class="bg-blue-9 my-card col q-ml-lg q-mt-xl">
+          <q-card-section>
+            <div class="text-h6">Média de protocolos finalizados</div>
+            <div
+              class="text-subtitle2"
+              v-if="!isNaN(getResults().averangCount)"
             >
-              <q-spinner-cube color="while" size="5.5em" />
-            </q-card-section>
-          </q-card>
-        </div>
-        <div class="col">
-          <q-card dark bordered class="bg-blue-9 my-card">
-            <q-card-section>
-              <div class="text-h6">Média de protocolos finalizados</div>
-              <div
-                class="text-subtitle2"
-                v-if="!isNaN(getResults().averangCount)"
-              >
-                <h1 class="text-h1 q-pa-none q-ma-none">
-                  {{ getResults().averangPoints }}
-                </h1>
-              </div>
-            </q-card-section>
+              <h1 class="text-h1 q-pa-none q-ma-none">
+                {{ getResults().averangCount }}
+              </h1>
+            </div>
+          </q-card-section>
 
-            <q-separator dark inset />
-            <q-card-section v-if="!isNaN(getResults().averangCount)">
-              <ul>
-                <li v-for="item in getResults().upPoints" :key="item">
-                  {{ item.user }} |
-                  {{ item.points }}
-                </li>
-              </ul>
-            </q-card-section>
-            <q-card-section
-              class="items-center text-center q-ma-lg"
-              v-if="isNaN(getResults().averangCount)"
+          <q-separator dark inset />
+          <q-card-section v-if="!isNaN(getResults().averangCount)">
+            <ul>
+              <li v-for="item in getResults().upCount" :key="item">
+                {{ item.user }} |
+                {{ item.count }}
+              </li>
+            </ul>
+          </q-card-section>
+          <q-card-section
+            class="items-center text-center q-ma-lg"
+            v-if="isNaN(getResults().averangCount)"
+          >
+            <q-spinner-cube color="while" size="5.5em" />
+          </q-card-section>
+        </q-card>
+        <q-card dark bordered class="bg-blue-9 my-card col q-mt-xl">
+          <q-card-section>
+            <div class="text-h6">Média de pontos de protocolos</div>
+            <div
+              class="text-subtitle2"
+              v-if="!isNaN(getResults().averangCount)"
             >
-              <q-spinner-cube color="while" size="5.5em" />
-            </q-card-section>
-          </q-card>
-        </div>
+              <h1 class="text-h1 q-pa-none q-ma-none">
+                {{ getResults().averangPoints }}
+              </h1>
+            </div>
+          </q-card-section>
+
+          <q-separator dark inset />
+          <q-card-section v-if="!isNaN(getResults().averangCount)">
+            <ul>
+              <li v-for="item in getResults().upPoints" :key="item">
+                {{ item.user }} |
+                {{ item.points }}
+              </li>
+            </ul>
+          </q-card-section>
+          <q-card-section
+            class="items-center text-center q-ma-lg"
+            v-if="isNaN(getResults().averangCount)"
+          >
+            <q-spinner-cube color="while" size="5.5em" />
+          </q-card-section>
+        </q-card>
       </div>
     </div>
   </q-page>
@@ -164,12 +160,16 @@ export default defineComponent({
         user: null,
         count: 0,
         points: 0,
+        priority: 0,
       });
 
       _.forEach(collaborator, function (value) {
         payload.user = value?.collaborator?.first_name;
         payload.count = collaborator?.length;
-        payload.points += parseFloat(value?.impact?.points);
+        payload.points +=
+          parseFloat(value?.impact?.points) +
+          (value.priority === 'yes' ? 1 : 0);
+        payload.priority += value.priority === 'yes' ? 1 : 0;
       });
 
       return payload;
@@ -177,7 +177,8 @@ export default defineComponent({
 
     const getTickets = async () => {
       try {
-        tickets.value = await list();
+        // tickets.value = await list();
+        tickets.value = await myTickets('?filter[status]=done');
         await recoverCollaborators();
         const data = ref({
           xaxis: {
@@ -227,7 +228,7 @@ export default defineComponent({
       const pointsSum = ref(
         averang(
           _.sumBy(dataCollaborators.value, function (value) {
-            return value.points;
+            return value.points + (value.priority === 'yes' ? 1 : 0);
           }),
           _.size(dataCollaborators.value)
         )

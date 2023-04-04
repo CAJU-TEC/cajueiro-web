@@ -34,6 +34,7 @@
           <EssentialLink
             v-for="link in essentialLinks"
             :key="link.title"
+            :permissions="link.route.permissions"
             v-bind="link"
           />
         </q-list>
@@ -84,61 +85,64 @@ export default defineComponent({
         title: 'Home',
         caption: '',
         icon: 'home',
-        route: { name: 'home' },
+        route: { name: 'home', permissions: [true] },
       },
       {
         title: 'Organizações',
         caption: '',
         icon: 'corporate_fare',
-        route: { name: 'corporates.list' },
+        route: { name: 'corporates.list', permissions: ['corporates.*'] },
       },
       {
         title: 'Clientes',
         caption: '',
         icon: 'groups',
-        route: { name: 'clients.list' },
+        route: { name: 'clients.list', permissions: ['clients.*'] },
       },
       {
         title: 'Protocolos',
         caption: '',
         icon: 'local_activity',
-        route: { name: 'tickets.list' },
+        route: {
+          name: 'tickets.list',
+          permissions: ['tickets.*', 'tickets.list'],
+        },
       },
       {
         title: 'Colaboradores',
         caption: '',
         icon: 'groups',
-        route: { name: 'collaborators.list' },
+        route: { name: 'collaborators.list', permissions: ['collaborators.*'] },
       },
       {
         title: 'Impactos',
         caption: '',
         icon: 'local_activity',
-        route: { name: 'impacts.list' },
+        route: { name: 'impacts.list', permissions: ['impacts.*'] },
       },
       {
         title: 'Planos de trabalho',
         caption: '',
         icon: 'plans',
-        route: { name: 'jobPlans.list' },
+        route: { name: 'jobPlans.list', permissions: ['jobPlans.*'] },
       },
       {
         title: 'Métricas',
         caption: '',
         icon: 'bar_chart',
-        route: { name: 'tickets.list' },
+        route: { name: 'tickets.list', permissions: ['metricas.*'] },
       },
       {
         title: 'Usuários',
         caption: '',
         icon: 'manage_accounts',
-        route: { name: 'users.list' },
+        route: { name: 'users.list', permissions: ['users.*'] },
       },
       {
         title: 'Grupos & Permissões',
         caption: '',
         icon: 'verified_user',
-        route: { name: 'groups.list' },
+        route: { name: 'groups.list', permissions: ['groups.*'] },
       },
     ];
 
