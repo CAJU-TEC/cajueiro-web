@@ -5,7 +5,6 @@
         <apexchart
           v-if="options.xaxis.categories.length"
           height="400"
-          type="bar"
           :options="options"
           :series="options.series"
         ></apexchart>
@@ -80,8 +79,6 @@ export default defineComponent({
 
     const getTickets = async () => {
       try {
-        // tickets.value = await list();
-        // tickets.value = await myTickets('?filter[status]=done');
         tickets.value = await ticketsGraphUsers('?filter[status]=done', {
           month: monthSelect.value !== '' ? monthSelect.value : dateActual(),
         });
@@ -89,8 +86,24 @@ export default defineComponent({
         const payloadRecoverCollaborators = recoverCollaborators();
 
         const data = ref({
+          chart: {
+            type: 'bar',
+          },
+          plotOptions: {
+            bar: {
+              horizontal: false,
+            },
+          },
           xaxis: {
             categories: [...payloadRecoverCollaborators.map((v) => v.user)],
+            lines: {
+              show: false,
+            },
+          },
+          yaxis: {
+            lines: {
+              show: true,
+            },
           },
           series: [
             {
