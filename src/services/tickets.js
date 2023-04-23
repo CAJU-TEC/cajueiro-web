@@ -27,6 +27,16 @@ export default function ticketsService() {
     }
   };
 
+  const ticketsGraphUsers = async (id, params) => {
+    try {
+      const url = `${endpoint}/graphDashboard/`;
+      const { data } = await api.post(`${url}${id}`, params);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const findTicketsAtCode = async (id) => {
     try {
       const url = `${endpoint}`;
@@ -51,6 +61,7 @@ export default function ticketsService() {
   return {
     addUserPatchTicket,
     findTicketsAtCode,
+    ticketsGraphUsers,
     report,
     myTickets,
     list,

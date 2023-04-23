@@ -4,6 +4,25 @@
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" />
       </q-breadcrumbs>
+      <div class="column items-end">
+        <div class="col">
+          <q-btn-dropdown color="primary" label="Escolha o mês">
+            <q-list>
+              <q-item
+                v-for="item in months"
+                :key="item"
+                clickable
+                v-close-popup
+                @click="onAlterMonth(item.index)"
+              >
+                <q-item-section>
+                  <q-item-label>{{ item.mes }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-btn-dropdown>
+        </div>
+      </div>
       <div class="row">
         <div class="col">
           <q-card style="width: 100%" flat bordered>
@@ -52,7 +71,7 @@
           </q-card>
         </div>
       </div>
-      <apex-bar class="column"></apex-bar>
+      <apex-bar class="column" :month="monthSelect"></apex-bar>
       <div class="row q-gutter-md">
         <q-card dark bordered class="bg-blue-9 my-card col q-ml-lg q-mt-xl">
           <q-card-section>
@@ -118,7 +137,7 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, ref, reactive } from 'vue';
+import { defineComponent, onMounted, ref, reactive, provide, watch } from 'vue';
 import ApexBar from 'src/components/charts/apexBar.vue';
 import ticketsService from 'src/services/tickets';
 import _ from 'lodash';
@@ -141,7 +160,27 @@ export default defineComponent({
     const loading = reactive({
       results: true,
     });
-    const { list, myTickets } = ticketsService();
+    const months = [
+      { index: 1, mes: 'JAN' },
+      { index: 2, mes: 'FEV' },
+      { index: 3, mes: 'MAR' },
+      { index: 4, mes: 'ABR' },
+      { index: 5, mes: 'MAI' },
+      { index: 6, mes: 'JUN' },
+      { index: 7, mes: 'JUL' },
+      { index: 8, mes: 'AGO' },
+      { index: 9, mes: 'SET' },
+      { index: 10, mes: 'OUT' },
+      { index: 11, mes: 'NOV' },
+      { index: 12, mes: 'DEZ' },
+    ];
+    const { myTickets, ticketsGraphUsers } = ticketsService();
+    const monthSelect = ref(Number(0));
+
+    const onAlterMonth = (month) => {
+      monthSelect.value = month;
+      getTickets();
+    };
 
     const averang = (num = null, qntItem = null) => {
       return parseFloat(num / qntItem);
@@ -153,6 +192,12 @@ export default defineComponent({
         .map((value) => recoverUser(value))
         .filter((value) => value.user !== undefined)
         .value();
+    };
+
+    const dateActual = () => {
+      const date = new Date();
+      const month = date.getMonth();
+      return parseInt(month) + 1;
     };
 
     const recoverUser = (collaborator) => {
@@ -178,7 +223,9 @@ export default defineComponent({
     const getTickets = async () => {
       try {
         // tickets.value = await list();
-        tickets.value = await myTickets('?filter[status]=done');
+        tickets.value = await ticketsGraphUsers('?filter[status]=done', {
+          month: monthSelect.value !== '' ? monthSelect.value : dateActual(),
+        });
         await recoverCollaborators();
         const data = ref({
           xaxis: {
@@ -250,11 +297,14 @@ export default defineComponent({
       options,
       dataCollaborators,
       getResults,
+      monthSelect,
       averang,
       ticketsInDevelop,
       status,
       priority,
       loading,
+      months,
+      onAlterMonth,
     };
   },
 });

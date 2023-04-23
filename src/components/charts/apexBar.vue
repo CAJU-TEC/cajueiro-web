@@ -1,19 +1,21 @@
 <template>
-  <q-card flat bordered class="q-mt-lg">
-    <q-card-section>
-      <apexchart
-        v-if="options.xaxis.categories.length"
-        height="400"
-        type="bar"
-        :options="options"
-        :series="options.series"
-      ></apexchart>
-      <div v-else class="column items-center text-center q-ma-xl">
-        <q-spinner-cube color="blue" size="5.5em" />
-        <div class="text-caption q-ma-xl">Carregando dados...</div>
-      </div>
-    </q-card-section>
-  </q-card>
+  <div>
+    <q-card flat bordered class="q-mt-lg">
+      <q-card-section>
+        <apexchart
+          v-if="options.xaxis.categories.length"
+          height="400"
+          type="bar"
+          :options="options"
+          :series="options.series"
+        ></apexchart>
+        <div v-else class="column items-center text-center q-ma-xl">
+          <q-spinner-cube color="blue" size="5.5em" />
+          <div class="text-caption q-ma-xl">Carregando dados...</div>
+        </div>
+      </q-card-section>
+    </q-card>
+  </div>
 </template>
 
 <script>
@@ -23,8 +25,9 @@ import ticketsService from 'src/services/tickets';
 
 export default defineComponent({
   name: 'ApexBar',
-  setup() {
-    const { myTickets } = ticketsService();
+  props: ['month'],
+  setup(props) {
+    const { ticketsGraphUsers } = ticketsService();
     const tickets = ref([]);
     const options = ref({
       series: [
@@ -69,22 +72,34 @@ export default defineComponent({
       },
     });
 
+    const dateActual = () => {
+      const date = new Date();
+      const month = date.getMonth();
+      return parseInt(month) + 1;
+    };
+
     const getTickets = async () => {
       try {
         // tickets.value = await list();
-        tickets.value = await myTickets('?filter[status]=done');
+        // tickets.value = await myTickets('?filter[status]=done');
+        tickets.value = await ticketsGraphUsers('?filter[status]=done', {
+          month: monthSelect.value !== '' ? monthSelect.value : dateActual(),
+        });
+
+        const payloadRecoverCollaborators = recoverCollaborators();
+
         const data = ref({
           xaxis: {
-            categories: [...recoverCollaborators().map((v) => v.user)],
+            categories: [...payloadRecoverCollaborators.map((v) => v.user)],
           },
           series: [
             {
               name: 'Total protocolos finalizados p/ usuários',
-              data: [...recoverCollaborators().map((v) => v.count)],
+              data: [...payloadRecoverCollaborators.map((v) => v.count)],
             },
             {
               name: 'Total do somatório de pontos',
-              data: [...recoverCollaborators().map((v) => v.points)],
+              data: [...payloadRecoverCollaborators.map((v) => v.points)],
             },
           ],
         });
@@ -96,6 +111,12 @@ export default defineComponent({
 
     onMounted(async () => {
       await getTickets();
+    });
+
+    const monthSelect = ref('');
+    watch(props, (newValue) => {
+      monthSelect.value = newValue.month;
+      getTickets();
     });
 
     const recoverCollaborators = () => {
@@ -115,7 +136,6 @@ export default defineComponent({
         user: null,
         count: 0,
         points: 0,
-        priotity: 0,
       });
 
       _.forEach(collaborator, function (value) {
@@ -124,7 +144,7 @@ export default defineComponent({
         payload.points +=
           parseFloat(value?.impact?.points) +
           (value.priority === 'yes' ? 1 : 0);
-        payload.priority += value.priority === 'yes' ? 1 : 0;
+        // payload.priority += value.priority === 'yes' ? 1 : 0;
       });
 
       return payload;
@@ -132,6 +152,7 @@ export default defineComponent({
 
     return {
       options,
+      monthSelect,
     };
   },
 });

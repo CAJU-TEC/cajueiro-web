@@ -62,7 +62,7 @@
       <q-list bordered>
         <template v-if="ticketsOpenYesPriority.length > 0">
           <q-item-label header>PRIORIDADES</q-item-label>
-          <template v-for="ticket in ticketsOpenYesPriority" :key="ticket?.id">
+          <div v-for="ticket in ticketsOpenYesPriority" :key="ticket?.id">
             <q-item class="q-ma-none bg-red-1" v-ripple>
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
@@ -181,7 +181,7 @@
               </q-item-section>
             </q-item>
             <q-separator />
-          </template>
+          </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
@@ -677,16 +677,7 @@
                     </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
-                  | Criado em: {{ dateFormat(ticket?.created_at) }}
-                  | Protocolo aberto
-                  <span v-if="betweenDates(new Date(), ticket?.created_at)"
-                    >à
-                    <span class="text-weight-bold">{{
-                      `${betweenDates(new Date(), ticket?.created_at)}`
-                    }}</span>
-                    dia(s)</span
-                  >
-                  <span v-else>Hoje</span>
+                  | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
                 </q-item-label>
               </q-item-section>
 
@@ -777,15 +768,6 @@
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
-                  | Protocolo aberto
-                  <span v-if="betweenDates(new Date(), ticket?.created_at)"
-                    >à
-                    <span class="text-weight-bold">{{
-                      `${betweenDates(new Date(), ticket?.created_at)}`
-                    }}</span>
-                    dia(s)</span
-                  >
-                  <span v-else>Hoje</span>
                 </q-item-label>
               </q-item-section>
 
@@ -827,10 +809,11 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
+import { reactify } from '@vueuse/core';
 
 const tab = ref('ticketsOpen');
 
