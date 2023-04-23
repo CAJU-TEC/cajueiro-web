@@ -91,7 +91,7 @@ export default defineComponent({
           },
           plotOptions: {
             bar: {
-              horizontal: false,
+              horizontal: true,
             },
           },
           xaxis: {
