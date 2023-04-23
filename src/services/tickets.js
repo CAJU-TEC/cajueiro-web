@@ -29,7 +29,7 @@ export default function ticketsService() {
 
   const ticketsGraphUsers = async (id, params) => {
     try {
-      const url = `${endpoint}/graphDashboard/`;
+      const url = `${endpoint}/graphDashboard`;
       const { data } = await api.post(`${url}${id}`, params);
       return data;
     } catch (error) {
