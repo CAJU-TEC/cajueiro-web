@@ -27,6 +27,19 @@
           />
         </div>
         <div class="">
+          <h6 class="q-mt-lg q-mb-md">Qual o tipo é esse protocolo?</h6>
+          <q-btn-toggle
+            v-model="form.type"
+            push
+            glossy
+            :toggle-color="`${types[form.type].color}`"
+            :options="[
+              { label: 'Implementação', value: 'implementation' },
+              { label: 'Manutenção', value: 'maintenance' },
+            ]"
+          />
+        </div>
+        <div class="">
           <h6 class="q-mt-lg q-mb-md">Como protocolo está no momento?</h6>
           <q-btn-toggle
             v-model="form.status"
@@ -247,6 +260,7 @@ import clientsService from 'src/services/clients';
 import AddClient from 'src/components/dialogs/clients/AddClient.vue';
 import impactsService from 'src/services/impacts';
 import status from 'src/support/tickets/status';
+import types from 'src/support/tickets/types';
 import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
@@ -277,6 +291,7 @@ export default defineComponent({
       collaborator_id: ref(''),
       impact_id: ref(''),
       priority: ref('no'),
+      type: ref('maintenance'),
       subject: ref(''),
       message: ref(''),
       status: ref('backlog'),
@@ -399,6 +414,7 @@ export default defineComponent({
       form,
       status,
       priority,
+      types,
       dialogAddClient,
       optionsClient,
       optionsImpacts,

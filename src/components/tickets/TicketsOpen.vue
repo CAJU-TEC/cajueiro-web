@@ -97,6 +97,19 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
                     <q-tooltip
@@ -154,6 +167,7 @@
                     round
                     color="primary"
                     icon="rocket_launch"
+                    v-if="allowTickets(ticket?.status)"
                     @click="
                       () => {
                         $emit('addUserTicker', ticket?.id);
@@ -225,6 +239,19 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
                     <q-tooltip
@@ -281,6 +308,7 @@
                     round
                     color="primary"
                     icon="rocket_launch"
+                    v-if="allowTickets(ticket?.status)"
                     @click="
                       () => {
                         $emit('addUserTicker', ticket?.id);
@@ -357,6 +385,19 @@
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
+                  <q-badge
+                    rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -458,6 +499,19 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
                     <q-tooltip
@@ -557,6 +611,19 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
                     <q-tooltip
@@ -589,6 +656,7 @@
                     round
                     color="primary"
                     icon="rocket_launch"
+                    v-if="allowTickets(ticket?.status)"
                     @click="
                       () => {
                         $emit('addUserTicker', ticket?.id);
@@ -664,6 +732,19 @@
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
+                  <q-badge
+                    rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -756,6 +837,19 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
                     <q-tooltip
@@ -767,7 +861,7 @@
                     </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
-                  | Criado em: {{ dateFormat(ticket?.created_at) }}
+                  | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
                 </q-item-label>
               </q-item-section>
 
@@ -809,11 +903,12 @@
 </template>
 
 <script>
-import { defineComponent, onMounted, reactive, ref, watch } from 'vue';
+import { defineComponent, ref } from 'vue';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
+import types from 'src/support/tickets/types';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
-import { reactify } from '@vueuse/core';
+import _ from 'lodash';
 
 const tab = ref('ticketsOpen');
 
@@ -858,9 +953,16 @@ export default defineComponent({
     },
   },
   setup() {
+    const allowTickets = (roles) => {
+      const statusRole = ['backlog', 'todo', 'analyze'];
+      return _.includes(statusRole, roles);
+    };
+
     return {
+      allowTickets,
       status,
       priority,
+      types,
       betweenDates,
       dateFormat,
       tab: ref('ticketsOpen'),
