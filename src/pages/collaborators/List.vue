@@ -51,6 +51,16 @@
               <q-tooltip> Login: {{ props.row.user.email }} </q-tooltip>
             </span>
 
+            <span v-if="col.name === 'jobplan'">
+              <q-badge
+                rounded
+                :style="`background: ${props.row.jobplan?.color};`"
+              >
+                {{ props.row.jobplan?.description }}
+                <q-tooltip> Valor: {{ props.row.jobplan?.value }} </q-tooltip>
+              </q-badge>
+            </span>
+
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -114,6 +124,11 @@ export default defineComponent({
         name: 'full_name',
         align: 'center',
         label: 'Me chamam!',
+      },
+      {
+        name: 'jobplan',
+        align: 'center',
+        label: 'Que tipo de caju sou eu?',
       },
       {
         name: 'cpf',

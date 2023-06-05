@@ -39,16 +39,37 @@
         label="Formação *"
         lazy-rules
         hint="Formação academica ou cursos"
-        class="col-md-6 col-lg-6 col-xs-12"
+        class="col-md-4 col-lg-4 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
+
+      <q-select
+        filled
+        label="Plano de Trabalho *"
+        v-model="form.jobplan_id"
+        use-input
+        hide-selected
+        fill-input
+        input-debounce="0"
+        :options="options"
+        @filter="filterFn"
+        class="col-lg-4 col-xs-12"
+        emit-value
+        map-options
+      >
+        <template #no-option>
+          <q-item>
+            <q-item-section class="text-grey"> Sem resultados </q-item-section>
+          </q-item>
+        </template>
+      </q-select>
 
       <q-file
         filled
         @update:model-value="onChange($event)"
         v-model="form.imageInput"
         label="Imagem"
-        class="col-md-6 col-lg-6 col-xs-12"
+        class="col-md-4 col-lg-4 col-xs-12"
         accept=".jpg, .png, .jpeg"
       >
         <template #prepend>
@@ -93,7 +114,7 @@
         v-model="form.cpf"
         filled
         label="CPF *"
-        class="col-md-6 col-lg-6 col-xs-12"
+        class="col-md-4 col-lg-4 col-xs-12"
         mask="###.###.###-##"
       />
 
@@ -101,8 +122,15 @@
         v-model="form.cnpj"
         filled
         label="CNPJ *"
-        class="col-md-6 col-lg-6 col-xs-12"
+        class="col-md-4 col-lg-4 col-xs-12"
         mask="##.###.###/####-##"
+      />
+
+      <q-input
+        v-model="form.pix"
+        filled
+        label="PIX *"
+        class="col-md-4 col-lg-4 col-xs-12"
       />
 
       <q-input
@@ -155,16 +183,19 @@ import { useQuasar, useMeta } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 import collaboratorsService from 'src/services/collaborators';
 import CajuDate from 'src/components/CajuDate.vue';
+import jobPlansService from 'src/services/jobPlans';
 
 export default defineComponent({
   name: 'FormCollaborator',
   setup() {
     const { post, getById, update } = collaboratorsService();
+    const { list } = jobPlansService();
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
     const title = ref('Colaboradores');
     const form = ref({
+      jobplan_id: '',
       first_name: '',
       last_name: '',
       formation: '',
@@ -178,10 +209,14 @@ export default defineComponent({
       address: '',
       postal: '',
       number: '',
+      pix: '',
     });
     const loading = ref('true');
+    const options = ref();
+    const stringOptions = ref(options);
 
     onMounted(async () => {
+      getJobPlan();
       if (route.params.id) {
         getClient(route.params.id);
       } else {
@@ -215,6 +250,28 @@ export default defineComponent({
     const onChange = (event) => {
       createBase64Image(event);
     };
+    const getJobPlan = async () => {
+      try {
+        const response = await list();
+        options.value = response.map((m) => {
+          return { value: m.id, label: `${m.description} [${m.value}]` };
+        });
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Ocorreu algum erro.',
+          icon: 'check',
+          color: 'warning',
+        });
+      }
+    };
+    const filterFn = (val, update, abort) => {
+      update(() => {
+        const needle = val.toLowerCase();
+        options.value = stringOptions.value.filter(
+          (v) => v.label.toLowerCase().indexOf(needle) > -1
+        );
+      });
+    };
     const createBase64Image = (fileObject) => {
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -245,6 +302,9 @@ export default defineComponent({
       }
     };
     return {
+      options,
+      filterFn,
+      stringOptions,
       form,
       onSubmit,
       onChange,

@@ -124,7 +124,7 @@ export default defineComponent({
         title: 'Planos de trabalho',
         caption: '',
         icon: 'plans',
-        route: { name: 'jobPlans.list', permissions: ['jobPlans.*'] },
+        route: { name: 'jobPlans.list', permissions: ['jobplans.*'] },
       },
       {
         title: 'Métricas',
