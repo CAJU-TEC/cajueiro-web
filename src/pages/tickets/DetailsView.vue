@@ -216,7 +216,7 @@
             <div class="col">
               <span class="text-caption">Atribuição</span>
               <p class="text-subtitle2">
-                <q-chip v-if="comment.collaborator?.image">
+                <q-chip v-if="comment.collaborator?.images">
                   <q-avatar>
                     <img
                       :src="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.collaborator?.image?.uri}`"
@@ -236,19 +236,18 @@
             </div>
           </div>
           <p v-html="comment.description"></p>
-          <div class="row" v-if="comment.image">
+
+          <span class="text-caption" v-if="comment.images?.length > 0"
+            >Arquivos</span
+          >
+          <div class="row" v-for="(image, i) in comment.images" :key="i">
             <div class="col">
-              <span class="text-caption">Imagens</span>
               <p>
                 <a
-                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.image?.uri}`"
+                  :href="`https://cajueiroapi.cajutec.com.br/storage/images/${image?.uri}`"
                   target="_blank"
                 >
-                  <q-img
-                    :src="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.image?.uri}`"
-                    spinner-color="white"
-                    :ratio="16 / 9"
-                  />
+                  {{ image.uri }}
                 </a>
               </p>
             </div>
@@ -375,11 +374,12 @@
             <div class="col-12 q-gutter-sm q-my-lg">
               <q-file
                 filled
+                multiple
+                clearable
                 @update:model-value="onChange($event)"
-                v-model="form.imageInput"
-                label="Imagem"
+                v-model="formResponse.imageInput"
+                label="Documento"
                 class="col-lg-6 col-xs-12"
-                accept=".jpg, .png, .jpeg"
               >
                 <template #prepend>
                   <q-icon name="file_upload" />
@@ -426,6 +426,7 @@ export default defineComponent({
       message: ref(''),
       status: ref('backlog'),
       image: ref(''),
+      imageInput: ref([]),
       comments: ref([{}]),
     });
     const optionsStatus = ref([
@@ -442,7 +443,8 @@ export default defineComponent({
       collaborator_id: ref(''),
       status: ref('backlog'),
       description: ref(''),
-      image: ref(''),
+      image: ref([]),
+      imageInput: ref([]),
     });
 
     onMounted(async () => {
@@ -456,19 +458,23 @@ export default defineComponent({
     };
 
     const createBase64Image = (fileObject) => {
-      const reader = new FileReader();
+      for (let i = 0; i < fileObject.length; i++) {
+        const reader = new FileReader();
+        formResponse.value.imageInput = fileObject[i].name;
 
-      reader.onloadend = () => {
-        formResponse.value.image = reader.result;
-      };
+        reader.onloadend = () => {
+          formResponse.value.image[i] = reader.result;
+        };
 
-      reader.readAsDataURL(fileObject);
+        reader.readAsDataURL(fileObject[i]);
+      }
     };
 
     const onSubmit = async () => {
       try {
         await post(formResponse.value);
         formResponse.value.description = null;
+        formResponse.value.imageInput = null;
         await getTicket(route.params.id);
         $q.notify({
           message: 'Dados salvos com sucesso',
