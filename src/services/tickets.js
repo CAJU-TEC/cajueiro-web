@@ -27,6 +27,15 @@ export default function ticketsService() {
     }
   };
 
+  const notifications = async () => {
+    try {
+      const { data } = await api.get(`${endpoint}/notifications`);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const ticketsGraphUsers = async (id, params) => {
     try {
       const url = `${endpoint}/graphDashboard`;
@@ -69,5 +78,6 @@ export default function ticketsService() {
     post,
     update,
     remove,
+    notifications
   };
 }

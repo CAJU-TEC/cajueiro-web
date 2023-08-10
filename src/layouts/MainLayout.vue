@@ -78,7 +78,6 @@ export default defineComponent({
 
   setup() {
     const leftDrawerOpen = ref(false);
-    const rightDrawerOpen = useDrawerRightStore();
     const { fetchUser } = usersService();
     const linksList = [
       {
@@ -168,7 +167,6 @@ export default defineComponent({
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
-      rightDrawerOpen,
       user,
       getImage,
       toggleLeftDrawer() {

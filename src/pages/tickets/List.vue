@@ -26,7 +26,11 @@
       <q-btn
         v-if="pusherMessage.length > 0"
         :label="`protocolos (${pusherMessage.length})`"
-        @click="getClients()"
+        @click="
+          {
+            window.load;
+          }
+        "
         push
         class="full-width"
         color="primary"
