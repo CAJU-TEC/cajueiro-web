@@ -32,7 +32,7 @@
       <q-tab
         :alert="ticketsInBacklog.length ? true : false"
         name="ticketsBacklog"
-        icon="fa fa-bugs"
+        icon="fa fa-cubes"
         label="Aguardando"
         @click="() => $emit('updateTicketsBacklog', true)"
       >
