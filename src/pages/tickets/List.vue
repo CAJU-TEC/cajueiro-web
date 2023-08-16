@@ -42,6 +42,7 @@
         openYesPriority ||
         ticketsInDevelop ||
         ticketsInTests ||
+        ticketsInBacklog ||
         ticketsInPending ||
         ticketsInDone
       "
@@ -49,6 +50,7 @@
       :tickets-open-yes-priority="openYesPriority"
       :tickets-in-develop="ticketsInDevelop"
       :tickets-in-tests="ticketsInTests"
+      :tickets-in-backlog="ticketsInBacklog"
       :tickets-in-pending="ticketsInPending"
       :tickets-in-done="ticketsInDone"
       :tickets-in-my-tickets="ticketsInMyTickets"
@@ -76,6 +78,11 @@
       @updateTicketsTests="
         () => {
           getTicketsInTests();
+        }
+      "
+      @updateTicketsBacklog="
+        () => {
+          getTicketsInBacklog();
         }
       "
       @updateTicketsPending="
@@ -143,6 +150,7 @@ export default defineComponent({
     const openYesPriority = ref([]);
     const ticketsInDevelop = ref([]);
     const ticketsInTests = ref([]);
+    const ticketsInBacklog = ref([]);
     const ticketsInPending = ref([]);
     const ticketsInDone = ref([]);
     const ticketsInMyTickets = ref([]);
@@ -227,6 +235,7 @@ export default defineComponent({
       getTicketsOpenYesPriority();
       getTicketsInDevelop();
       getTicketsInTests();
+      getTicketsInBacklog();
       getTicketsInPending();
       getTicketsInDone();
     });
@@ -340,6 +349,17 @@ export default defineComponent({
       }
     };
 
+    const getTicketsInBacklog = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=backlog'
+        );
+        ticketsInBacklog.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const getTicketsInPending = async () => {
       try {
         const data = await myTicketsService(
@@ -443,6 +463,7 @@ export default defineComponent({
       openYesPriority,
       ticketsInDevelop,
       ticketsInTests,
+      ticketsInBacklog,
       ticketsInPending,
       ticketsInDone,
       ticketsInMyTickets,
@@ -451,6 +472,7 @@ export default defineComponent({
       getTicketsOpenMyTickets,
       getTicketsInDevelop,
       getTicketsInTests,
+      getTicketsInBacklog,
       getTicketsInPending,
       getTicketsInDone,
     };
