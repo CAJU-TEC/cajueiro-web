@@ -390,17 +390,30 @@ export default defineComponent({
           cancel: true,
           persistent: true,
         }).onOk(async () => {
-          $q.notify({
-            message: 'Esse protocolo agora é meu, ninguém me toma!',
-            icon: 'check',
-            color: 'positive',
-          });
-          addUserPatchTicket({
+          // $q.notify({
+          //   message: 'Esse protocolo agora é meu, ninguém me toma!',
+          //   icon: 'check',
+          //   color: 'positive',
+          // });
+
+          await addUserPatchTicket({
             id,
-          });
+          })
+            .then((response) => {
+              handleListClient(id);
+            })
+            .catch((error) => {
+              $q.notify({
+                message: error.message,
+                caption:
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendetes por seu usuário.',
+                icon: 'block',
+                color: 'negative',
+              });
+            });
+
           await getClients();
           await getTicketsOpenNoPriority();
-          await handleListClient(id);
         });
       } catch (error) {
         $q.notify({

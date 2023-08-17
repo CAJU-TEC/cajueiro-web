@@ -770,27 +770,16 @@
 
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
-                  <q-btn
-                    unelevated
-                    size="xs"
-                    round
-                    color="primary"
-                    icon="rocket_launch"
-                    v-if="allowTickets(ticket?.status)"
-                    @click="
-                      () => {
-                        $emit('addUserTicker', ticket?.id);
-                      }
-                    "
-                  >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      <div>Quero esse protocolo</div>
-                    </q-tooltip>
-                  </q-btn>
+                  <template v-if="ticket?.collaborator">
+                    <q-chip size="sm">
+                      <q-avatar v-if="ticket?.collaborator?.image">
+                        <img
+                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
+                        />
+                      </q-avatar>
+                      {{ ticket.collaborator?.first_name }}
+                    </q-chip>
+                  </template>
                   <q-badge
                     rounded
                     flat
