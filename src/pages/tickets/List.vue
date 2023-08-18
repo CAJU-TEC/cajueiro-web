@@ -242,6 +242,7 @@ export default defineComponent({
       getTicketsOpenNoPriority();
       getTicketsOpenYesPriority();
       getTicketsInDevelop();
+      getTicketsInValidation();
       getTicketsInTests();
       getTicketsInBacklog();
       getTicketsInPending();
