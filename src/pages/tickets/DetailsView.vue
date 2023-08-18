@@ -437,6 +437,7 @@ export default defineComponent({
       { value: 'test', label: 'teste' },
       { value: 'pending', label: 'pendente' },
       { value: 'done', label: 'finalizado' },
+      { value: 'validation', label: 'validação' },
     ]);
     const formResponse = ref({
       ticket_id: ref(route.params.id ?? null),

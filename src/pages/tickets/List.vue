@@ -43,6 +43,7 @@
         ticketsInDevelop ||
         ticketsInTests ||
         ticketsInBacklog ||
+        ticketsInValidation ||
         ticketsInPending ||
         ticketsInDone
       "
@@ -51,6 +52,7 @@
       :tickets-in-develop="ticketsInDevelop"
       :tickets-in-tests="ticketsInTests"
       :tickets-in-backlog="ticketsInBacklog"
+      :tickets-in-validation="ticketsInValidation"
       :tickets-in-pending="ticketsInPending"
       :tickets-in-done="ticketsInDone"
       :tickets-in-my-tickets="ticketsInMyTickets"
@@ -83,6 +85,11 @@
       @updateTicketsBacklog="
         () => {
           getTicketsInBacklog();
+        }
+      "
+      @updateTicketsValidation="
+        () => {
+          getTicketsInValidation();
         }
       "
       @updateTicketsPending="
@@ -151,6 +158,7 @@ export default defineComponent({
     const ticketsInDevelop = ref([]);
     const ticketsInTests = ref([]);
     const ticketsInBacklog = ref([]);
+    const ticketsInValidation = ref([]);
     const ticketsInPending = ref([]);
     const ticketsInDone = ref([]);
     const ticketsInMyTickets = ref([]);
@@ -360,6 +368,17 @@ export default defineComponent({
       }
     };
 
+    const getTicketsInValidation = async () => {
+      try {
+        const data = await myTicketsService(
+          '?filter[collaborator_id]=&filter[status]=validation'
+        );
+        ticketsInValidation.value = data;
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const getTicketsInPending = async () => {
       try {
         const data = await myTicketsService(
@@ -477,6 +496,7 @@ export default defineComponent({
       ticketsInDevelop,
       ticketsInTests,
       ticketsInBacklog,
+      ticketsInValidation,
       ticketsInPending,
       ticketsInDone,
       ticketsInMyTickets,
@@ -486,6 +506,7 @@ export default defineComponent({
       getTicketsInDevelop,
       getTicketsInTests,
       getTicketsInBacklog,
+      getTicketsInValidation,
       getTicketsInPending,
       getTicketsInDone,
     };

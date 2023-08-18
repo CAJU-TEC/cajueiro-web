@@ -38,6 +38,14 @@
       >
       </q-tab>
       <q-tab
+        :alert="ticketsInValidation.length ? true : false"
+        name="ticketsValidation"
+        icon="fa fa-fire-extinguisher"
+        label="Validação"
+        @click="() => $emit('updateTicketsValidation', true)"
+      >
+      </q-tab>
+      <q-tab
         :alert="ticketsInPending?.length ? true : false"
         name="ticketsPending"
         icon="fa fa-hourglass"
@@ -691,6 +699,118 @@
       </q-list>
     </template>
 
+    <template v-if="tab === 'ticketsValidation'">
+      <q-toolbar class="bg-primary text-white shadow-2">
+        <q-toolbar-title>Aguardando validação (cliente)</q-toolbar-title>
+      </q-toolbar>
+      <q-list bordered>
+        <template v-if="ticketsInValidation.length > 0">
+          <div v-for="ticket in ticketsInValidation" :key="ticket?.id">
+            <q-item class="q-my-sm" v-ripple>
+              <q-item-section avatar>
+                <template v-if="ticket?.client?.corporate?.image">
+                  <q-avatar
+                    class="q-ma-none"
+                    v-if="ticket.client?.corporate?.image"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      <div>
+                        {{ ticket.client?.corporate?.full_name }}
+                      </div>
+                    </q-tooltip>
+                    <img
+                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.client?.corporate?.image?.uri}`"
+                    />
+                  </q-avatar>
+                </template>
+              </q-item-section>
+
+              <q-item-section>
+                <q-item-label
+                  @click="$emit('handleListClient', ticket.id)"
+                  style="cursor: pointer"
+                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  {{ ticket?.subject }}</q-item-label
+                >
+                <q-item-label caption lines="1">
+                  <q-badge
+                    rounded
+                    :style="`background:${types[ticket?.type].hex}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ types[ticket?.type].title }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ types[ticket?.type].title }}
+                  <q-badge
+                    rounded
+                    :style="`background:${ticket?.impact?.color}`"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ ticket?.impact?.description }}
+                    </q-tooltip>
+                  </q-badge>
+                  {{ ticket?.impact?.description }}
+                  | Criado em: {{ dateFormat(ticket?.created_at) }}
+                  | Protocolo aberto
+                  <span v-if="betweenDates(new Date(), ticket?.created_at)"
+                    >à
+                    <span class="text-weight-bold">{{
+                      `${betweenDates(new Date(), ticket?.created_at)}`
+                    }}</span>
+                    dia(s)</span
+                  >
+                  <span v-else>Hoje</span>
+                </q-item-label>
+              </q-item-section>
+
+              <q-item-section top side>
+                <div class="text-grey-8 q-gutter-xs">
+                  <template v-if="ticket?.collaborator">
+                    <q-chip size="sm">
+                      <q-avatar v-if="ticket?.collaborator?.image">
+                        <img
+                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
+                        />
+                      </q-avatar>
+                      {{ ticket.collaborator?.first_name }}
+                    </q-chip>
+                  </template>
+                  <q-badge
+                    rounded
+                    flat
+                    class="text-caption text-weight-regular"
+                    :style="`background:${
+                      status[ticket?.status]?.hex
+                    }; font-size: 10px;`"
+                    :label="`${status[ticket?.status]?.title}`"
+                  />
+                </div>
+              </q-item-section>
+            </q-item>
+            <q-separator spaced />
+          </div>
+        </template>
+        <div v-else class="q-pa-md q-gutter-sm">
+          <q-banner inline-actions rounded class="bg-orange text-white">
+            Não existem protocolos com esse status no momento.
+          </q-banner>
+        </div>
+      </q-list>
+    </template>
+
     <template v-if="tab === 'ticketsPending'">
       <q-toolbar class="bg-primary text-white shadow-2">
         <q-toolbar-title>Protocolos com pendências</q-toolbar-title>
@@ -1028,6 +1148,7 @@ export default defineComponent({
     'updateTicketsDevelop',
     'updateTicketsTests',
     'updateTicketsBacklog',
+    'updateTicketsValidation',
     'updateTicketsPending',
     'updateTicketsDone',
     'updateTicketsMy',
@@ -1050,6 +1171,10 @@ export default defineComponent({
       default: null,
     },
     ticketsInBacklog: {
+      type: Array,
+      default: null,
+    },
+    ticketsInValidation: {
       type: Array,
       default: null,
     },
