@@ -14,6 +14,8 @@
         clickable
         v-ripple
         :active="active"
+        replace
+        :to="{ name: 'ticktes.details', id: item.id }"
       >
         <q-item-section>#{{ item.data?.code ?? '- - -' }}</q-item-section>
         <q-item-section side class="text-weight-medium">
