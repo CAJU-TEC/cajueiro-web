@@ -13,9 +13,9 @@
         :key="item.id"
         clickable
         v-ripple
-        :active="active"
         replace
-        :to="{ name: 'ticktes.details', id: item.id }"
+        :active="active"
+        @click="handleListClient(item.data.id)"
       >
         <q-item-section>#{{ item.data?.code ?? '- - -' }}</q-item-section>
         <q-item-section side class="text-weight-medium">
@@ -29,6 +29,7 @@
 
 <script>
 import { defineComponent, ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'TicketsNotifications',
@@ -43,9 +44,14 @@ export default defineComponent({
       required: true,
     },
   },
-  setup(props, emit) {
+  setup(props, { emit }) {
     const inputValue = ref(props.modelValue);
+    const router = useRouter();
     // const inputNotifications = ref(props.notifications);
+
+    const handleListClient = async (id) => {
+      await router.push({ name: 'tickets.details', params: { id } });
+    };
 
     const model = computed({
       get() {
@@ -75,6 +81,7 @@ export default defineComponent({
       updateInputValue,
       model,
       inputNotification,
+      handleListClient,
     };
   },
 });

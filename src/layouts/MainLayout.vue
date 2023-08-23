@@ -56,7 +56,7 @@
     </q-drawer>
 
     <q-page-container>
-      <router-view />
+      <router-view :key="route.path" />
     </q-page-container>
   </q-layout>
 </template>
@@ -64,9 +64,9 @@
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
-import { useDrawerRightStore } from 'src/stores/drawerRight';
 import NavBarPerfil from '../components/buttons/users/NavBarPerfil.vue';
 import usersService from 'src/services/users';
+import { useRouter, useRoute } from 'vue-router';
 
 export default defineComponent({
   name: 'MainLayout',
@@ -79,6 +79,9 @@ export default defineComponent({
   setup() {
     const leftDrawerOpen = ref(false);
     const { fetchUser } = usersService();
+    const router = useRouter();
+    const route = useRoute();
+
     const linksList = [
       {
         title: 'Home',
@@ -169,6 +172,8 @@ export default defineComponent({
       leftDrawerOpen,
       user,
       getImage,
+      router,
+      route,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
       },
