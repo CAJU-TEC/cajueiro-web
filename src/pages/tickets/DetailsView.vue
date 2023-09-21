@@ -9,9 +9,13 @@
     </div>
 
     <div class="row items-start q-gutter-md">
-      <q-card class="my-card col bg-blue-1">
+      <q-card
+        class="my-card col bg-blue-1"
+        :class="{ 'bg-green-1': form?.dufy === 'yes' }"
+      >
         <q-card-section>
           <strong>Protocolo #{{ form.code }}</strong>
+          <span class="text-weight-bolder">(PLANTÃO)</span>
         </q-card-section>
         <q-separator />
         <q-card-section>
@@ -154,7 +158,7 @@
             <div class="col">
               <span class="text-caption">Assunto</span>
               <p>
-                <strong>{{ form.subject }}</strong>
+                <strong>#{{ form.code }} - {{ form.subject }}</strong>
               </p>
             </div>
           </div>

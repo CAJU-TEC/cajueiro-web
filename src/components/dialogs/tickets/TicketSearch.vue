@@ -105,6 +105,23 @@
                 <q-card-section horizontal class="text-grey-10">
                   <q-card-section>
                     <div class="row">
+                      <div
+                        class="col text-caption"
+                        v-if="ticket.dufy === 'yes'"
+                      >
+                        <q-badge rounded color="green">
+                          <q-tooltip
+                            :offset="[10, 10]"
+                            anchor="top middle"
+                            self="bottom middle"
+                          >
+                            <span>PLANTÃO</span>
+                          </q-tooltip>
+                        </q-badge>
+                        PLANTÃO
+                      </div>
+                    </div>
+                    <div class="row">
                       <div class="col text-caption">
                         <q-badge
                           rounded
@@ -211,6 +228,15 @@
                         </p>
                       </div>
                     </div>
+                    <div class="row" v-if="(ticket?.comments).length > 0">
+                      <div class="col">
+                        <span class="text-caption">Histórico</span>
+                        <p
+                          class="text-caption"
+                          v-html="getFirst(ticket?.comments).description"
+                        ></p>
+                      </div>
+                    </div>
                   </q-card-section>
                 </q-card-section>
               </q-card>
@@ -228,6 +254,7 @@ import ticketsService from 'src/services/tickets';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
 import { useRouter } from 'vue-router';
+import _ from 'lodash';
 
 const state = reactive({
   code: null,
@@ -256,6 +283,10 @@ export default {
       },
     });
 
+    const getFirst = (elements) => {
+      return _.head(elements);
+    };
+
     const getTickets = async (work) => {
       try {
         const response = await findTicketsAtCode(work);
@@ -272,9 +303,13 @@ export default {
     watch(state, async (newValue) => {
       if (!state.code) {
         tickets.value = null;
-        return;
+        return null;
       }
-      getTickets(newValue.code);
+      if (state.code.length > 3) {
+        getTickets(newValue.code);
+      }
+      tickets.value = null;
+      return null;
     });
 
     return {
@@ -284,6 +319,7 @@ export default {
       status,
       priority,
       handleListClient,
+      getFirst,
     };
   },
 };

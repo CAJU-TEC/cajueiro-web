@@ -234,7 +234,11 @@
         <q-item-label header>OUTROS</q-item-label>
         <template v-if="ticketsOpenNoPriority.length > 0">
           <div v-for="ticket in ticketsOpenNoPriority" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+              v-ripple
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -376,7 +380,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
 
@@ -395,7 +399,10 @@
       <q-list bordered>
         <template v-if="ticketsInDevelop.length > 0">
           <div v-for="ticket in ticketsInDevelop" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -502,7 +509,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -520,7 +527,10 @@
       <q-list bordered>
         <template v-if="ticketsInTests.length > 0">
           <div v-for="ticket in ticketsInTests" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -627,7 +637,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -645,7 +655,10 @@
       <q-list bordered>
         <template v-if="ticketsInBacklog.length > 0">
           <div v-for="ticket in ticketsInBacklog" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -672,7 +685,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -739,7 +765,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -757,7 +783,10 @@
       <q-list bordered>
         <template v-if="ticketsInValidation.length > 0">
           <div v-for="ticket in ticketsInValidation" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -864,7 +893,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -882,7 +911,10 @@
       <q-list bordered>
         <template v-if="ticketsInPending.length > 0">
           <div v-for="ticket in ticketsInPending" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -989,7 +1021,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -1007,7 +1039,10 @@
       <q-list bordered>
         <template v-if="ticketsInDone.length > 0">
           <div v-for="ticket in ticketsInDone" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -1105,7 +1140,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
@@ -1123,7 +1158,10 @@
       <q-list bordered>
         <template v-if="ticketsInMyTickets.length > 0">
           <div v-for="ticket in ticketsInMyTickets" :key="ticket?.id">
-            <q-item class="q-my-sm" v-ripple>
+            <q-item
+              class="q-ma-none"
+              :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
+            >
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
                   <q-avatar
@@ -1221,7 +1259,7 @@
                 </div>
               </q-item-section>
             </q-item>
-            <q-separator spaced />
+            <q-separator />
           </div>
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
