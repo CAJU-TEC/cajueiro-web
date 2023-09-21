@@ -106,7 +106,19 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
+                  class="row"
                 >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}
                 </q-item-label>
@@ -249,7 +261,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -397,7 +422,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -509,7 +547,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -733,7 +784,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -845,7 +909,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -957,7 +1034,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">
@@ -1060,7 +1150,20 @@
                 <q-item-label
                   @click="$emit('handleListClient', ticket.id)"
                   style="cursor: pointer"
-                  ><span class="text-weight-bold">#{{ ticket?.code }}</span>
+                  class="row"
+                >
+                  <div class="text-green" v-if="ticket?.dufy == 'yes'">
+                    <q-icon size="xs" name="update">
+                      <q-tooltip
+                        :offset="[10, 10]"
+                        anchor="top middle"
+                        self="bottom middle"
+                      >
+                        PLANTÃO
+                      </q-tooltip>
+                    </q-icon>
+                  </div>
+                  <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}</q-item-label
                 >
                 <q-item-label caption lines="1">

@@ -14,6 +14,19 @@
     >
       <div class="column">
         <div class="">
+          <h6 class="q-mt-lg q-mb-md">Esse protocolo é um PLANTÃO?</h6>
+          <q-btn-toggle
+            v-model="form.dufy"
+            push
+            glossy
+            :toggle-color="`${priority[form.dufy].color}`"
+            :options="[
+              { label: 'SIM', value: 'yes' },
+              { label: 'NÃO', value: 'no' },
+            ]"
+          />
+        </div>
+        <div class="">
           <h6 class="q-mt-lg q-mb-md">Qual a prioridade desse protocolo?</h6>
           <q-btn-toggle
             v-model="form.priority"
@@ -293,6 +306,7 @@ export default defineComponent({
       impact_id: ref(''),
       priority: ref('no'),
       type: ref('maintenance'),
+      dufy: ref('no'),
       subject: ref(''),
       message: ref(''),
       status: ref('backlog'),
