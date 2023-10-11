@@ -78,7 +78,7 @@ module.exports = configure(function (ctx) {
       env: {
         API_URL: ctx.dev
           ? 'http://localhost:8000/'
-          : 'https://sol.solarcontrol.com.br/'
+          : 'https://solapi.solarcontrol.com.br/'
       }
       // rawDefine: {}
       // ignorePublicFolder: true,
