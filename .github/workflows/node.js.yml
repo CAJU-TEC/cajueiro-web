@@ -5,6 +5,8 @@ name: Build CI
 on:
   push:
     branches: ['sol']
+  pull_request:
+    branches: ['sol']
 
 jobs:
   build:
