@@ -4,7 +4,7 @@ name: Build CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['sol']
 
 jobs:
   build:
@@ -34,8 +34,8 @@ jobs:
       - name: 📂 Sync files
         uses: SamKirkland/FTP-Deploy-Action@4.3.2
         with:
-          server: "ftp.cajutec.com.br"
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          local-dir: "./dist/spa/"
-          server-dir: "cajueiro.cajutec.com.br/web/"
+          server: 'ftp.solarcontrol.com.br'
+          username: ${{ secrets.FTP_USERNAME_SOL }}
+          password: ${{ secrets.FTP_PASSWORD_SOL }}
+          local-dir: './dist/spa/'
+          server-dir: 'sol/web/'
