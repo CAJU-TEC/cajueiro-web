@@ -12,7 +12,7 @@
           @click="toggleLeftDrawer"
         />
         <q-separator dark vertical inset />
-        <q-toolbar-title> Cajueiro App </q-toolbar-title>
+        <q-toolbar-title> SOL App </q-toolbar-title>
 
         <div>
           <nav-bar-perfil></nav-bar-perfil>

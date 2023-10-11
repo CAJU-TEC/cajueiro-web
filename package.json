@@ -2,7 +2,7 @@
   "name": "quasar-project",
   "version": "0.0.1",
   "description": "Gestão de chamados",
-  "productName": "CajueiroApp",
+  "productName": "SOLApp",
   "author": "Luizmagao <luizmagao@gmail.com>",
   "private": true,
   "scripts": {

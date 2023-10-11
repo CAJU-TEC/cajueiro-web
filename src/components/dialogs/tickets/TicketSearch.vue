@@ -42,7 +42,7 @@
         <q-card-section class="q-pt-none">
           <div class="row">
             <div v-if="tickets?.length" class="col">
-              Cajueiro encontrou:
+              SOL encontrou:
               <span class="text-weight-bold">{{ tickets?.length }}</span>
               protocolos.
             </div>

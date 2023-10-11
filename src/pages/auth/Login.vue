@@ -12,7 +12,7 @@
           style="width: 320px"
         >
           <q-card-section class="q-mt-xl q-mb-md">
-            <p class="text-weight-bolder text-white">Cajueiro versão 1.0.0</p>
+            <p class="text-weight-bolder text-white">SOL versão 1.0.0</p>
           </q-card-section>
           <q-card-section>
             <q-form class="q-gutter-md">
