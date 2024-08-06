@@ -13,32 +13,39 @@
         class="my-card col bg-blue-1"
         :class="{ 'bg-green-1': form?.dufy === 'yes' }"
       >
-        <q-card-section>
-          <strong>Protocolo #{{ form.code }}</strong>
-          <span class="text-weight-bolder">&nbsp;(PLANTÃO)</span>&nbsp;
-          <span>
-            <q-btn
-              unelevated
-              size="xs"
-              round
-              color="primary"
-              icon="rocket_launch"
-              v-if="allowTickets(form?.status)"
-              @click="
-                () => {
-                  addUserTicker(form?.id);
-                }
-              "
-            >
-              <q-tooltip
-                :offset="[10, 10]"
-                anchor="top middle"
-                self="bottom middle"
+        <q-card-section :class="{ 'bg-green text-white': form?.dufy === 'yes' }"
+          ><div class="row">
+            <div class="col-md-8">
+              Protocolo: #{{ form.code }} {{ form.subject }}
+              <span v-if="form.dufy === 'yes'" class="text-weight-bolder"
+                >&nbsp;(PLANTÃO)</span
+              >&nbsp;
+            </div>
+            <div class="col-md-2 offset-md-2 text-right">
+              <q-btn
+                unelevated
+                size="xs"
+                round
+                color="white"
+                class="text-green"
+                icon="rocket_launch"
+                v-if="allowTickets(form?.status)"
+                @click="
+                  () => {
+                    addUserTicker(form?.id);
+                  }
+                "
               >
-                <div>Quero esse protocolo</div>
-              </q-tooltip>
-            </q-btn>
-          </span>
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <div>Quero esse protocolo</div>
+                </q-tooltip>
+              </q-btn>
+            </div>
+          </div>
         </q-card-section>
         <q-separator />
         <q-card-section>
@@ -181,7 +188,7 @@
             <div class="col">
               <span class="text-caption">Assunto</span>
               <p>
-                <strong>#{{ form.code }} - {{ form.subject }}</strong>
+                <strong>#{{ form.code }} {{ form.subject }}</strong>
               </p>
             </div>
           </div>
@@ -213,7 +220,7 @@
 
     <div class="row items-start q-my-md">
       <q-card class="my-card col bg-grey-3">
-        <q-card-section> <strong>Histórico</strong> </q-card-section>
+        <q-card-section> <strong>Histórico</strong> (Kanban) </q-card-section>
         <q-separator />
         <q-card-section v-if="form.comments.length === 0"
           >Não existe comentários no momento</q-card-section
@@ -221,7 +228,6 @@
         <q-card-section v-for="comment in form.comments" :key="comment.id">
           <div class="row">
             <div class="col">
-              <span class="text-caption">Kanban</span>
               <p class="text-subtitle2">
                 <q-badge
                   rounded
@@ -491,7 +497,7 @@ export default defineComponent({
       createBase64Image(event);
     };
 
-    const router = useRouter();
+    // const router = useRouter();
 
     const handleListClient = async (id) => {
       if (route.params.id) {
