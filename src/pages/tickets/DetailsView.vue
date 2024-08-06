@@ -15,7 +15,30 @@
       >
         <q-card-section>
           <strong>Protocolo #{{ form.code }}</strong>
-          <span class="text-weight-bolder">(PLANTÃO)</span>
+          <span class="text-weight-bolder">&nbsp;(PLANTÃO)</span>&nbsp;
+          <span>
+            <q-btn
+              unelevated
+              size="xs"
+              round
+              color="primary"
+              icon="rocket_launch"
+              v-if="allowTickets(form?.status)"
+              @click="
+                () => {
+                  addUserTicker(form?.id);
+                }
+              "
+            >
+              <q-tooltip
+                :offset="[10, 10]"
+                anchor="top middle"
+                self="bottom middle"
+              >
+                <div>Quero esse protocolo</div>
+              </q-tooltip>
+            </q-btn>
+          </span>
         </q-card-section>
         <q-separator />
         <q-card-section>
@@ -411,12 +434,13 @@ import {
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
 import { useQuasar } from 'quasar';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
+import _ from 'lodash';
 
 export default defineComponent({
   name: 'DetailsView',
   setup() {
-    const { getById } = ticketsService();
+    const { getById, addUserPatchTicket } = ticketsService();
     const { post } = commentsService();
     const $q = useQuasar();
     const route = useRoute();
@@ -452,6 +476,11 @@ export default defineComponent({
       imageInput: ref([]),
     });
 
+    const allowTickets = (roles) => {
+      const statusRole = ['backlog', 'todo', 'analyze'];
+      return _.includes(statusRole, roles);
+    };
+
     onMounted(async () => {
       if (route.params.id) {
         getTicket(route.params.id);
@@ -460,6 +489,53 @@ export default defineComponent({
 
     const onChange = (event) => {
       createBase64Image(event);
+    };
+
+    const router = useRouter();
+
+    const handleListClient = async (id) => {
+      if (route.params.id) {
+        getTicket(route.params.id);
+      }
+    };
+
+    const addUserTicker = async (id) => {
+      try {
+        $q.dialog({
+          title: 'Quero assumir esse protocolo',
+          message: 'Desejo esse protocolo, blz?',
+          cancel: true,
+          persistent: true,
+        }).onOk(async () => {
+          $q.notify({
+            message: 'Esse protocolo agora é meu, ninguém me toma!',
+            icon: 'check',
+            color: 'positive',
+          });
+
+          await addUserPatchTicket({
+            id,
+          })
+            .then(() => {
+              handleListClient(id);
+            })
+            .catch((error) => {
+              $q.notify({
+                message: error.message,
+                caption:
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendetes por seu usuário.',
+                icon: 'block',
+                color: 'negative',
+              });
+            });
+        });
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível associar você a este protocolo.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
     };
 
     const createBase64Image = (fileObject) => {
@@ -510,6 +586,8 @@ export default defineComponent({
     };
 
     return {
+      addUserTicker,
+      allowTickets,
       dateFormat,
       dateTimeFormat,
       comments,
