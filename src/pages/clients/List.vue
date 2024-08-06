@@ -12,8 +12,8 @@
       :columns="columns"
       row-key="full_name"
       no-data-label="Não existe dados no momento."
-      rows-per-page-label="10"
-      :rows-per-page-options="[10, 15, 20]"
+      rows-per-page-label="50"
+      :rows-per-page-options="[10, 15, 20, 50, 100]"
       :loading="loading"
     >
       <template #top>
@@ -103,6 +103,12 @@ export default defineComponent({
         align: 'center',
         label: '#',
         field: 'image',
+      },
+      {
+        name: 'corporates',
+        align: 'center',
+        label: 'Organização',
+        field: (row) => row.corporate?.first_name,
       },
       {
         name: 'full_name',

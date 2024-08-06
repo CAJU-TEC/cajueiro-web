@@ -13,7 +13,7 @@
       row-key="full_name"
       no-data-label="Não existe dados no momento."
       rows-per-page-label="10"
-      :rows-per-page-options="[10, 15, 20]"
+      :rows-per-page-options="[10, 15, 20, 50, 100]"
       :loading="loading"
     >
       <template #top>
@@ -37,7 +37,7 @@
             <span v-if="col.name != 'image'">{{ col.value }}</span>
             <q-avatar v-if="col.name == 'image' && props.row.image">
               <img
-                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.image.uri}`"
+                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row?.image?.uri}`"
               />
             </q-avatar>
             <q-avatar
@@ -45,6 +45,32 @@
               color="primary"
               >{{ props.row.letter }}</q-avatar
             >
+            <span v-if="col.name == 'client'">
+              <div class="q-pa-md q-gutter-sm" style="height: 70px">
+                <q-avatar
+                  v-for="(n, i) in props.row.clients"
+                  :key="n.id"
+                  size="40px"
+                  class="overlapping"
+                  :style="`left: ${i * 25}px`"
+                >
+                  <q-btn v-if="n.image?.uri">
+                    <q-tooltip anchor="center middle" self="center middle">
+                      {{ n.full_name }}
+                    </q-tooltip>
+                    <img
+                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${n.image?.uri}`"
+                    />
+                  </q-btn>
+                  <q-btn v-else label="Hover me" color="primary">
+                    <q-tooltip anchor="center middle">
+                      {{ n.full_name }}
+                    </q-tooltip>
+                    <img :src="`https://i.pravatar.cc/40`" />
+                  </q-btn>
+                </q-avatar>
+              </div>
+            </span>
             <q-btn-group v-if="col.name == 'actions'" push>
               <q-btn
                 push
@@ -78,6 +104,12 @@
   </q-page>
 </template>
 
+<style lang="sass" scoped>
+.overlapping
+  border: 2px solid white
+  position: absolute
+</style>
+
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import clientsService from 'src/services/corporate';
@@ -109,6 +141,12 @@ export default defineComponent({
         align: 'center',
         label: 'Me chamam!',
         field: 'full_name',
+      },
+      {
+        name: 'client',
+        align: 'center',
+        label: 'Clientes',
+        field: 'client',
       },
       {
         name: 'actions',

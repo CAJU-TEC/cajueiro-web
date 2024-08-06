@@ -306,7 +306,7 @@ export default defineComponent({
       try {
         const user = await fetchUser();
         const data = await myTicketsService(
-          `?filter[collaborator_id]=${user.data.user.collaborator.id}`
+          `?filter[collaborator_id]=${user.data.user.collaborator?.id}`
         );
         ticketsInMyTickets.value = data;
       } catch (error) {

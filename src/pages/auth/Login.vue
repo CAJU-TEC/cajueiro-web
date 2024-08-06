@@ -15,7 +15,7 @@
             <p class="text-weight-bolder text-white">Cajueiro versão 1.0.0</p>
           </q-card-section>
           <q-card-section>
-            <q-form class="q-gutter-md">
+            <q-form @submit.prevent="login" class="q-gutter-md">
               <q-input
                 dark
                 standout="text-white"
@@ -27,7 +27,7 @@
                 type="email"
                 label="Email"
               >
-                <template #:prepend>
+                <template #prepend>
                   <q-icon name="email" />
                 </template>
               </q-input>
@@ -39,11 +39,18 @@
                 filled
                 clearable
                 v-model="form.password"
-                type="password"
+                :type="showPassword ? 'text' : 'password'"
                 label="Password"
               >
-                <template #:prepend>
+                <template #prepend>
                   <q-icon name="lock" />
+                </template>
+                <template #append>
+                  <q-icon
+                    :name="showPassword ? 'visibility_off' : 'visibility'"
+                    @click="togglePasswordVisibility"
+                    class="cursor-pointer"
+                  />
                 </template>
               </q-input>
             </q-form>
@@ -58,7 +65,7 @@
                   color="primary"
                   class="full-width text-white"
                   label="Entrar"
-                  @click="() => login()"
+                  @click="login"
                 />
               </div>
               <div class="col-6">
@@ -91,9 +98,10 @@ export default {
     const $q = useQuasar();
     const router = useRouter();
     const form = ref({
-      email: ref(''),
-      password: ref(''),
+      email: '',
+      password: '',
     });
+    const showPassword = ref(false);
 
     const login = async () => {
       try {
@@ -118,9 +126,16 @@ export default {
         });
       }
     };
+
+    const togglePasswordVisibility = () => {
+      showPassword.value = !showPassword.value;
+    };
+
     return {
-      login,
       form,
+      showPassword,
+      login,
+      togglePasswordVisibility,
     };
   },
 };

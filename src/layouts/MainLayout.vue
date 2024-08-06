@@ -15,7 +15,7 @@
         <q-toolbar-title> Cajueiro App </q-toolbar-title>
 
         <div>
-          <nav-bar-perfil></nav-bar-perfil>
+          <navBarPerfil></navBarPerfil>
         </div>
       </q-toolbar>
     </q-header>
