@@ -339,7 +339,7 @@ export default defineComponent({
     const getTicketsInDevelop = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=development'
+          '?include=client.corporate.image&filter[collaborator_id]=&filter[status]=development'
         );
         ticketsInDevelop.value = data;
       } catch (error) {
