@@ -4,7 +4,7 @@
       <q-tab
         :alert="
           ticketsOpenYesPriorityLocal.data?.length +
-          ticketsOpenNoPriority.length
+          ticketsOpenNoPriorityLocal.data?.length
             ? true
             : false
         "
@@ -15,7 +15,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInDevelop.length ? true : false"
+        :alert="ticketsInDevelopLocal?.data?.length ? true : false"
         name="ticketsDevelop"
         icon="mdi-ticket-account"
         label="Desenvolvimento"
@@ -23,7 +23,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInTests.length ? true : false"
+        :alert="ticketsInTestsLocal?.data?.length ? true : false"
         name="ticketsTests"
         icon="fa fa-bugs"
         label="Teste"
@@ -31,7 +31,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInBacklog.length ? true : false"
+        :alert="ticketsInBacklogLocal?.data?.length ? true : false"
         name="ticketsBacklog"
         icon="fa fa-cubes"
         label="Aguardando"
@@ -39,7 +39,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInValidation.length ? true : false"
+        :alert="ticketsInValidationLocal?.data?.length ? true : false"
         name="ticketsValidation"
         icon="fa fa-fire-extinguisher"
         label="Validação"
@@ -47,7 +47,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInPending?.length ? true : false"
+        :alert="ticketsInPendingLocal?.data?.length ? true : false"
         name="ticketsPending"
         icon="fa fa-hourglass"
         label="Pendentes"
@@ -55,7 +55,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInDone?.length ? true : false"
+        :alert="ticketsInDoneLocal?.data?.length ? true : false"
         name="ticketsDone"
         icon="mdi-check"
         label="Finalizados"
@@ -63,7 +63,7 @@
       >
       </q-tab>
       <q-tab
-        :alert="ticketsInMyTickets?.length ? true : false"
+        :alert="ticketsInMyTicketsLocal?.data?.length ? true : false"
         name="myTickets"
         icon="mdi-ticket"
         label="Meus protocolos"
@@ -229,9 +229,15 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
           </q-banner>
         </div>
         <div
@@ -249,8 +255,11 @@
         </div>
 
         <q-item-label header>OUTROS</q-item-label>
-        <template v-if="ticketsOpenNoPriority.length > 0">
-          <div v-for="ticket in ticketsOpenNoPriority" :key="ticket?.id">
+        <template v-if="ticketsOpenNoPriorityLocal.data">
+          <div
+            v-for="ticket in ticketsOpenNoPriorityLocal.data"
+            :key="ticket?.id"
+          >
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -400,10 +409,28 @@
             <q-separator />
           </div>
         </template>
-
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsOpenNoPriorityLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsOpenNoPriorityLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -414,8 +441,8 @@
         <q-toolbar-title>Protocolos em desenvolvimento</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInDevelop.length > 0">
-          <div v-for="ticket in ticketsInDevelop" :key="ticket?.id">
+        <template v-if="ticketsInDevelopLocal.data">
+          <div v-for="ticket in ticketsInDevelopLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -529,9 +556,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInDevelopLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInDevelopLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -542,8 +588,8 @@
         <q-toolbar-title>Protocolos em fase de testes</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInTests.length > 0">
-          <div v-for="ticket in ticketsInTests" :key="ticket?.id">
+        <template v-if="ticketsInTestsLocal.data">
+          <div v-for="ticket in ticketsInTestsLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -657,9 +703,29 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInTestsLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInTestsLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -670,8 +736,8 @@
         <q-toolbar-title>Protocolos aguardando (backlog)</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInBacklog.length > 0">
-          <div v-for="ticket in ticketsInBacklog" :key="ticket?.id">
+        <template v-if="ticketsInBacklogLocal.data">
+          <div v-for="ticket in ticketsInBacklogLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -785,9 +851,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInBacklogLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInBacklogLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -798,8 +883,11 @@
         <q-toolbar-title>Aguardando validação (cliente)</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInValidation.length > 0">
-          <div v-for="ticket in ticketsInValidation" :key="ticket?.id">
+        <template v-if="ticketsInValidationLocal.data">
+          <div
+            v-for="ticket in ticketsInValidationLocal.data"
+            :key="ticket?.id"
+          >
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -913,9 +1001,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInValidationLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInValidationLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -926,8 +1033,8 @@
         <q-toolbar-title>Protocolos com pendências</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInPending.length > 0">
-          <div v-for="ticket in ticketsInPending" :key="ticket?.id">
+        <template v-if="ticketsInPendingLocal.data">
+          <div v-for="ticket in ticketsInPendingLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -1041,9 +1148,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInPendingLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInPendingLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -1054,8 +1180,8 @@
         <q-toolbar-title>Protocolos finalizados</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInDone.length > 0">
-          <div v-for="ticket in ticketsInDone" :key="ticket?.id">
+        <template v-if="ticketsInDoneLocal.data">
+          <div v-for="ticket in ticketsInDoneLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -1160,9 +1286,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInDoneLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInDoneLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -1173,8 +1318,8 @@
         <q-toolbar-title>Meus Protocolos</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsInMyTickets.length > 0">
-          <div v-for="ticket in ticketsInMyTickets" :key="ticket?.id">
+        <template v-if="ticketsInMyTicketsLocal.data">
+          <div v-for="ticket in ticketsInMyTicketsLocal.data" :key="ticket?.id">
             <q-item
               class="q-ma-none"
               :class="{ 'bg-green-1': ticket?.dufy === 'yes' }"
@@ -1279,9 +1424,28 @@
             <q-separator />
           </div>
         </template>
-        <div v-else class="q-pa-md q-gutter-sm">
-          <q-banner inline-actions rounded class="bg-orange text-white">
-            Protocolos sendo carregados.
+        <div v-else class="q-pa-xs q-gutter-sm text-center">
+          <q-banner inline-actions rounded class="bg-blue-2 text-blue q-pt-lg">
+            <div>
+              <q-spinner-oval color="primary" size="2em" />
+              <p>Aguarde enquanto carrega os dados.</p>
+              <q-tooltip :offset="[0, 8]"
+                >Aguarde enquanto carrega os dados.</q-tooltip
+              >
+            </div>
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsInMyTicketsLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsInDoneLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
       </q-list>
@@ -1297,8 +1461,6 @@ import ticketsService from 'src/services/tickets';
 import types from 'src/support/tickets/types';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import _ from 'lodash';
-
-const tab = ref('ticketsOpen');
 
 export default defineComponent({
   emits: [
@@ -1359,11 +1521,76 @@ export default defineComponent({
     const { myTickets } = ticketsService();
 
     const ticketsOpenYesPriorityLocal = ref(props.ticketsOpenYesPriority);
+    const ticketsOpenNoPriorityLocal = ref(props.ticketsOpenNoPriority);
+    const ticketsInDevelopLocal = ref(props.ticketsInDevelop);
+    const ticketsInTestsLocal = ref(props.ticketsInTests);
+    const ticketsInBacklogLocal = ref(props.ticketsInBacklog);
+    const ticketsInValidationLocal = ref(props.ticketsInValidation);
+    const ticketsInPendingLocal = ref(props.ticketsInPending);
+    const ticketsInDoneLocal = ref(props.ticketsInDone);
+    const ticketsInMyTicketsLocal = ref(props.ticketsInMyTickets);
 
+    // ticketsOpenYesPriority
     watch(
       () => props.ticketsOpenYesPriority,
       (newVal) => {
         ticketsOpenYesPriorityLocal.value = newVal;
+      }
+    );
+    // ticketsOpenNoPriority
+    watch(
+      () => props.ticketsOpenNoPriority,
+      (newVal) => {
+        ticketsOpenNoPriorityLocal.value = newVal;
+      }
+    );
+    // ticketsInDevelop
+    watch(
+      () => props.ticketsInDevelop,
+      (newVal) => {
+        ticketsInDevelopLocal.value = newVal;
+      }
+    );
+    // ticketsInTests
+    watch(
+      () => props.ticketsInTests,
+      (newVal) => {
+        ticketsInTestsLocal.value = newVal;
+      }
+    );
+    // ticketsInBacklog
+    watch(
+      () => props.ticketsInBacklog,
+      (newVal) => {
+        ticketsInBacklogLocal.value = newVal;
+      }
+    );
+    // ticketsInBacklog
+    watch(
+      () => props.ticketsInValidation,
+      (newVal) => {
+        ticketsInValidationLocal.value = newVal;
+      }
+    );
+    // ticketsInBacklog
+    watch(
+      () => props.ticketsInPending,
+      (newVal) => {
+        ticketsInPendingLocal.value = newVal;
+      }
+    );
+    // ticketsInBacklog
+    watch(
+      () => props.ticketsInDone,
+      (newVal) => {
+        ticketsInDoneLocal.value = newVal;
+      }
+    );
+    // ticketsInMyTickets
+    watch(
+      () => props.ticketsInMyTickets,
+      (newVal) => {
+        ticketsInMyTicketsLocal.value = newVal;
       }
     );
 
@@ -1385,6 +1612,14 @@ export default defineComponent({
     return {
       addTickets,
       ticketsOpenYesPriorityLocal,
+      ticketsOpenNoPriorityLocal,
+      ticketsInDevelopLocal,
+      ticketsInTestsLocal,
+      ticketsInBacklogLocal,
+      ticketsInValidationLocal,
+      ticketsInPendingLocal,
+      ticketsInDoneLocal,
+      ticketsInMyTicketsLocal,
       allowTickets,
       status,
       priority,

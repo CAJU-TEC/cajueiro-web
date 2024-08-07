@@ -319,7 +319,7 @@ export default defineComponent({
         const data = await myTicketsService(
           '?include=collaborator,impact,user.collaborator&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no'
         );
-        openNoPriority.value = data.data;
+        openNoPriority.value = data;
       } catch (error) {
         console.log(error);
       }
