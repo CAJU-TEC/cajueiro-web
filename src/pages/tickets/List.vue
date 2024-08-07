@@ -317,7 +317,7 @@ export default defineComponent({
     const getTicketsOpenNoPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no'
         );
         openNoPriority.value = data;
       } catch (error) {
@@ -328,7 +328,7 @@ export default defineComponent({
     const getTicketsOpenYesPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes'
         );
         openYesPriority.value = data;
       } catch (error) {
