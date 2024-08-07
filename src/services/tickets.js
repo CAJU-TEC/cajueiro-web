@@ -50,8 +50,8 @@ export default function ticketsService() {
     try {
       const url = `${endpoint}`;
       // const { data } = await api.get(`${url}`);
-      const { data } = await api.get(`${url}?filter[code]=${id}`);
-      return data;
+      const { data } = await api.get(`${url}?include=collaborator,impact,user.collaborator,client.corporate.image&filter[code]=${id}`);
+      return data.data;
     } catch (error) {
       throw (new Error(error.message));
     }

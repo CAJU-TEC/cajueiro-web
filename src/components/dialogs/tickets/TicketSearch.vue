@@ -228,12 +228,12 @@
                         </p>
                       </div>
                     </div>
-                    <div class="row" v-if="(ticket?.comments).length > 0">
+                    <div class="row" v-if="ticket?.comments?.length > 0">
                       <div class="col">
                         <span class="text-caption">Histórico</span>
                         <p
                           class="text-caption"
-                          v-html="getFirst(ticket?.comments).description"
+                          v-html="getFirstticket?.comments?.description"
                         ></p>
                       </div>
                     </div>

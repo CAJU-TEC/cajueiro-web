@@ -35,7 +35,7 @@
                   <div
                     class="row text-grey-8 q-gutter-xs"
                     v-for="ticket in ticketsInDevelop"
-                    :key="ticket.id"
+                    :key="ticket?.id"
                   >
                     <q-chip size="sm" v-if="ticket?.collaborator">
                       <q-avatar v-if="ticket?.collaborator?.image">
