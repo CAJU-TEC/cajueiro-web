@@ -306,7 +306,7 @@ export default defineComponent({
       try {
         const user = await fetchUser();
         const data = await myTicketsService(
-          `?filter[collaborator_id]=${user.data.user.collaborator?.id}`
+          `?include=collaborator.image&filter[collaborator_id]=${user.data.user.collaborator?.id}`
         );
         ticketsInMyTickets.value = data;
       } catch (error) {
@@ -339,7 +339,7 @@ export default defineComponent({
     const getTicketsInDevelop = async () => {
       try {
         const data = await myTicketsService(
-          '?include=client.corporate.image&filter[collaborator_id]=&filter[status]=development'
+          '?include=collaborator.image&include=collaborator.image&filter[collaborator_id]=&filter[status]=development'
         );
         ticketsInDevelop.value = data;
       } catch (error) {
@@ -350,7 +350,7 @@ export default defineComponent({
     const getTicketsInTests = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=test'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test'
         );
         ticketsInTests.value = data;
       } catch (error) {
@@ -361,7 +361,7 @@ export default defineComponent({
     const getTicketsInBacklog = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=backlog'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=backlog'
         );
         ticketsInBacklog.value = data;
       } catch (error) {
@@ -372,7 +372,7 @@ export default defineComponent({
     const getTicketsInValidation = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=validation'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=validation'
         );
         ticketsInValidation.value = data;
       } catch (error) {
@@ -383,7 +383,7 @@ export default defineComponent({
     const getTicketsInPending = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=pending'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=pending'
         );
         ticketsInPending.value = data;
       } catch (error) {
@@ -394,7 +394,7 @@ export default defineComponent({
     const getTicketsInDone = async () => {
       try {
         const data = await myTicketsService(
-          '?filter[collaborator_id]=&filter[status]=done'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=done'
         );
         ticketsInDone.value = data;
       } catch (error) {
