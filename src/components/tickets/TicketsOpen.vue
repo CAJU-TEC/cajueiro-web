@@ -3,7 +3,8 @@
     <q-tabs v-model="tab" class="bg-yellow">
       <q-tab
         :alert="
-          ticketsOpenYesPriority.length + ticketsOpenNoPriority.length
+          ticketsOpenYesPriorityLocal.data?.length +
+          ticketsOpenNoPriority.length
             ? true
             : false
         "
@@ -76,9 +77,12 @@
         <q-toolbar-title>Protocolos abertos</q-toolbar-title>
       </q-toolbar>
       <q-list bordered>
-        <template v-if="ticketsOpenYesPriority.length > 0">
-          <q-item-label header>PRIORIDADES</q-item-label>
-          <div v-for="ticket in ticketsOpenYesPriority" :key="ticket?.id">
+        <q-item-label header>PRIORIDADES</q-item-label>
+        <template v-if="ticketsOpenYesPriority.data">
+          <div
+            v-for="ticket in ticketsOpenYesPriorityLocal.data"
+            :key="ticket?.id"
+          >
             <q-item class="q-ma-none bg-red-1" v-ripple>
               <q-item-section avatar>
                 <template v-if="ticket?.client?.corporate?.image">
@@ -227,7 +231,20 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
+          </q-banner>
+        </div>
+        <div
+          class="q-pa-md q-gutter-sm"
+          v-if="ticketsOpenYesPriorityLocal.next_page_url"
+        >
+          <q-banner
+            inline-actions
+            rounded
+            class="bg-grey-2 text-grey text-center"
+            @click="() => addTickets('ticketsOpenYesPriorityLocal')"
+          >
+            Veja mais protocolos.
           </q-banner>
         </div>
 
@@ -386,7 +403,7 @@
 
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -514,7 +531,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -642,7 +659,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -770,7 +787,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -898,7 +915,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -1026,7 +1043,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -1145,7 +1162,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -1264,7 +1281,7 @@
         </template>
         <div v-else class="q-pa-md q-gutter-sm">
           <q-banner inline-actions rounded class="bg-orange text-white">
-            Não existem protocolos com esse status no momento.
+            Protocolos sendo carregados.
           </q-banner>
         </div>
       </q-list>
@@ -1273,9 +1290,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
+import ticketsService from 'src/services/tickets';
 import types from 'src/support/tickets/types';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import _ from 'lodash';
@@ -1284,6 +1302,7 @@ const tab = ref('ticketsOpen');
 
 export default defineComponent({
   emits: [
+    'handleListClient',
     'addUserTicker',
     'updateTicketsOpen',
     'updateTicketsDevelop',
@@ -1332,13 +1351,40 @@ export default defineComponent({
       default: null,
     },
   },
-  setup() {
+  setup(props) {
     const allowTickets = (roles) => {
       const statusRole = ['backlog', 'todo', 'analyze'];
       return _.includes(statusRole, roles);
     };
+    const { myTickets } = ticketsService();
+
+    const ticketsOpenYesPriorityLocal = ref(props.ticketsOpenYesPriority);
+
+    watch(
+      () => props.ticketsOpenYesPriority,
+      (newVal) => {
+        ticketsOpenYesPriorityLocal.value = newVal;
+      }
+    );
+
+    const addTickets = async (model) => {
+      try {
+        const url = eval(`${model}.value.next_page_url`);
+        const queryString = _.split(url, '?')[1];
+        const data = await myTickets(`?${queryString}`);
+
+        eval(`${model}.value.data = [...${model}.value.data, ...data.data]`);
+        eval(`${model}.value.next_page_url = data.next_page_url`);
+
+        console.log(eval(model).value);
+      } catch (error) {
+        console.log(error);
+      }
+    };
 
     return {
+      addTickets,
+      ticketsOpenYesPriorityLocal,
       allowTickets,
       status,
       priority,

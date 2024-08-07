@@ -86,6 +86,8 @@ module.exports = {
     'prefer-promise-reject-errors': 'off',
     'vue/no-v-model-argument': 'off',
 
+    'no-eval': 'off',
+
     // allow debugger during development only
     'no-debugger': process.env.NODE_ENV === 'production' ? 'error' : 'off'
   }
