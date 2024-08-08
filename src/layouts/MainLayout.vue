@@ -64,7 +64,7 @@
 <script>
 import { defineComponent, onMounted, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
-import NavBarPerfil from '../components/buttons/users/NavBarPerfil.vue';
+import NavBarPerfil from 'components/buttons/users/NavBarPerfil.vue';
 import usersService from 'src/services/users';
 import { useRouter, useRoute } from 'vue-router';
 

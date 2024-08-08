@@ -241,16 +241,16 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsOpenYesPriorityLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
+            class="bg-grey-2 text-grey text-center clickable-banner"
             @click="() => addTickets('ticketsOpenYesPriorityLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
 
@@ -421,16 +421,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsOpenNoPriorityLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsOpenNoPriorityLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsOpenNoPriorityLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -568,16 +567,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInDevelopLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInDevelopLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDevelopLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -716,16 +714,15 @@
         </div>
 
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInTestsLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInTestsLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInTestsLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -863,16 +860,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInBacklogLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInBacklogLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInBacklogLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -1013,16 +1009,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInValidationLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInValidationLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInValidationLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -1160,16 +1155,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInPendingLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInPendingLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInPendingLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -1298,16 +1292,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInDoneLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInDoneLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDoneLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -1436,16 +1429,15 @@
           </q-banner>
         </div>
         <div
-          class="q-pa-md q-gutter-sm"
+          class="q-pb-md q-gutter-sm"
           v-if="ticketsInMyTicketsLocal.next_page_url"
         >
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center"
-            @click="() => addTickets('ticketsInDoneLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDoneLocal')"
           >
-            Veja mais protocolos.
+            Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
       </q-list>
@@ -1477,39 +1469,39 @@ export default defineComponent({
   ],
   props: {
     ticketsOpenNoPriority: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsOpenYesPriority: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInDevelop: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInTests: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInBacklog: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInValidation: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInPending: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInDone: {
-      type: Array,
+      type: Object,
       default: null,
     },
     ticketsInMyTickets: {
-      type: Array,
+      type: Object,
       default: null,
     },
   },
@@ -1649,5 +1641,9 @@ export default defineComponent({
 
 .piscar {
   animation: animate 1.5s linear infinite;
+}
+
+.clickable-banner {
+  cursor: pointer;
 }
 </style>
