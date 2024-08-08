@@ -78,7 +78,7 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import checkListsService from 'src/services/checkLists';
+import checkListsService from 'src/services/checkList';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
