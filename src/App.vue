@@ -19,11 +19,8 @@ export default defineComponent({
       document.addEventListener('keydown', keyListener);
     });
 
-    const keysPressed = {};
     const keyListener = (event) => {
-      keysPressed[event.key] = event.type === 'keydown';
-
-      if (keysPressed.Shift && keysPressed.k) {
+      if (event.shiftKey && event.key === 'k') {
         dialogTicketSearch.value = true;
       }
     };
