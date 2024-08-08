@@ -59,6 +59,7 @@ import { onMounted, ref } from 'vue';
 import TicketsNotifications from 'src/components/dialogs/notifications/TicketsNotifications.vue';
 
 export default {
+  name: 'NavbarPerfil',
   setup() {
     const router = useRouter();
     const { fetchUser } = usersService();
