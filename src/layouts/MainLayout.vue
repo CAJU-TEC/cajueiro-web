@@ -36,6 +36,7 @@
             :key="link.title"
             :permissions="link.route.permissions"
             v-bind="link"
+            :submenus="link.submenu"
           />
         </q-list>
       </q-scroll-area>
@@ -109,6 +110,32 @@ export default defineComponent({
           name: 'tickets.list',
           permissions: ['tickets.*', 'tickets.list'],
         },
+        submenu: [
+          {
+            title: 'Ver Todos',
+            icon: 'fa-solid fa-angle-right',
+            route: {
+              name: 'tickets.list',
+              permissions: ['tickets.*', 'tickets.list'],
+            },
+          },
+          {
+            title: 'Listas de Protocolos',
+            icon: 'fa-solid fa-angle-right',
+            route: {
+              name: 'tickets.check-list',
+              permissions: ['tickets.*', 'tickets.list'],
+            },
+          },
+          {
+            title: 'Relatórios',
+            icon: 'fa-solid fa-angle-right',
+            route: {
+              name: 'tickets.check-list',
+              permissions: ['tickets.*', 'tickets.list'],
+            },
+          },
+        ],
       },
       {
         title: 'Colaboradores',

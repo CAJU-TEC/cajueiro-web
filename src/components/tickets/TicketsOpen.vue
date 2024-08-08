@@ -427,7 +427,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsOpenNoPriorityLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsOpenNoPriorityLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -578,6 +579,7 @@
             Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
+        " @click="()
       </q-list>
     </template>
 
@@ -720,7 +722,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInTestsLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInTestsLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -866,7 +869,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInBacklogLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInBacklogLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1015,7 +1019,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInValidationLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInValidationLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1161,7 +1166,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInPendingLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInPendingLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1298,7 +1304,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDoneLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInDoneLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1435,7 +1442,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDoneLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInDoneLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1455,6 +1463,7 @@ import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import _ from 'lodash';
 
 export default defineComponent({
+  name: 'TicketsOpen',
   emits: [
     'handleListClient',
     'addUserTicker',

@@ -22,4 +22,11 @@ export default [
     component: () => import('src/pages/tickets/DetailsView.vue'),
     beforeEnter: [can]
   },
+  {
+    path: 'tickets/check-list',
+    name: 'tickets.check-list',
+    meta: {permissions: ['tickets.details', 'tickets.*']},
+    component: () => import('src/pages/tickets/CheckList.vue'),
+    beforeEnter: [can]
+  },
 ];
