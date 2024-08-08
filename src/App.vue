@@ -20,7 +20,8 @@ export default defineComponent({
     });
 
     const keyListener = (event) => {
-      if (event.shiftKey && event.key === 'k') {
+      console.log(event);
+      if (event.shiftLeftKey && event.key === 'k') {
         dialogTicketSearch.value = true;
       }
     };
