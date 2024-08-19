@@ -1603,8 +1603,6 @@ export default defineComponent({
 
         eval(`${model}.value.data = [...${model}.value.data, ...data.data]`);
         eval(`${model}.value.next_page_url = data.next_page_url`);
-
-        console.log(eval(model).value);
       } catch (error) {
         console.log(error);
       }

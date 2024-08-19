@@ -24,14 +24,10 @@
             :key="col.name"
             :props="props"
           >
-            <q-badge
-              :style="`background:${props.row.color}`"
-              v-if="col.name == 'description'"
-            >
-              {{ col.value }}
-            </q-badge>
-            <span v-if="col.name == 'value'">{{ col.value }}</span>
-            <span v-if="col.name == 'time'">{{ col.value }}</span>
+            <span v-if="col.name == 'description'">{{ col.value }}</span>
+            <span v-if="col.name == 'status'">{{ col.value }}</span>
+            <span v-if="col.name == 'started'">{{ col.value }}</span>
+            <span v-if="col.name == 'delivered'">{{ col.value }}</span>
 
             <q-btn-group v-if="col.name == 'actions'" push size="˜xs">
               <q-btn
@@ -39,14 +35,14 @@
                 size="xs"
                 icon="edit"
                 color="blue"
-                @click="handleEditClient(props.row.id)"
+                @click="handleEditCheckList(props.row.id)"
               />
               <q-btn
                 push
                 size="xs"
                 icon="delete_outline"
                 color="red"
-                @click="handleDeleteClient(props.row.id)"
+                @click="handleDeleteCheckList(props.row.id)"
               />
             </q-btn-group>
           </q-td>
@@ -63,7 +59,7 @@
         </div>
       </template>
       <template #top>
-        <span class="text-h4">Planos de trabalho</span>
+        <span class="text-h4">Lista de protocolos</span>
         <q-space />
         <q-btn color="primary" push :to="{ name: 'checkLists.form' }">
           <div class="row items-center no-wrap">
@@ -78,7 +74,7 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import checkListsService from 'src/services/checkList';
+import checkListsService from 'src/services/checkLists';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
@@ -103,16 +99,22 @@ export default defineComponent({
         field: 'description',
       },
       {
-        name: 'value',
+        name: 'status',
         align: 'center',
-        label: 'Valor R$',
-        field: 'value',
+        label: 'Situação',
+        field: 'status',
       },
       {
-        name: 'time',
+        name: 'started',
         align: 'center',
-        label: 'Tempo/Período',
-        field: 'time',
+        label: 'Iniciado',
+        field: 'started',
+      },
+      {
+        name: 'delivered',
+        align: 'center',
+        label: 'Previsão',
+        field: 'delivered',
       },
       {
         name: 'actions',
@@ -126,11 +128,11 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      getClients();
+      getCheckList();
       loading.value = true;
     });
 
-    const getClients = async () => {
+    const getCheckList = async () => {
       try {
         const data = await list();
         checkLists.value = data;
@@ -145,7 +147,7 @@ export default defineComponent({
       }
     };
 
-    const handleDeleteClient = async (id) => {
+    const handleDeleteCheckList = async (id) => {
       try {
         $q.dialog({
           title: 'Remover',
@@ -159,7 +161,7 @@ export default defineComponent({
             icon: 'check',
             color: 'positive',
           });
-          await getClients();
+          await getCheckList();
         });
       } catch (error) {
         $q.notify({
@@ -170,15 +172,15 @@ export default defineComponent({
       }
     };
 
-    const handleEditClient = async (id) => {
+    const handleEditCheckList = async (id) => {
       router.push({ name: 'checkLists.form', params: { id } });
     };
 
     return {
       checkLists,
       columns,
-      handleDeleteClient,
-      handleEditClient,
+      handleDeleteCheckList,
+      handleEditCheckList,
       pagination,
       loading,
     };

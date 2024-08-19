@@ -123,7 +123,7 @@ export default defineComponent({
             title: 'Listas de Protocolos',
             icon: 'fa-solid fa-angle-right',
             route: {
-              name: 'tickets.check-list',
+              name: 'checkLists.list',
               permissions: ['tickets.*', 'tickets.list'],
             },
           },

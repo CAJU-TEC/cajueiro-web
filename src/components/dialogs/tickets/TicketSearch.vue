@@ -262,6 +262,7 @@ const state = reactive({
 const tickets = ref([]);
 
 export default {
+  name: 'TicketSearch',
   props: {
     modelValue: {
       type: Boolean,

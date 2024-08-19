@@ -57,6 +57,17 @@ export default function ticketsService() {
     }
   };
 
+  const findStatus = async (params) => {
+    try {
+      const url = `${endpoint}`;
+      // const { data } = await api.get(`${url}`);
+      const payload = await api.post(`${url}/ticketsFindStatus`, {params});
+      return payload;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const report = async (id) => {
     try {
       const response = await api.get(`${endpoint}/kanban/${id}`, { responseType: 'arraybuffer' })
@@ -78,6 +89,7 @@ export default function ticketsService() {
     post,
     update,
     remove,
-    notifications
+    notifications,
+    findStatus
   };
 }
