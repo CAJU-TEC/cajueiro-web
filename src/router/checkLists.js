@@ -15,13 +15,13 @@ export default [
     component: () => import('src/pages/checkLists/FormCheckList.vue'),
     // beforeEnter: [can]
   },
-  {
-    path: 'checkLists/details/:id?',
-    name: 'checkLists.details',
-    meta: {permissions: ['checkLists.details', 'checkLists.*']},
-    component: () => import('src/pages/checkLists/List.vue'),
-    // beforeEnter: [can]
-  },
+  // {
+  //   path: 'checkLists/details/:id?',
+  //   name: 'checkLists.details',
+  //   meta: {permissions: ['checkLists.details', 'checkLists.*']},
+  //   component: () => import('src/pages/checkLists/List.vue'),
+  //   // beforeEnter: [can]
+  // },
   {
     path: 'checkLists/check-list',
     name: 'checkLists.check-list',
