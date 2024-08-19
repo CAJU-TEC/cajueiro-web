@@ -19,14 +19,14 @@ export default [
     path: 'checkLists/details/:id?',
     name: 'checkLists.details',
     meta: {permissions: ['checkLists.details', 'checkLists.*']},
-    component: () => import('src/pages/checkLists/DetailsView.vue'),
+    component: () => import('src/pages/checkLists/List.vue'),
     // beforeEnter: [can]
   },
   {
     path: 'checkLists/check-list',
     name: 'checkLists.check-list',
     meta: {permissions: ['checkLists.details', 'checkLists.*']},
-    component: () => import('src/pages/checkLists/CheckList.vue'),
+    component: () => import('src/pages/checkLists/FormCheckList.vue'),
     // beforeEnter: [can]
   },
 ];
