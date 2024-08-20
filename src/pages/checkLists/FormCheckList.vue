@@ -66,10 +66,11 @@
             icon="create_new_folder"
             :done="step > 3"
           >
-            <q-select
-              v-model="model"
-              :options="['Publico', 'Privado']"
-              label="Standard"
+            <SelectSearch
+              label="Escolha colaboradores para os ticktes"
+              multiple
+              :options-value="optionsUsers"
+              @update:modelValue="updateOptionsUsersValue"
             />
 
             <q-stepper-navigation>
@@ -141,6 +142,7 @@
           </q-step>
         </q-stepper>
       </div>
+      {{ form }}
 
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
@@ -168,6 +170,7 @@
 import { defineComponent, ref, onMounted, watch } from 'vue';
 import checkListsService from 'src/services/checkLists';
 import corporateService from 'src/services/corporate';
+import usersService from 'src/services/users';
 import ticketsService from 'src/services/tickets';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
@@ -184,6 +187,7 @@ export default defineComponent({
     const { post, getById, update } = checkListsService();
     const { findStatus } = ticketsService();
     const { list: listCorporate } = corporateService();
+    const { list: listUsers } = usersService();
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
@@ -191,15 +195,19 @@ export default defineComponent({
 
     const optionsCorporates = ref([{}]);
     const optionsStatus = ref([{}]);
+    const optionsUsers = ref([{}]);
     const selectValue = ref({});
     const selectStatusValue = ref({});
+    const selectUsersValue = ref({});
     const ticketsBinder = ref([]);
     const listTicketsFinds = ref({});
     const form = ref({
       description: '',
-      status: '',
       started: null,
       delivered: null,
+      collaborators: [],
+      tickets: [],
+      status: 'open',
     });
     const date = ref({ from: '', to: '' });
 
@@ -221,6 +229,9 @@ export default defineComponent({
         // data.value.splice(index, 0);
         const [item] = data.value.splice(index, 1);
         add.value.push(item);
+        form.value.tickets = _.map(ticketsBinder.value, (item) => {
+          return item.id;
+        });
       }
     };
 
@@ -255,6 +266,13 @@ export default defineComponent({
       selectStatusValue.value = value;
     };
 
+    const updateOptionsUsersValue = (value) => {
+      selectUsersValue.value = value;
+      form.value.collaborators = _.map(selectUsersValue.value, (item) => {
+        return item.id;
+      });
+    };
+
     const updateListTicketsFindsValue = (value) => {
       transferItem(value, listTicketsFinds, ticketsBinder);
     };
@@ -266,10 +284,28 @@ export default defineComponent({
     onMounted(() => {
       getCorporates();
       getStatus();
+      getUsers();
       if (route.params.id) {
         getCheckList(route.params.id);
       }
     });
+
+    const getUsers = async () => {
+      try {
+        const data = await listUsers();
+
+        optionsUsers.value = _.map(data, (item) => {
+          return { id: item.id, label: item.name };
+        });
+      } catch (error) {
+        console.error(error);
+        $q.notify({
+          message: 'Ops! Ocorreu algum erro.',
+          icon: 'check',
+          color: 'warning',
+        });
+      }
+    };
 
     const getTicketsFindStatus = async (data) => {
       try {
@@ -359,8 +395,10 @@ export default defineComponent({
       status,
       getStatus,
       optionsStatus,
+      optionsUsers,
       selectStatusValue,
       updateOptionsStatusValue,
+      updateOptionsUsersValue,
       updateListTicketsFindsValue,
       updateListTicketsBinderFindsValue,
       step,
