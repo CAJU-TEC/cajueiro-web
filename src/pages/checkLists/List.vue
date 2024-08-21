@@ -3,7 +3,7 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Planos de trabalho" />
+        <q-breadcrumbs-el label="Ficheiros de protocolos" />
       </q-breadcrumbs>
     </div>
     <q-table
@@ -25,18 +25,15 @@
             :props="props"
           >
             <span v-if="col.name == 'description'">{{ col.value }}</span>
+            <span v-if="col.name == 'collaborators_count'">{{
+              col.value
+            }}</span>
+            <span v-if="col.name == 'tickets_count'">{{ col.value }}</span>
             <span v-if="col.name == 'status'">{{ col.value }}</span>
             <span v-if="col.name == 'started'">{{ col.value }}</span>
             <span v-if="col.name == 'delivered'">{{ col.value }}</span>
 
             <q-btn-group v-if="col.name == 'actions'" push size="˜xs">
-              <q-btn
-                push
-                size="xs"
-                icon="edit"
-                color="blue"
-                @click="handleEditCheckList(props.row.id)"
-              />
               <q-btn
                 push
                 size="xs"
@@ -59,7 +56,7 @@
         </div>
       </template>
       <template #top>
-        <span class="text-h4">Lista de protocolos</span>
+        <span class="text-h4">Lista dos ficheiros de protocolos</span>
         <q-space />
         <q-btn color="primary" push :to="{ name: 'checkLists.form' }">
           <div class="row items-center no-wrap">
@@ -97,6 +94,18 @@ export default defineComponent({
         align: 'center',
         label: 'Descrição',
         field: 'description',
+      },
+      {
+        name: 'collaborators_count',
+        align: 'center',
+        label: 'Qnt Colaboradores',
+        field: 'collaborators_count',
+      },
+      {
+        name: 'tickets_count',
+        align: 'center',
+        label: 'Qnt Protocolos',
+        field: 'tickets_count',
       },
       {
         name: 'status',

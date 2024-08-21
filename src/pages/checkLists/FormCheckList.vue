@@ -69,7 +69,7 @@
             <SelectSearch
               label="Escolha colaboradores para os ticktes"
               multiple
-              :options-value="optionsUsers"
+              :options-value="optionsCollaborators"
               @update:modelValue="updateOptionsUsersValue"
             />
 
@@ -142,7 +142,6 @@
           </q-step>
         </q-stepper>
       </div>
-      {{ form }}
 
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
@@ -178,6 +177,7 @@ import SelectSearch from 'src/components/select-search/AutoComplete.vue';
 import ListTicketsFindsComponent from 'src/components/tickets/ListTicketsFinds.vue';
 import status from 'src/support/tickets/status';
 import _ from 'lodash';
+import collaboratorsService from 'src/services/collaborators';
 // import tickets from 'src/router/tickets';
 
 export default defineComponent({
@@ -187,7 +187,7 @@ export default defineComponent({
     const { post, getById, update } = checkListsService();
     const { findStatus } = ticketsService();
     const { list: listCorporate } = corporateService();
-    const { list: listUsers } = usersService();
+    const { list: listCollaborators } = collaboratorsService();
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
@@ -195,12 +195,12 @@ export default defineComponent({
 
     const optionsCorporates = ref([{}]);
     const optionsStatus = ref([{}]);
-    const optionsUsers = ref([{}]);
+    const optionsCollaborators = ref([{}]);
     const selectValue = ref({});
     const selectStatusValue = ref({});
     const selectUsersValue = ref({});
     const ticketsBinder = ref([]);
-    const listTicketsFinds = ref({});
+    const listTicketsFinds = ref([]);
     const form = ref({
       description: '',
       started: null,
@@ -284,18 +284,18 @@ export default defineComponent({
     onMounted(() => {
       getCorporates();
       getStatus();
-      getUsers();
+      getCollaborators();
       if (route.params.id) {
         getCheckList(route.params.id);
       }
     });
 
-    const getUsers = async () => {
+    const getCollaborators = async () => {
       try {
-        const data = await listUsers();
+        const data = await listCollaborators();
 
-        optionsUsers.value = _.map(data, (item) => {
-          return { id: item.id, label: item.name };
+        optionsCollaborators.value = _.map(data, (item) => {
+          return { id: item.id, label: item.full_name };
         });
       } catch (error) {
         console.error(error);
@@ -395,7 +395,7 @@ export default defineComponent({
       status,
       getStatus,
       optionsStatus,
-      optionsUsers,
+      optionsCollaborators,
       selectStatusValue,
       updateOptionsStatusValue,
       updateOptionsUsersValue,
