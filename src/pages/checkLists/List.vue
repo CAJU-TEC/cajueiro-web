@@ -39,6 +39,13 @@
                 size="xs"
                 icon="delete_outline"
                 color="red"
+                @click="handleCheckListReport(props.row.id)"
+              />
+              <q-btn
+                push
+                size="xs"
+                icon="delete_outline"
+                color="red"
                 @click="handleDeleteCheckList(props.row.id)"
               />
             </q-btn-group>
@@ -66,6 +73,11 @@
         </q-btn>
       </template>
     </q-table>
+    <TicketReport
+      :dialog="dialog"
+      :report-pdf="reportPdf"
+      @receive-event="receiveEvent"
+    ></TicketReport>
   </q-page>
 </template>
 
@@ -74,12 +86,14 @@ import { defineComponent, ref, onMounted } from 'vue';
 import checkListsService from 'src/services/checkLists';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
+import TicketReport from 'src/components/dialogs/checklists/CheckListReport.vue';
 
 export default defineComponent({
   name: 'ListPage',
+  components: { TicketReport },
   setup() {
     const checkLists = ref([]);
-    const { list, remove } = checkListsService();
+    const { list, remove, report } = checkListsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -87,6 +101,16 @@ export default defineComponent({
       rowsPerPage: 15,
     });
     const loading = ref();
+    const dialog = ref(false);
+    const receiveEvent = (event) => {
+      dialog.value = event;
+    };
+    const reportPdf = ref('');
+    const handleCheckListReport = async (id) => {
+      dialog.value = true;
+      reportPdf.value = null;
+      reportPdf.value = await report(id);
+    };
 
     const columns = [
       {
@@ -192,6 +216,10 @@ export default defineComponent({
       handleEditCheckList,
       pagination,
       loading,
+      dialog,
+      receiveEvent,
+      reportPdf,
+      handleCheckListReport,
     };
   },
 });
