@@ -34,7 +34,7 @@
                 <div v-if="ticketsInDevelop">
                   <div
                     class="row text-grey-8 q-gutter-xs"
-                    v-for="ticket in ticketsInDevelop"
+                    v-for="ticket in ticketsInDevelop.data"
                     :key="ticket?.id"
                   >
                     <q-chip size="sm" v-if="ticket?.collaborator">
@@ -254,7 +254,7 @@ export default defineComponent({
     const getTicketsInDevelop = async () => {
       try {
         const data = await myTickets(
-          '?filter[collaborator_id]=&filter[status]=development'
+          '?include=collaborator.image,impact,user.collaborator,client.corporate.image,&filter[collaborator_id]=&filter[status]=development'
         );
         ticketsInDevelop.value = data;
       } catch (error) {

@@ -571,7 +571,7 @@ export default defineComponent({
       } catch (error) {
         $q.notify({
           icon: 'block',
-          message: 'Ops! Ocorreu um erro ao salvar commentários.',
+          message: 'Ops! Ocorreu um erro ao salvar comentários.',
           caption: error.message,
           color: 'negative',
         });
