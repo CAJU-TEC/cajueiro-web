@@ -29,7 +29,16 @@
               col.value
             }}</span>
             <span v-if="col.name == 'tickets_count'">{{ col.value }}</span>
-            <span v-if="col.name == 'status'">{{ col.value }}</span>
+            <span v-if="col.name == 'status'">
+              <q-chip
+                square
+                :color="col.value.color"
+                text-color="white"
+                icon-right="star"
+              >
+                {{ col.value.description }}
+              </q-chip>
+            </span>
             <span v-if="col.name == 'started'">{{ col.value }}</span>
             <span v-if="col.name == 'delivered'">{{ col.value }}</span>
 
@@ -37,8 +46,8 @@
               <q-btn
                 push
                 size="xs"
-                icon="delete_outline"
-                color="red"
+                icon="picture_as_pdf"
+                color="blue"
                 @click="handleCheckListReport(props.row.id)"
               />
               <q-btn
