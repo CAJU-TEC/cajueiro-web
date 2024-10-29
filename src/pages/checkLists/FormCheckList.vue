@@ -375,6 +375,7 @@ export default defineComponent({
         });
         router.push({ name: 'checkLists.list' });
       } catch (error) {
+        console.log(error);
         $q.notify({
           icon: 'block',
           message: 'Ops! Ocorreu um erro.',
