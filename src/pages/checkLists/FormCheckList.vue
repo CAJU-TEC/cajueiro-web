@@ -36,7 +36,12 @@
             />
 
             <q-stepper-navigation>
-              <q-btn @click="step = 2" color="primary" label="Próximo" />
+              <q-btn
+                @click="step = 2"
+                :disable="form.description ? false : true"
+                color="primary"
+                label="Próximo"
+              />
             </q-stepper-navigation>
           </q-step>
 
@@ -46,10 +51,15 @@
             icon="create_new_folder"
             :done="step > 2"
           >
-            <q-date class="row" v-model="date" range />
+            <q-date class="row" v-model="date" />
 
             <q-stepper-navigation>
-              <q-btn @click="step = 3" color="primary" label="Próximo" />
+              <q-btn
+                @click="step = 3"
+                :disable="date ? false : true"
+                color="primary"
+                label="Próximo"
+              />
               <q-btn
                 flat
                 @click="step = 1"
@@ -94,6 +104,7 @@
             <div class="q-pb-sm">
               <SelectSearch
                 label="Escolha um cliente na busca"
+                multiple
                 :options-value="optionsCorporates"
                 @update:modelValue="updateOptionsValue"
               />
@@ -169,7 +180,6 @@
 import { defineComponent, ref, onMounted, watch } from 'vue';
 import checkListsService from 'src/services/checkLists';
 import corporateService from 'src/services/corporate';
-import usersService from 'src/services/users';
 import ticketsService from 'src/services/tickets';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
@@ -178,7 +188,6 @@ import ListTicketsFindsComponent from 'src/components/tickets/ListTicketsFinds.v
 import status from 'src/support/tickets/status';
 import _ from 'lodash';
 import collaboratorsService from 'src/services/collaborators';
-// import tickets from 'src/router/tickets';
 
 export default defineComponent({
   name: 'FormCheckList',
@@ -201,6 +210,7 @@ export default defineComponent({
     const selectUsersValue = ref({});
     const ticketsBinder = ref([]);
     const listTicketsFinds = ref([]);
+    const date = ref();
     const form = ref({
       description: '',
       started: null,
@@ -209,11 +219,10 @@ export default defineComponent({
       tickets: [],
       status: 'open',
     });
-    const date = ref({ from: '', to: '' });
 
     watch(date, (newDate) => {
-      form.value.started = formatDateFromAmerica(newDate.from);
-      form.value.delivered = formatDateFromAmerica(newDate.to);
+      form.value.started = formatDateFromAmerica(newDate);
+      form.value.delivered = formatDateFromAmerica(newDate);
     });
 
     watch(selectStatusValue, async (newValue) => {
@@ -258,8 +267,12 @@ export default defineComponent({
       return `${year}-${month}-${day}`;
     };
 
-    const updateOptionsValue = (value) => {
+    const updateOptionsValue = async (value) => {
       selectValue.value = value;
+      listTicketsFinds.value = await getTicketsFindStatus({
+        status: selectStatusValue.value,
+        corporate_id: selectValue.value,
+      });
     };
 
     const updateOptionsStatusValue = (value) => {
