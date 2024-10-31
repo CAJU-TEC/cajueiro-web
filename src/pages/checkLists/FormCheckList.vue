@@ -193,11 +193,12 @@ export default defineComponent({
   name: 'FormCheckList',
   components: { SelectSearch, ListTicketsFindsComponent },
   setup() {
-    const { getById } = checkListsService();
+    const { getById, update, post } = checkListsService();
     const { findStatus } = ticketsService();
     const { list: listCorporate } = corporateService();
     const { list: listCollaborators } = collaboratorsService();
     const $q = useQuasar();
+    const router = useRouter();
     const route = useRoute();
     const step = ref(1);
 
@@ -310,7 +311,6 @@ export default defineComponent({
           return { id: item.id, label: item.full_name };
         });
       } catch (error) {
-        console.error(error);
         $q.notify({
           message: 'Ops! Ocorreu algum erro.',
           icon: 'check',
@@ -357,7 +357,6 @@ export default defineComponent({
           return { id: item.id, label: item.full_name };
         });
       } catch (error) {
-        console.error(error);
         $q.notify({
           message: 'Ops! Ocorreu algum erro.',
           icon: 'check',
@@ -374,28 +373,27 @@ export default defineComponent({
 
     const onSubmit = async () => {
       console.log(form.value);
-      // try {
-      //   if (form.value.id) {
-      //     await update(form.value);
-      //   } else {
-      //     await post(form.value);
-      //   }
+      try {
+        if (form.value.id) {
+          await update(form.value);
+        } else {
+          await post(form.value);
+        }
 
-      //   $q.notify({
-      //     message: 'Dados salvos com sucesso',
-      //     icon: 'check',
-      //     color: 'positive',
-      //   });
-      //   router.push({ name: 'checkLists.list' });
-      // } catch (error) {
-      //   console.log(error);
-      //   $q.notify({
-      //     icon: 'block',
-      //     message: 'Ops! Ocorreu um erro.',
-      //     caption: error.message,
-      //     color: 'negative',
-      //   });
-      // }
+        $q.notify({
+          message: 'Dados salvos com sucesso',
+          icon: 'check',
+          color: 'positive',
+        });
+        router.push({ name: 'checkLists.list' });
+      } catch (error) {
+        $q.notify({
+          icon: 'block',
+          message: 'Ops! Ocorreu um erro.',
+          caption: error.message,
+          color: 'negative',
+        });
+      }
     };
 
     return {
