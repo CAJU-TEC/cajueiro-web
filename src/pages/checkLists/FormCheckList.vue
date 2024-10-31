@@ -193,12 +193,11 @@ export default defineComponent({
   name: 'FormCheckList',
   components: { SelectSearch, ListTicketsFindsComponent },
   setup() {
-    const { post, getById, update } = checkListsService();
+    const { getById } = checkListsService();
     const { findStatus } = ticketsService();
     const { list: listCorporate } = corporateService();
     const { list: listCollaborators } = collaboratorsService();
     const $q = useQuasar();
-    const router = useRouter();
     const route = useRoute();
     const step = ref(1);
 
@@ -374,28 +373,29 @@ export default defineComponent({
     };
 
     const onSubmit = async () => {
-      try {
-        if (form.value.id) {
-          await update(form.value);
-        } else {
-          await post(form.value);
-        }
+      console.log(form.value);
+      // try {
+      //   if (form.value.id) {
+      //     await update(form.value);
+      //   } else {
+      //     await post(form.value);
+      //   }
 
-        $q.notify({
-          message: 'Dados salvos com sucesso',
-          icon: 'check',
-          color: 'positive',
-        });
-        router.push({ name: 'checkLists.list' });
-      } catch (error) {
-        console.log(error);
-        $q.notify({
-          icon: 'block',
-          message: 'Ops! Ocorreu um erro.',
-          caption: error.message,
-          color: 'negative',
-        });
-      }
+      //   $q.notify({
+      //     message: 'Dados salvos com sucesso',
+      //     icon: 'check',
+      //     color: 'positive',
+      //   });
+      //   router.push({ name: 'checkLists.list' });
+      // } catch (error) {
+      //   console.log(error);
+      //   $q.notify({
+      //     icon: 'block',
+      //     message: 'Ops! Ocorreu um erro.',
+      //     caption: error.message,
+      //     color: 'negative',
+      //   });
+      // }
     };
 
     return {
