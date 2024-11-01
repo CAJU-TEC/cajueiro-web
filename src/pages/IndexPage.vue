@@ -65,7 +65,8 @@
 
               <q-card-section class="col">
                 <h5 class="text-overline q-ma-none q-pb-sm">PLANTÃO:</h5>
-                Em desenvolvimento
+
+                <DutiesComponent></DutiesComponent>
               </q-card-section>
             </q-card-section>
           </q-card>
@@ -139,6 +140,7 @@
 <script>
 import { defineComponent, onMounted, ref, reactive, provide, watch } from 'vue';
 import ApexBar from 'src/components/charts/apexBar.vue';
+import DutiesComponent from 'src/components/dashboard/DutiesComponent.vue';
 import ticketsService from 'src/services/tickets';
 import _ from 'lodash';
 import status from 'src/support/tickets/status';
@@ -146,7 +148,7 @@ import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { ApexBar },
+  components: { ApexBar, DutiesComponent },
   setup() {
     onMounted(async () => {
       await getTickets();
