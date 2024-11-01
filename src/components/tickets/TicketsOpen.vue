@@ -579,7 +579,6 @@
             Veja mais protocolos, clicando aqui!
           </q-banner>
         </div>
-        " @click="()
       </q-list>
     </template>
 

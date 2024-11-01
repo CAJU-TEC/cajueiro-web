@@ -33,7 +33,7 @@ import { useRouter } from 'vue-router';
 
 export default defineComponent({
   name: 'TicketsNotifications',
-  emits: ['update:modelValue'],
+  emits: ['update:modelValue', 'update:notifications'],
   props: {
     modelValue: {
       type: Boolean,
