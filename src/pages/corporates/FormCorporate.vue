@@ -123,9 +123,9 @@ export default defineComponent({
       }
     });
 
-    watchEffect(() => {
-      form.value.initials = form.value.initials.toUpperCase();
-    });
+    // watchEffect(() => {
+    //   form.value.initials = form.value.initials.toUpperCase();
+    // });
 
     const getClient = async (id) => {
       try {
