@@ -16,11 +16,20 @@
       @submit="onSubmit"
     >
       <q-input
+        v-model="form.initials"
+        filled
+        label="Iniciais *"
+        lazy-rules
+        class="col-lg-2 col-xs-12"
+        :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
+      />
+
+      <q-input
         v-model="form.first_name"
         filled
         label="Primeiro Nome *"
         lazy-rules
-        class="col-lg-6 col-xs-12"
+        class="col-lg-5 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
@@ -29,7 +38,7 @@
         filled
         label="Último Nome *"
         lazy-rules
-        class="col-lg-6 col-xs-12"
+        class="col-lg-5 col-xs-12"
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
       <q-input
@@ -86,7 +95,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, watchEffect } from 'vue';
 import corporatesService from 'src/services/corporate';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
@@ -100,6 +109,7 @@ export default defineComponent({
     const route = useRoute();
 
     const form = ref({
+      initials: '',
       first_name: '',
       last_name: '',
       email: '',
@@ -111,6 +121,10 @@ export default defineComponent({
       if (route.params.id) {
         getClient(route.params.id);
       }
+    });
+
+    watchEffect(() => {
+      form.value.initials = form.value.initials.toUpperCase();
     });
 
     const getClient = async (id) => {
