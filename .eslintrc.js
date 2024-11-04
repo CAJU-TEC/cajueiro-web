@@ -52,6 +52,9 @@ module.exports = {
 
   // add your custom rules here
   rules: {
+    'vue/v-on-event-hyphenation': ['error', 'always', {
+      ignore: ['update:modelValue'],
+    }],
     // allow async-await
     'generator-star-spacing': 'off',
     'no-unused-vars': 'off',

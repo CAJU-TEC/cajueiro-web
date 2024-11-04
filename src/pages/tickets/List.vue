@@ -56,53 +56,53 @@
       :tickets-in-pending="ticketsInPending"
       :tickets-in-done="ticketsInDone"
       :tickets-in-my-tickets="ticketsInMyTickets"
-      @addUserTicker="
+      @add-user-ticker="
         (id) => {
           addUserTicker(id);
         }
       "
-      @handleListClient="
+      @handle-list-client="
         (id) => {
           handleListClient(id);
         }
       "
-      @updateTicketsOpen="
+      @update-tickets-open="
         () => {
           getTicketsOpenYesPriority();
           getTicketsOpenNoPriority();
         }
       "
-      @updateTicketsDevelop="
+      @update-tickets-develop="
         () => {
           getTicketsInDevelop();
         }
       "
-      @updateTicketsTests="
+      @update-tickets-tests="
         () => {
           getTicketsInTests();
         }
       "
-      @updateTicketsBacklog="
+      @update-tickets-backlog="
         () => {
           getTicketsInBacklog();
         }
       "
-      @updateTicketsValidation="
+      @update-tickets-validation="
         () => {
           getTicketsInValidation();
         }
       "
-      @updateTicketsPending="
+      @update-tickets-pending="
         () => {
           getTicketsInPending();
         }
       "
-      @updateTicketsDone="
+      @update-tickets-done="
         () => {
           getTicketsInDone();
         }
       "
-      @updateTicketsMy="
+      @update-tickets-my="
         () => {
           getTicketsOpenMyTickets();
         }

@@ -1,6 +1,6 @@
 <template>
   <span>
-    <q-card class="my-card" flat bordered>
+    <q-card class="" flat bordered>
       <q-item>
         <q-item-section avatar>
           <q-avatar>
@@ -11,8 +11,10 @@
         </q-item-section>
 
         <q-item-section>
-          <q-item-label>{{ duty.first_name ?? '- - -' }}</q-item-label>
-          <q-item-label caption> Plantonista </q-item-label>
+          <q-item-label>{{
+            duty.first_name ? duty.first_name : '- - -'
+          }}</q-item-label>
+          <q-item-label class="text-caption"> Plantonista </q-item-label>
         </q-item-section>
 
         <q-item-section>
@@ -26,9 +28,23 @@
         </q-item-section>
       </q-item>
     </q-card>
-    <q-card class="my-card text-caption" flat bordered>
-      <q-list bordered separator v-for="ticket in tickets" :key="ticket.id">
-        <q-item clickable v-ripple>
+    <q-card class="text-caption" flat bordered>
+      <div v-if="isLoading" class="q-pa-md text-primary text-center">
+        Carregando...
+      </div>
+
+      <!-- Verifica se há tickets -->
+      <q-list v-else-if="tickets.length > 0" bordered separator>
+        <!-- Cabeçalho indicando que são os protocolos do dia -->
+        <q-item-label header class="text-h6 text-primary q-py-sm q-px-md">
+          Protocolos de hoje
+        </q-item-label>
+        <!-- Listagem dos tickets com link para cada item -->
+        <q-item
+          :to="{ name: 'tickets.details', params: { id: ticket.id } }"
+          v-for="ticket in tickets"
+          :key="ticket.id"
+        >
           <q-item-section>
             <q-item-label caption>#{{ ticket.code }}</q-item-label>
             <q-item-label class="text-weight-bold">{{
@@ -37,12 +53,18 @@
           </q-item-section>
         </q-item>
       </q-list>
+
+      <!-- Mensagem caso não haja tickets -->
+      <div v-else class="q-pa-md text-orange text-center">
+        Sem protocolos para hoje!
+      </div>
     </q-card>
   </span>
 </template>
 
 <script setup>
-import { ref, watchEffect, reactive } from 'vue';
+import { ref, watchEffect } from 'vue';
+import { date } from 'quasar';
 import ticketsService from 'src/services/tickets';
 import dutiesService from 'src/services/duties';
 import collaboratorsService from 'src/services/collaborators';
@@ -53,6 +75,7 @@ const tickets = ref([]);
 const duty = ref({});
 const collaborators = ref({});
 const collaboratorsOptions = ref([]);
+const isLoading = ref(true);
 
 const { myTickets } = ticketsService();
 const { list } = dutiesService();
@@ -60,12 +83,17 @@ const { list: listCollaborators } = collaboratorsService();
 
 const getTicketsToday = async () => {
   try {
+    const timeStamp = ref(Date.now());
+    const formattedString = ref(date.formatDate(timeStamp.value, 'YYYY-MM-DD'));
     const { data } = await myTickets(
-      '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[starts_before]=2024-11-01&[collaborator_id]=null'
+      `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[starts_before]=${formattedString.value}&[collaborator_id]=null`
     );
     tickets.value = data;
+    console.log(formattedString.value);
   } catch (error) {
     console.log(error);
+  } finally {
+    isLoading.value = false;
   }
 };
 
@@ -93,14 +121,11 @@ const getListCollaborators = async () => {
 };
 
 watchEffect(() => {
+  isLoading.value = true;
   getTicketsToday();
   getDutyLatest();
   getListCollaborators();
 });
 </script>
 
-<style lang="scss" scoped>
-.my-card {
-  margin: 10px auto;
-}
-</style>
+<style lang="scss" scoped></style>

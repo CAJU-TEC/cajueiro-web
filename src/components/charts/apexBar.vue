@@ -24,7 +24,12 @@ import ticketsService from 'src/services/tickets';
 
 export default defineComponent({
   name: 'ApexBar',
-  props: ['month'],
+  props: {
+    month: {
+      type: String,
+      required: true,
+    },
+  },
   setup(props) {
     const { ticketsGraphUsers } = ticketsService();
     const tickets = ref([]);
