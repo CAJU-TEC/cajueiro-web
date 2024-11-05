@@ -99,10 +99,14 @@ const getTicketsToday = async () => {
 const getDutyLatest = async () => {
   try {
     const data = await list();
-    const { dutyable } = _.head(data ?? []);
+    const firstItem = _.head(data ?? []);
+
+    // Define dutyable como um valor padrão caso esteja undefined ou null
+    const dutyable = firstItem?.dutyable ?? '[]';
+
     duty.value = dutyable;
   } catch (e) {
-    console.log(e);
+    console.error('Erro ao tentar definir duty:', e);
   }
 };
 
