@@ -26,7 +26,7 @@ export default defineComponent({
   name: 'ApexBar',
   props: {
     month: {
-      type: String,
+      type: Number,
       required: true,
     },
   },
