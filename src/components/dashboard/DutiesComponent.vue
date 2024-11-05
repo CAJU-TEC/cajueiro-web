@@ -89,7 +89,6 @@ const getTicketsToday = async () => {
       `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[starts_before]=${formattedString.value}&[collaborator_id]=null`
     );
     tickets.value = data;
-    console.log(formattedString.value);
   } catch (error) {
     console.log(error);
   } finally {
@@ -100,6 +99,8 @@ const getTicketsToday = async () => {
 const getDutyLatest = async () => {
   try {
     const data = await list();
+    console.log(data);
+
     const { dutyable } = _.head(data);
     duty.value = dutyable;
   } catch (e) {
