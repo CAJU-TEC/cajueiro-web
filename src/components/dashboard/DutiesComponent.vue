@@ -99,9 +99,7 @@ const getTicketsToday = async () => {
 const getDutyLatest = async () => {
   try {
     const data = await list();
-    console.log(data);
-
-    const { dutyable } = _.head(data);
+    const { dutyable } = _.head(data ?? []);
     duty.value = dutyable;
   } catch (e) {
     console.log(e);
