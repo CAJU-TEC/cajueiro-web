@@ -128,6 +128,14 @@ export default defineComponent({
             },
           },
           {
+            title: 'Movimentações',
+            icon: 'fa-solid fa-angle-right',
+            route: {
+              name: 'checkLists.movements',
+              // permissions: ['tickets.*', 'tickets.list'],
+            },
+          },
+          {
             title: 'Relatórios',
             icon: 'fa-solid fa-angle-right',
             route: {

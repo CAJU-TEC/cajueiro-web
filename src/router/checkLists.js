@@ -29,4 +29,11 @@ export default [
     component: () => import('src/pages/checkLists/FormCheckList.vue'),
     // beforeEnter: [can]
   },
+  {
+    path: 'checkLists/movements',
+    name: 'checkLists.movements',
+    meta: {permissions: ['checkLists.movements', 'checkLists.*']},
+    component: () => import('src/pages/checkLists/MovementsCheckList.vue'),
+    // beforeEnter: [can]
+  },
 ];
