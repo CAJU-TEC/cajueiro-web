@@ -49,7 +49,7 @@
           <q-item-section>
             <q-item-label caption>#{{ ticket.code }}</q-item-label>
             <q-item-label class="text-weight-bold"
-              >{{ ticket.subject }} - {{ ticket.dufy }}
+              >{{ ticket.subject }}
             </q-item-label>
           </q-item-section>
         </q-item>
