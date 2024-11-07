@@ -44,12 +44,13 @@
           :to="{ name: 'tickets.details', params: { id: ticket.id } }"
           v-for="ticket in tickets"
           :key="ticket.id"
+          :class="{ 'bg-teal-1 text-grey-8': ticket.dufy === 'yes' }"
         >
           <q-item-section>
             <q-item-label caption>#{{ ticket.code }}</q-item-label>
-            <q-item-label class="text-weight-bold">{{
-              ticket.subject
-            }}</q-item-label>
+            <q-item-label class="text-weight-bold"
+              >{{ ticket.subject }} - {{ ticket.dufy }}
+            </q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
