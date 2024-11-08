@@ -183,6 +183,28 @@
                 </p>
               </span>
             </div>
+            <div class="col">
+              <span class="q-mb-xs text-caption">
+                <span class="text-caption">Tempo de resposta (plantão)</span>
+                <p class="q-mb-xs text-subtitle2" v-if="!form.time">
+                  <q-select
+                    dense
+                    filled
+                    v-model="form.time"
+                    :options="sequencesInHours"
+                    option-value="data"
+                    option-label="timeForHuman"
+                    @update:model-value="
+                      (value) =>
+                        setTimeTicketOfDuty({ ...value, ticket_id: form.id })
+                    "
+                  />
+                </p>
+                <p class="q-mb-xs text-subtitle2" v-else>
+                  {{ formatTimeDescription(form.time) }}
+                </p>
+              </span>
+            </div>
           </div>
           <div class="row">
             <div class="col">
@@ -429,7 +451,7 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
 import {
@@ -437,20 +459,37 @@ import {
   dateTimeFormat,
   betweenDates,
 } from 'src/support/dates/dateFormat';
+import { formatTimeDescription } from 'src/support/times/timeFormat';
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
 import { useQuasar } from 'quasar';
-import { useRoute, useRouter } from 'vue-router';
+import { useRoute } from 'vue-router';
 import _ from 'lodash';
 
 export default defineComponent({
   name: 'DetailsView',
   setup() {
-    const { getById, addUserPatchTicket } = ticketsService();
+    const { getById, addUserPatchTicket, timeAlterDuty } = ticketsService();
     const { post } = commentsService();
     const $q = useQuasar();
     const route = useRoute();
     const comments = ref([{}]);
+    const sequencesInHours = computed(() => {
+      const result = [];
+      const maxMinutes = 120; // 2 horas em minutos
+      const interval = 5; // intervalo em minutos
+
+      for (let minutes = 20; minutes <= maxMinutes; minutes += interval) {
+        const timeInHours = minutes / 60; // converte minutos para horas sem arredondar
+        result.push({
+          data: timeInHours,
+          timeForHuman: formatTimeDescription(timeInHours), // gera a descrição humanizada
+        });
+      }
+
+      return result;
+    });
+
     const form = ref({
       client_id: ref(''),
       collaborator_id: ref(''),
@@ -462,6 +501,7 @@ export default defineComponent({
       image: ref(''),
       imageInput: ref([]),
       comments: ref([{}]),
+      time: ref(),
     });
     const optionsStatus = ref([
       { value: 'backlog', label: 'Aguardando' },
@@ -482,6 +522,21 @@ export default defineComponent({
       imageInput: ref([]),
     });
 
+    const setTimeTicketOfDuty = (value) => {
+      try {
+        const payload = timeAlterDuty(value);
+        if (route.params.id) {
+          getTicket(route.params.id);
+        }
+        return payload;
+      } catch (e) {
+        $q.notify({
+          message: 'Ops! Não alterar o tempo de plantão.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
     const allowTickets = (roles) => {
       const statusRole = ['backlog', 'todo', 'analyze'];
       return _.includes(statusRole, roles);
@@ -496,8 +551,6 @@ export default defineComponent({
     const onChange = (event) => {
       createBase64Image(event);
     };
-
-    // const router = useRouter();
 
     const handleListClient = async (id) => {
       if (route.params.id) {
@@ -605,6 +658,9 @@ export default defineComponent({
       priority,
       status,
       form,
+      sequencesInHours,
+      formatTimeDescription,
+      setTimeTicketOfDuty,
     };
   },
 });

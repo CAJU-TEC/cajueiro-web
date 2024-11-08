@@ -24,22 +24,20 @@
             label="Selecione um colaborador"
             option-label="first_name"
             option-value="id"
+            @update:model-value="handleSelectOptions"
           />
         </q-item-section>
       </q-item>
     </q-card>
     <q-card class="text-caption" flat bordered>
       <div v-if="isLoading" class="q-pa-md text-primary text-center">
-        Carregando...
+        <q-spinner-cube color="blue" size="3.5em" />
       </div>
 
-      <!-- Verifica se há tickets -->
       <q-list v-else-if="tickets.length > 0" bordered separator>
-        <!-- Cabeçalho indicando que são os protocolos do dia -->
         <q-item-label header class="text-h6 text-primary q-py-sm q-px-md">
           Protocolos de hoje
         </q-item-label>
-        <!-- Listagem dos tickets com link para cada item -->
         <q-item
           :to="{ name: 'tickets.details', params: { id: ticket.id } }"
           v-for="ticket in tickets"
@@ -48,24 +46,45 @@
         >
           <q-item-section>
             <q-item-label caption>#{{ ticket.code }}</q-item-label>
-            <q-item-label class="text-weight-bold"
-              >{{ ticket.subject }}
+            <q-item-label class="text-weight-bold">
+              {{ ticket.subject }}
             </q-item-label>
           </q-item-section>
         </q-item>
       </q-list>
 
-      <!-- Mensagem caso não haja tickets -->
       <div v-else class="q-pa-md text-orange text-center">
-        Sem protocolos para hoje!
+        Hoje ainda não existe protocolos criados!
       </div>
     </q-card>
+
+    <q-dialog v-model="confirm" persistent>
+      <q-card>
+        <q-card-section class="row items-center">
+          <q-avatar icon="live_help" color="primary" text-color="white" />
+          <span class="q-ml-sm"
+            >Deseja realmente adicionar-lo(a) como plantonista?</span
+          >
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Não" color="primary" v-close-popup />
+          <q-btn
+            flat
+            label="Sim, agora!"
+            @click="() => (returnDuty = true)"
+            color="primary"
+            v-close-popup
+          />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
   </span>
 </template>
 
 <script setup>
-import { ref, watchEffect } from 'vue';
-import { date } from 'quasar';
+import { ref, watchEffect, watch } from 'vue';
+import { date, useQuasar } from 'quasar';
 import ticketsService from 'src/services/tickets';
 import dutiesService from 'src/services/duties';
 import collaboratorsService from 'src/services/collaborators';
@@ -77,10 +96,42 @@ const duty = ref({});
 const collaborators = ref({});
 const collaboratorsOptions = ref([]);
 const isLoading = ref(true);
+const confirm = ref(false);
+const returnDuty = ref(false);
+const collaboratorSelection = ref({});
+
+const $q = useQuasar();
 
 const { myTickets } = ticketsService();
 const { list } = dutiesService();
-const { list: listCollaborators } = collaboratorsService();
+const { list: listCollaborators, syncDuty } = collaboratorsService();
+
+const handleSelectOptions = async (value) => {
+  collaboratorSelection.value = value;
+  confirm.value = !confirm.value;
+};
+
+const setDuty = async (collaborator) => {
+  console.log(collaborator);
+
+  try {
+    await syncDuty({ collaborator });
+    getDutyLatest();
+  } catch (error) {
+    $q.notify({
+      message: 'Ops! Ocorreu algum erro.',
+      icon: 'check',
+      color: 'warning',
+    });
+  }
+};
+
+watch(returnDuty, () => {
+  if (returnDuty.value) {
+    setDuty(collaboratorSelection.value);
+  }
+  returnDuty.value = false;
+});
 
 const getTicketsToday = async () => {
   try {

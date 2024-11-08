@@ -78,6 +78,15 @@ export default function ticketsService() {
     }
   };
 
+  const timeAlterDuty = async (params) => {
+    try {
+      const payload = await api.patch(`${endpoint}/timeAlterDuty`, {params});
+      return payload;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   return {
     addUserPatchTicket,
     findTicketsAtCode,
@@ -90,6 +99,7 @@ export default function ticketsService() {
     update,
     remove,
     notifications,
-    findStatus
+    findStatus,
+    timeAlterDuty
   };
 }
