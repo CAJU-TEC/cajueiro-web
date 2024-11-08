@@ -30,7 +30,7 @@
             <q-circular-progress
               show-value
               font-size="12px"
-              :value="20"
+              :value="convertForStatistics(item.en)[0].percentage"
               size="50px"
               :thickness="0.22"
               color="blue-light-4"
@@ -91,8 +91,8 @@ const status = reactive([
   { en: 'development', br: 'desenvolvimento' },
   { en: 'test', br: 'teste' },
   { en: 'pending', br: 'pendente' },
-  { en: 'done', br: 'finalizado' },
   { en: 'validation', br: 'validação' },
+  { en: 'done', br: 'finalizado' },
 ]);
 
 const getProtocols = async () => {
