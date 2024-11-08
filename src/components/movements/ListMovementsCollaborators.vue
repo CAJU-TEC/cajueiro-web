@@ -15,7 +15,9 @@
       </q-item-section>
 
       <q-item-section>
-        <q-item-label>{{ collaborator.full_name }}</q-item-label>
+        <q-item-label class="text-subtitle2 text-weight-bold">{{
+          collaborator.full_name
+        }}</q-item-label>
         <q-item-label caption>
           {{ collaborator.jobplan?.description ?? 'Sem plano de trabalho' }}
         </q-item-label>
@@ -34,14 +36,30 @@
               size="50px"
               :thickness="0.22"
               color="blue-light-4"
-              track-color="blue-4"
+              :track-color="
+                convertForStatistics(item.en)[0].percentage
+                  ? 'blue-4'
+                  : 'blue-grey-2'
+              "
               class="q-ma-md"
             >
               {{ convertForStatistics(item.en)[0].percentage }}%
             </q-circular-progress>
-            <div class="text-center text-caption text-weight-thin">
-              <div>{{ convertForStatistics(item.en)[0].amount }}</div>
-              <div>{{ item.br }}</div>
+            <div class="text-center text-weight-thin text-caption">
+              <!-- <div>{{ convertForStatistics(item.en)[0].amount }}</div> -->
+              <q-btn
+                flat
+                size="x-small"
+                text
+                :disabled="!convertForStatistics(item.en)[0].percentage"
+                :color="
+                  convertForStatistics(item.en)[0].percentage > 0
+                    ? 'blue'
+                    : 'grey'
+                "
+              >
+                <div>{{ item.br }}</div>
+              </q-btn>
             </div>
           </div>
         </template>
