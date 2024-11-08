@@ -1,6 +1,6 @@
 <template>
   <span>
-    <q-card class="" flat bordered>
+    <q-card class="q-mb-sm" flat bordered>
       <q-item>
         <q-item-section avatar>
           <q-avatar>
