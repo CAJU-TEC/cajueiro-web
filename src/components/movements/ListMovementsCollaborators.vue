@@ -1,35 +1,68 @@
 <template>
-  <q-card-section horizontal>
-    <q-card-section class="row">
-      <template v-if="!loading">
-        <div v-for="item in status" :key="item" class="text-center">
-          <q-circular-progress
-            show-value
-            font-size="12px"
-            :value="20"
-            size="50px"
-            :thickness="0.22"
-            color="blue-light-4"
-            track-color="blue-4"
-            class="q-ma-md"
-          >
-            20%
-          </q-circular-progress>
-          <div class="text-center text-caption text-weight-thin">
-            <div>{{ item?.count }}</div>
-            <div>{{ item }}</div>
+  <q-card class="my-card q-mb-lg shadow-2 bg-light-blue-1" bordered>
+    <q-item>
+      <q-item-section avatar>
+        <q-avatar>
+          <img
+            v-if="!collaborator?.image"
+            src="https://cdn.quasar.dev/img/boy-avatar.png"
+          />
+          <img
+            v-else
+            :src="`https://cajueiroapi.cajutec.com.br/storage/images/${collaborator?.image?.uri}`"
+          />
+        </q-avatar>
+      </q-item-section>
+
+      <q-item-section>
+        <q-item-label>{{ collaborator.full_name }}</q-item-label>
+        <q-item-label caption>
+          {{ collaborator.jobplan?.description ?? 'Sem plano de trabalho' }}
+        </q-item-label>
+      </q-item-section>
+    </q-item>
+
+    <q-separator />
+    <q-card-section horizontal>
+      <q-card-section class="row">
+        <template v-if="!loading">
+          <div v-for="item in status" :key="item" class="text-center">
+            <q-circular-progress
+              show-value
+              font-size="12px"
+              :value="20"
+              size="50px"
+              :thickness="0.22"
+              color="blue-light-4"
+              track-color="blue-4"
+              class="q-ma-md"
+            >
+              {{ convertForStatistics(item.en)[0].percentage }}%
+            </q-circular-progress>
+            <div class="text-center text-caption text-weight-thin">
+              <div>{{ convertForStatistics(item.en)[0].amount }}</div>
+              <div>{{ item.br }}</div>
+            </div>
           </div>
+        </template>
+        <div v-else class="loading-container">
+          <q-spinner-dots color="primary" size="40px" />
+          <p class="text-caption text-grey-7">Carregando...</p>
         </div>
-      </template>
-      <div v-else class="loading-container">
-        <q-spinner-dots color="primary" size="40px" />
-        <p class="text-caption text-grey-7">Carregando...</p>
-      </div>
+      </q-card-section>
+      <q-separator vertical />
+      <q-card-section class="col-4">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+      </q-card-section>
     </q-card-section>
 
-    <q-separator vertical />
-    <p>Protocolos assumidos</p>
-  </q-card-section>
+    <q-separator />
+    <q-card-actions horizontal class="justify-start">
+      <q-btn flat size="x-small" text disabled color="grey">
+        <div>Total de protocolos: {{ ticketsProps.length }}</div>
+      </q-btn>
+    </q-card-actions>
+  </q-card>
 </template>
 
 <script setup>
@@ -50,24 +83,34 @@ const props = defineProps({
 
 const tickets = ref();
 const loading = ref(true);
+const ticketsProps = ref(true);
 const status = reactive([
-  'backlog',
-  'todo',
-  'analyze',
-  'develpment',
-  'test',
-  'pending',
-  'done',
-  'validation',
+  // { en: 'backlog', br: 'aguardando' },
+  // { en: 'todo', br: 'a fazer' },
+  { en: 'analyze', br: 'analise' },
+  { en: 'develpment', br: 'desenvolvimento' },
+  { en: 'test', br: 'teste' },
+  { en: 'pending', br: 'pendente' },
+  { en: 'done', br: 'finalizado' },
+  { en: 'validation', br: 'validação' },
 ]);
 
 const getProtocols = async () => {
   await getTickets();
-  convertForStatistics();
 };
 
-const convertForStatistics = () => {
-  console.log('here statistics');
+const convertForStatistics = (status) => {
+  let amountTicketsStatus = tickets.value[status]
+    ? tickets.value[status].length
+    : 0;
+  amountTicketsStatus = (amountTicketsStatus * 100) / ticketsProps.value.length;
+  amountTicketsStatus = Math.floor(amountTicketsStatus);
+  return [
+    {
+      percentage: amountTicketsStatus,
+      amount: tickets.value[status] ? tickets.value[status].length : 0,
+    },
+  ];
 };
 
 const getTickets = async () => {
@@ -75,7 +118,8 @@ const getTickets = async () => {
     const { data } = await myTicketsService(
       `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=${props.collaborator.id}`
     );
-    tickets.value = _.groupBy(tickets.value, 'status');
+    tickets.value = _.groupBy(data, 'status');
+    ticketsProps.value = data;
   } catch (error) {
     $q.notify({
       message: 'Ops! Ocorreu algum erro',
