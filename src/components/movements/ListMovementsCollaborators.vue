@@ -88,7 +88,7 @@ const status = reactive([
   // { en: 'backlog', br: 'aguardando' },
   // { en: 'todo', br: 'a fazer' },
   { en: 'analyze', br: 'analise' },
-  { en: 'develpment', br: 'desenvolvimento' },
+  { en: 'development', br: 'desenvolvimento' },
   { en: 'test', br: 'teste' },
   { en: 'pending', br: 'pendente' },
   { en: 'done', br: 'finalizado' },
