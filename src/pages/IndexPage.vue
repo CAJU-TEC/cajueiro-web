@@ -34,7 +34,7 @@
                 <div v-if="ticketsInDevelop">
                   <div
                     class="row text-grey-8 q-gutter-xs"
-                    v-for="ticket in ticketsInDevelop.data"
+                    v-for="ticket in ticketsInDevelop"
                     :key="ticket?.id"
                   >
                     <q-chip size="sm" v-if="ticket?.collaborator">
