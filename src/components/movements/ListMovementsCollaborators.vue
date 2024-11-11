@@ -51,6 +51,12 @@
                 flat
                 size="x-small"
                 text
+                @click="
+                  selectStatus({
+                    status: item.en,
+                    collaborator_id: collaborator.id,
+                  })
+                "
                 :disabled="!convertForStatistics(item.en)[0].percentage"
                 :color="
                   convertForStatistics(item.en)[0].percentage > 0
@@ -148,6 +154,10 @@ const getTickets = async () => {
   } finally {
     loading.value = false;
   }
+};
+
+const selectStatus = async (data) => {
+  console.log(data);
 };
 
 onMounted(() => {

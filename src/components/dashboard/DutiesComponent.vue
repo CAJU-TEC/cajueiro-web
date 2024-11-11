@@ -54,7 +54,7 @@
       </q-list>
 
       <div v-else class="q-pa-md text-orange text-center">
-        Hoje ainda não existe protocolos criados!
+        Hoje ainda não existem protocolos criados!
       </div>
     </q-card>
 

@@ -38,7 +38,6 @@
             </template>
           </q-input>
         </q-card-section>
-
         <q-card-section class="q-pt-none">
           <div class="row">
             <div v-if="tickets?.length" class="col">
@@ -291,6 +290,7 @@ export default {
     const getTickets = async (work) => {
       try {
         const response = await findTicketsAtCode(work);
+        console.log(response);
         tickets.value = await response;
       } catch (error) {
         console.log(error);
