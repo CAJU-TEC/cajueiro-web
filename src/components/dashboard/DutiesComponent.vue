@@ -112,8 +112,6 @@ const handleSelectOptions = async (value) => {
 };
 
 const setDuty = async (collaborator) => {
-  console.log(collaborator);
-
   try {
     await syncDuty({ collaborator });
     getDutyLatest();
@@ -137,7 +135,7 @@ const getTicketsToday = async () => {
   try {
     const timeStamp = ref(Date.now());
     const formattedString = ref(date.formatDate(timeStamp.value, 'YYYY-MM-DD'));
-    const { data } = await myTickets(
+    const data = await myTickets(
       `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[starts_before]=${formattedString.value}&[collaborator_id]=null`
     );
     tickets.value = data;
