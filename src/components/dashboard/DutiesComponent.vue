@@ -34,7 +34,7 @@
         <q-spinner-cube color="blue" size="3.5em" />
       </div>
 
-      <q-list v-else-if="tickets.length > 0" bordered separator>
+      <q-list v-else-if="tickets" bordered separator>
         <q-item-label header class="text-h6 text-primary q-py-sm q-px-md">
           Protocolos de hoje
         </q-item-label>
