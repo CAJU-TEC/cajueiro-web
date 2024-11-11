@@ -26,46 +26,52 @@
 
     <q-separator />
     <q-card-section horizontal>
-      <q-card-section class="row">
+      <q-card-section class="col-4 row">
         <template v-if="!loading">
-          <div v-for="item in status" :key="item" class="text-center">
-            <q-circular-progress
-              show-value
-              font-size="12px"
-              :value="convertForStatistics(item.en)[0].percentage"
-              size="50px"
-              :thickness="0.22"
-              color="blue-light-4"
-              :track-color="
-                convertForStatistics(item.en)[0].percentage
-                  ? 'blue-4'
-                  : 'blue-grey-2'
-              "
-              class="q-ma-md"
-            >
-              {{ convertForStatistics(item.en)[0].percentage }}%
-            </q-circular-progress>
-            <div class="text-center text-weight-thin text-caption">
-              <!-- <div>{{ convertForStatistics(item.en)[0].amount }}</div> -->
-              <q-btn
-                flat
-                size="x-small"
-                text
-                @click="
-                  selectStatus({
-                    status: item.en,
-                    collaborator_id: collaborator.id,
-                  })
+          <div
+            v-for="item in status"
+            :key="item"
+            class="justify-center content-center"
+          >
+            <div class="text-center">
+              <q-circular-progress
+                show-value
+                font-size="12px"
+                :value="convertForStatistics(item.en)[0].percentage"
+                size="50px"
+                :thickness="0.22"
+                color="blue-light-4"
+                :track-color="
+                  convertForStatistics(item.en)[0].percentage
+                    ? 'blue-4'
+                    : 'blue-grey-2'
                 "
-                :disabled="!convertForStatistics(item.en)[0].percentage"
-                :color="
-                  convertForStatistics(item.en)[0].percentage > 0
-                    ? 'blue'
-                    : 'grey'
-                "
+                class="q-ma-md"
               >
-                <div>{{ item.br }}</div>
-              </q-btn>
+                {{ convertForStatistics(item.en)[0].percentage }}%
+              </q-circular-progress>
+              <div class="text-center text-weight-thin text-caption">
+                <!-- <div>{{ convertForStatistics(item.en)[0].amount }}</div> -->
+                <q-btn
+                  flat
+                  size="x-small"
+                  text
+                  @click="
+                    selectStatus({
+                      status: item.en,
+                      collaborator_id: collaborator.id,
+                    })
+                  "
+                  :disabled="!convertForStatistics(item.en)[0].percentage"
+                  :color="
+                    convertForStatistics(item.en)[0].percentage > 0
+                      ? 'blue'
+                      : 'grey'
+                  "
+                >
+                  <div>{{ item.br }}</div>
+                </q-btn>
+              </div>
             </div>
           </div>
         </template>
@@ -76,7 +82,47 @@
       </q-card-section>
       <q-separator vertical />
       <q-card-section class="col-4">
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+        <q-table
+          flat
+          bordered
+          title="Resumo de hoje"
+          dense
+          :rows="rowsGeneralSummary"
+          :columns="columnsGeneralSummary"
+          row-key="name"
+          :rows-class="getRowClass"
+          striped
+          separator="vertical"
+          color="light-blue-7"
+          class="text-uppercase col-6"
+          :style="{
+            borderRadius: '8px',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+          }"
+        />
+      </q-card-section>
+      <q-separator vertical />
+      <q-card-section class="col-4">
+        <q-table
+          flat
+          bordered
+          title="Resumo geral"
+          dense
+          :rows="rowsGeneralSummary"
+          :columns="columnsGeneralSummary"
+          row-key="name"
+          :rows-class="getRowClass"
+          striped
+          separator="vertical"
+          color="light-blue-7"
+          class="text-uppercase col-6"
+          :style="{
+            borderRadius: '8px',
+            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+          }"
+          hide-pagination
+          :pagination="{ rowsPerPage: 20 }"
+        />
       </q-card-section>
     </q-card-section>
 
@@ -93,7 +139,7 @@
 import { useQuasar } from 'quasar';
 import _ from 'loadsh';
 import ticketsService from 'src/services/tickets';
-import { onMounted, ref, reactive } from 'vue';
+import { onMounted, ref, reactive, watch } from 'vue';
 
 const { myTickets: myTicketsService } = ticketsService();
 
@@ -105,12 +151,37 @@ const props = defineProps({
   },
 });
 
+const getRowClass = (row) => {
+  return row.rowIndex % 2 === 0 ? 'q-pa-none bg-grey-2' : 'q-pa-none bg-white';
+};
+const columnsGeneralSummary = [
+  {
+    name: 'status',
+    align: 'left',
+    label: 'Status',
+    field: 'status',
+    sortable: true,
+  },
+  {
+    name: 'quantidade',
+    label: 'Quantidade',
+    field: 'amount',
+    sortable: true,
+  },
+  {
+    name: 'porcentagens',
+    label: 'Porcentagens',
+    field: 'percentage',
+    sortable: true,
+  },
+];
+const rowsGeneralSummary = ref([]);
 const tickets = ref();
 const loading = ref(true);
 const ticketsProps = ref([]);
 const status = reactive([
-  // { en: 'backlog', br: 'aguardando' },
-  // { en: 'todo', br: 'a fazer' },
+  { en: 'backlog', br: 'aguardando' },
+  { en: 'todo', br: 'à fazer' },
   { en: 'analyze', br: 'analise' },
   { en: 'development', br: 'desenvolvimento' },
   { en: 'test', br: 'teste' },
@@ -118,6 +189,11 @@ const status = reactive([
   { en: 'validation', br: 'validação' },
   { en: 'done', br: 'finalizado' },
 ]);
+
+const getStatusInPortuguese = (enStatus) => {
+  const statusItem = status.find((item) => item.en === enStatus);
+  return statusItem ? statusItem.br : null;
+};
 
 const getProtocols = async () => {
   await getTickets();
@@ -129,7 +205,7 @@ const convertForStatistics = (status) => {
     : 0;
 
   amountTicketsStatus = (amountTicketsStatus * 100) / ticketsProps.value.length;
-  amountTicketsStatus = Math.floor(amountTicketsStatus);
+  amountTicketsStatus = Math.ceil(amountTicketsStatus);
   return [
     {
       percentage: amountTicketsStatus,
@@ -159,6 +235,16 @@ const getTickets = async () => {
 const selectStatus = async (data) => {
   console.log(data);
 };
+
+watch(tickets, () => {
+  for (const [key, value] of Object.entries(tickets.value)) {
+    rowsGeneralSummary.value.push({
+      status: getStatusInPortuguese(key),
+      percentage: `${convertForStatistics(key)[0].percentage}%`,
+      amount: `${convertForStatistics(key)[0].amount}`,
+    });
+  }
+});
 
 onMounted(() => {
   getProtocols();
