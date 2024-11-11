@@ -306,7 +306,7 @@ export default defineComponent({
       try {
         const user = await fetchUser();
         const data = await myTicketsService(
-          `?include=collaborator.image&filter[collaborator_id]=${user.data.user.collaborator?.id}`
+          `?include=collaborator.image&filter[collaborator_id]=${user.data.user.collaborator?.id}&paginate=50`
         );
         ticketsInMyTickets.value = data;
       } catch (error) {
@@ -317,7 +317,7 @@ export default defineComponent({
     const getTicketsOpenNoPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no&paginate=50vvvv'
         );
         openNoPriority.value = data;
       } catch (error) {
@@ -328,7 +328,7 @@ export default defineComponent({
     const getTicketsOpenYesPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes&paginate=50'
         );
         openYesPriority.value = data;
       } catch (error) {
@@ -339,7 +339,7 @@ export default defineComponent({
     const getTicketsInDevelop = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&include=collaborator.image&filter[collaborator_id]=&filter[status]=development'
+          '?include=collaborator.image&include=collaborator.image&filter[collaborator_id]=&filter[status]=development&paginate=50'
         );
         ticketsInDevelop.value = data;
       } catch (error) {
@@ -350,7 +350,7 @@ export default defineComponent({
     const getTicketsInTests = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test&paginate=50'
         );
         ticketsInTests.value = data;
       } catch (error) {
@@ -361,7 +361,7 @@ export default defineComponent({
     const getTicketsInBacklog = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=backlog'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=backlog&paginate=50'
         );
         ticketsInBacklog.value = data;
       } catch (error) {
@@ -372,7 +372,7 @@ export default defineComponent({
     const getTicketsInValidation = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=validation'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=validation&paginate=50'
         );
         ticketsInValidation.value = data;
       } catch (error) {
@@ -383,7 +383,7 @@ export default defineComponent({
     const getTicketsInPending = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=pending'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=pending&paginate=50'
         );
         ticketsInPending.value = data;
       } catch (error) {
@@ -394,7 +394,7 @@ export default defineComponent({
     const getTicketsInDone = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=done'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=done&paginate=50'
         );
         ticketsInDone.value = data;
       } catch (error) {

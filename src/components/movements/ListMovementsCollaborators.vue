@@ -101,7 +101,7 @@ const props = defineProps({
 
 const tickets = ref();
 const loading = ref(true);
-const ticketsProps = ref(true);
+const ticketsProps = ref([]);
 const status = reactive([
   // { en: 'backlog', br: 'aguardando' },
   // { en: 'todo', br: 'a fazer' },
@@ -121,6 +121,7 @@ const convertForStatistics = (status) => {
   let amountTicketsStatus = tickets.value[status]
     ? tickets.value[status].length
     : 0;
+
   amountTicketsStatus = (amountTicketsStatus * 100) / ticketsProps.value.length;
   amountTicketsStatus = Math.floor(amountTicketsStatus);
   return [
@@ -133,8 +134,8 @@ const convertForStatistics = (status) => {
 
 const getTickets = async () => {
   try {
-    const { data } = await myTicketsService(
-      `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=${props.collaborator.id}`
+    const data = await myTicketsService(
+      `?include=collaborator,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,status&filter[collaborator_id]=${props.collaborator.id}`
     );
     tickets.value = _.groupBy(data, 'status');
     ticketsProps.value = data;
