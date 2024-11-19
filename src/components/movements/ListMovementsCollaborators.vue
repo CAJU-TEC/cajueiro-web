@@ -104,7 +104,11 @@
             boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
           }"
           hide-pagination
-          :pagination="{ rowsPerPage: 20 }"
+          :pagination="{
+            sortBy: columnsToday[1]?.status,
+            descending: false,
+            rowsPerPage: 20,
+          }"
         />
       </q-card-section>
       <q-separator vertical />
