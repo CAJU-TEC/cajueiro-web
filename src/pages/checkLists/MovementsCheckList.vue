@@ -8,6 +8,7 @@
     </div>
 
     <ListMovementsCollaborators
+      cols="12"
       :collaborator="collaborator"
       v-for="collaborator in collaborators"
       :key="collaborator.id"
