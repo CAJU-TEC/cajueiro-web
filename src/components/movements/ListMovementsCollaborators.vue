@@ -175,6 +175,7 @@ const columnsToday = [
     name: 'status',
     label: 'Status',
     field: 'status',
+    sortable: true,
   },
 ];
 const columnsGeneralSummary = [
