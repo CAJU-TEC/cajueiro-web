@@ -85,7 +85,7 @@
         <q-table
           flat
           bordered
-          title="Resumo de hoje"
+          :title="titleToday"
           dense
           :rows="rowsGeneralSummary"
           :columns="columnsGeneralSummary"
@@ -136,11 +136,10 @@
 </template>
 
 <script setup>
-import { useQuasar } from 'quasar';
+import { useQuasar, date } from 'quasar';
 import _ from 'loadsh';
 import ticketsService from 'src/services/tickets';
-import { onMounted, ref, reactive, watch } from 'vue';
-
+import { onMounted, ref, reactive, watch, computed } from 'vue';
 const { myTickets: myTicketsService } = ticketsService();
 
 const $q = useQuasar();
@@ -154,6 +153,10 @@ const props = defineProps({
 const getRowClass = (row) => {
   return row.rowIndex % 2 === 0 ? 'q-pa-none bg-grey-2' : 'q-pa-none bg-white';
 };
+const titleToday = computed(() => {
+  const newDate = date.formatDate(new Date(), 'DD/MM/YYYY');
+  return `Histórico de hoje(${newDate})`;
+});
 const columnsGeneralSummary = [
   {
     name: 'status',

@@ -33,8 +33,7 @@
       <div v-if="isLoading" class="q-pa-md text-primary text-center">
         <q-spinner-cube color="blue" size="3.5em" />
       </div>
-
-      <q-list v-else-if="tickets" bordered separator>
+      <q-list v-else-if="tickets.length > 0" bordered separator>
         <q-item-label header class="text-h6 text-primary q-py-sm q-px-md">
           Protocolos de hoje
         </q-item-label>
@@ -151,7 +150,6 @@ const getDutyLatest = async () => {
     const data = await list();
     const firstItem = _.head(data ?? []);
 
-    // Define dutyable como um valor padrão caso esteja undefined ou null
     const dutyable = firstItem?.dutyable ?? '[]';
 
     duty.value = dutyable;
