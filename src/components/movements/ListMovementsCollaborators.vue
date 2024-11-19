@@ -87,18 +87,24 @@
           bordered
           :title="titleToday"
           dense
-          :rows="rowsGeneralSummary"
-          :columns="columnsGeneralSummary"
-          row-key="name"
+          :rows="ticketsToday"
+          :columns="columnsToday"
+          row-key="code"
           :rows-class="getRowClass"
           striped
           separator="vertical"
           color="light-blue-7"
+          :class="{
+            'bg-blue-3': ticketsToday && ticketsToday.length > 0,
+            'bg-grey-2': !ticketsToday || ticketsToday.length === 0,
+          }"
           class="text-uppercase col-6"
           :style="{
             borderRadius: '8px',
             boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
           }"
+          hide-pagination
+          :pagination="{ rowsPerPage: 20 }"
         />
       </q-card-section>
       <q-separator vertical />
@@ -155,8 +161,22 @@ const getRowClass = (row) => {
 };
 const titleToday = computed(() => {
   const newDate = date.formatDate(new Date(), 'DD/MM/YYYY');
-  return `Histórico de hoje(${newDate})`;
+  return `Histórico de hoje (${newDate})`;
 });
+const columnsToday = [
+  {
+    name: 'code',
+    align: 'left',
+    label: 'Código',
+    field: 'code',
+    sortable: true,
+  },
+  {
+    name: 'status',
+    label: 'Status',
+    field: 'status',
+  },
+];
 const columnsGeneralSummary = [
   {
     name: 'status',
@@ -192,6 +212,7 @@ const status = reactive([
   { en: 'validation', br: 'validação' },
   { en: 'done', br: 'finalizado' },
 ]);
+const ticketsToday = ref([]);
 
 const getStatusInPortuguese = (enStatus) => {
   const statusItem = status.find((item) => item.en === enStatus);
@@ -235,8 +256,26 @@ const getTickets = async () => {
   }
 };
 
-const selectStatus = async (data) => {
-  console.log(data);
+const getTicketsToday = async () => {
+  try {
+    const newDate = date.formatDate(new Date(), 'YYYY-MM-DD');
+    const data = await myTicketsService(
+      `?field[tickets]=id,impact_id,status&filter[collaborator_id]=${props.collaborator.id}&filter[today]=${newDate}`
+    );
+
+    ticketsToday.value = _.map(data, (ticket) => ({
+      code: ticket.code,
+      status: ticket.statusCast.description,
+    }));
+  } catch (error) {
+    $q.notify({
+      message: 'Ops! Ocorreu algum erro',
+      icon: 'block',
+      color: 'negative',
+    });
+  } finally {
+    loading.value = false;
+  }
 };
 
 watch(tickets, () => {
@@ -251,6 +290,7 @@ watch(tickets, () => {
 
 onMounted(() => {
   getProtocols();
+  getTicketsToday();
 });
 </script>
 

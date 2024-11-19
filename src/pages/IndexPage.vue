@@ -72,9 +72,13 @@
           </q-card>
         </div>
       </div>
-      <apex-bar class="column" :month="monthSelect"></apex-bar>
-      <div class="row q-gutter-md">
-        <q-card dark bordered class="bg-blue-9 my-card col q-ml-lg q-mt-xl">
+      <apex-bar class="column q-mt-lg" :month="monthSelect"></apex-bar>
+      <div class="row q-gutter-md justify-center items-center q-mt-lg">
+        <q-card
+          dark
+          bordered
+          class="bg-blue-9 my-card q-col-12 q-col-md-6 q-mb-md"
+        >
           <q-card-section>
             <div class="text-h6">Média de protocolos finalizados</div>
             <div
@@ -103,7 +107,11 @@
             <q-spinner-cube color="while" size="5.5em" />
           </q-card-section>
         </q-card>
-        <q-card dark bordered class="bg-blue-9 my-card col q-mt-xl">
+        <q-card
+          dark
+          bordered
+          class="bg-blue-9 my-card q-col-12 q-col-md-6 q-mb-md"
+        >
           <q-card-section>
             <div class="text-h6">Média de pontos de protocolos</div>
             <div
