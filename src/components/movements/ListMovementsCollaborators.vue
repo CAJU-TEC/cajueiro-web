@@ -128,10 +128,7 @@
             >
               <td v-for="col in props.cols" :key="col.name">
                 <!-- Exemplo: renderização condicional de conteúdo -->
-                <span
-                  v-if="col.name === 'status'"
-                  :class="getStatusClass(props.row.status)"
-                >
+                <span v-if="col.name === 'status'">
                   {{ props.row[col.name] }}
                 </span>
                 <span v-else>
