@@ -109,7 +109,38 @@
             descending: false,
             rowsPerPage: 20,
           }"
-        />
+        >
+          <template #header="props">
+            <tr class="bg-blue-4 text-white">
+              <th v-for="col in props.cols" :key="col.name" class="text-left">
+                <span class="text-weight-bold">{{ col.label }}</span>
+              </th>
+            </tr>
+          </template>
+          <template #body="props">
+            <tr
+              :class="[
+                getRowClass(props.row),
+                { 'bg-light-yellow': props.row.status === 'pending' },
+                { 'bg-light-green': props.row.status === 'completed' },
+              ]"
+              :key="props.row.code"
+            >
+              <td v-for="col in props.cols" :key="col.name">
+                <!-- Exemplo: renderização condicional de conteúdo -->
+                <span
+                  v-if="col.name === 'status'"
+                  :class="getStatusClass(props.row.status)"
+                >
+                  {{ props.row[col.name] }}
+                </span>
+                <span v-else>
+                  {{ props.row[col.name] }}
+                </span>
+              </td>
+            </tr>
+          </template>
+        </q-table>
       </q-card-section>
       <q-separator vertical />
       <q-card-section class="col-4">
