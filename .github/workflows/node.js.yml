@@ -61,4 +61,4 @@ jobs:
           script: |
             cd /var/www/cajueiro/prod/web
             cp -r -v dist/spa/* /var/www/cajueiro/prod/web
-            cp dist/spa/.htaccess /var/www/cajueiro/prod/web
+            cp -r -v dist/spa/.* /var/www/cajueiro/prod/web
