@@ -60,5 +60,4 @@ jobs:
           port: 22
           script: |
             cd /var/www/cajueiro/prod/web
-            cp -r -v dist/spa/* /var/www/cajueiro/prod/web
-            cp -r -v dist/spa/.* /var/www/cajueiro/prod/web
+            cp -r -v dist/* /var/www/cajueiro/prod/web
