@@ -1,21 +1,19 @@
-# This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
-# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-nodejs
-name: Build CI
+name: Producao Deployment
 
 on:
   push:
-    branches: [ "main" ]
+    branches:
+      - "l3sistemas"
 
 jobs:
-  build:
+  build-producao:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v3
-      - name: Use Node.js 18.x
+      - uses: actions/checkout@v4
+      - name: Use Node.js 16.x
         uses: actions/setup-node@v3
         with:
-          node-version: 18.x
+          node-version: 16.x
 
       - name: Cache node modules
         uses: actions/cache@v3
@@ -28,36 +26,28 @@ jobs:
             ${{ runner.os }}-build-${{ env.cache-name }}-
             ${{ runner.os }}-build-
             ${{ runner.os }}-
-      - run: yarn
-      - run: yarn quasar build
 
-      # - name: 📂 Sync files
-      #   uses: SamKirkland/FTP-Deploy-Action@4.3.2
-      #   with:
-      #     server: "179.189.124.29"
-      #     username: ${{ secrets.FTP_USERNAME }}
-      #     password: ${{ secrets.FTP_PASSWORD }}
-      #     port: 22
-      #     local-dir: "./dist/spa/"
-      #     server-dir: "/var/www/cajueiro/prod/web/"
+      - run: yarn
+      - run: yarn run build --mode production
 
       - name: Copy Files to Server (Producao)
         uses: appleboy/scp-action@master
         with:
-          host: "179.189.124.29"
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22
-          source: "./dist/spa/"
-          target: "/var/www/cajueiro/prod/web/"
+          host: 'suporte.l3sistemas.com.br'
+          username: ${{ vars.USERNAME_L3 }}
+          key: ${{ secrets.SSH_KEY_L3 }}
+          port: ${{ vars.PORT_L3 }}
+          source: "./dist/spa"
+          target: "/var/www/web/public_html"
 
       - name: Deploy (Develop)
         uses: appleboy/ssh-action@master
         with:
-          host: "179.189.124.29"
-          username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
-          port: 22
+          host: 'suporte.l3sistemas.com.br'
+          username: ${{ vars.USERNAME_L3 }}
+          key: ${{ secrets.SSH_KEY_L3 }}
+          port: ${{ vars.PORT_L3 }}
           script: |
-            cd /var/www/cajueiro/prod/web
-            cp -r -v dist/* /var/www/cajueiro/prod/web
+            cd /var/www/web/public_html
+            cp -r -v dist/spa/* /var/www/web/public_html
+            cp dist/spa/.htaccess /var/www/web/public_html
