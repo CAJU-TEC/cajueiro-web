@@ -33,7 +33,7 @@ jobs:
       - name: Copy Files to Server (Producao)
         uses: appleboy/scp-action@master
         with:
-          host: 'suporte.l3sistemas.com.br'
+          host: 'ssh.l3sistemas.com.br'
           username: ${{ vars.USERNAME_L3 }}
           key: ${{ secrets.SSH_KEY_L3 }}
           port: ${{ vars.PORT_L3 }}
@@ -43,7 +43,7 @@ jobs:
       - name: Deploy (Develop)
         uses: appleboy/ssh-action@master
         with:
-          host: 'suporte.l3sistemas.com.br'
+          host: 'ssh.l3sistemas.com.br'
           username: ${{ vars.USERNAME_L3 }}
           key: ${{ secrets.SSH_KEY_L3 }}
           port: ${{ vars.PORT_L3 }}
