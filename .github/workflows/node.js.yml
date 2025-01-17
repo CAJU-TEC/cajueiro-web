@@ -50,4 +50,3 @@ jobs:
           script: |
             cd /var/www/web/public_html
             cp -r -v dist/spa/* /var/www/web/public_html
-            cp dist/spa/.htaccess /var/www/web/public_html
