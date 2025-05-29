@@ -170,6 +170,26 @@
           </div>
           <div class="row q-my-md">
             <div class="col">
+              <span class="text-caption">Validação</span>
+              <p class="text-subtitle2">
+                <q-badge
+                  rounded
+                  :color="form.validated === 'yes' ? 'green' : 'red'"
+                >
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <span>
+                      {{ form.validated === 'yes' ? 'Validar' : 'Não validar' }}
+                    </span>
+                  </q-tooltip>
+                </q-badge>
+                {{ form.validated === 'yes' ? 'Validar' : 'Não validar' }}
+              </p>
+            </div>
+            <div class="col">
               <span class="text-caption">Cliente</span>
               <p class="q-mb-xs text-subtitle2">
                 {{ form.client?.full_name ?? '[- - -]' }}
