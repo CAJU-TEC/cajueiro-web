@@ -4,7 +4,7 @@ name: Build CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: ['main']
 
 jobs:
   build:
@@ -34,30 +34,30 @@ jobs:
       # - name: 📂 Sync files
       #   uses: SamKirkland/FTP-Deploy-Action@4.3.2
       #   with:
-      #     server: "179.189.124.29"
-      #     username: ${{ secrets.FTP_USERNAME }}
+      #     server: "cajueiro.cajutec.com.br"
+      #     username: ${{ vars.FTP_USERNAME }}
       #     password: ${{ secrets.FTP_PASSWORD }}
       #     port: 22
       #     local-dir: "./dist/spa/"
-      #     server-dir: "/var/www/cajueiro/prod/web/"
+      #     server-dir: "cajueiro.cajutec.com.br/web/"
 
       - name: Copy Files to Server (Producao)
         uses: appleboy/scp-action@master
         with:
-          host: "179.189.124.29"
-          username: ${{ secrets.FTP_USERNAME }}
+          host: 'cajueiro.cajutec.com.br'
+          username: ${{ vars.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
-          source: "./dist/spa/"
-          target: "/var/www/cajueiro/prod/web/"
+          source: './dist/spa/'
+          target: 'cajueiro.cajutec.com.br/web/'
 
       - name: Deploy (Develop)
         uses: appleboy/ssh-action@master
         with:
-          host: "179.189.124.29"
-          username: ${{ secrets.FTP_USERNAME }}
+          host: 'cajueiro.cajutec.com.br'
+          username: ${{ vars.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
           port: 22
           script: |
-            cd /var/www/cajueiro/prod/web
-            cp -r -v dist/* /var/www/cajueiro/prod/web
+            cd cajueiro.cajutec.com.br/web
+            cp -r -v dist/* cajueiro.cajutec.com.br/web
