@@ -172,21 +172,26 @@
             <div class="col">
               <span class="text-caption">Validação</span>
               <p class="text-subtitle2">
-                <q-badge
-                  rounded
-                  :color="form.validated === 'yes' ? 'green' : 'red'"
-                >
-                  <q-tooltip
-                    :offset="[10, 10]"
-                    anchor="top middle"
-                    self="bottom middle"
+                <template v-if="form.validated">
+                  <q-badge
+                    rounded
+                    :color="form.validated === 'yes' ? 'green' : 'red'"
                   >
-                    <span>
-                      {{ form.validated === 'yes' ? 'Validar' : 'Não validar' }}
-                    </span>
-                  </q-tooltip>
-                </q-badge>
-                {{ form.validated === 'yes' ? 'Validar' : 'Não validar' }}
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      <span>
+                        {{
+                          form.validated === 'yes' ? 'Validar' : 'Não validar'
+                        }}
+                      </span>
+                    </q-tooltip>
+                  </q-badge>
+                  {{ form.validated === 'yes' ? 'Validar' : 'Não validar' }}
+                </template>
+                <template v-else> [- - -] </template>
               </p>
             </div>
             <div class="col">
