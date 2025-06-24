@@ -60,4 +60,4 @@ jobs:
           port: 22
           script: |
             cd /home/wwcaju/cajueiro.cajutec.com.br/web
-            cp -r -v dist/* /home/wwcaju/cajueiro.cajutec.com.br/web
+            cp -r -v dist/spa/* /home/wwcaju/cajueiro.cajutec.com.br/web
