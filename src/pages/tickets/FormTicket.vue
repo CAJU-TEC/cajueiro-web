@@ -27,6 +27,19 @@
           />
         </div>
         <div class="">
+          <h6 class="q-mt-lg q-mb-md">Em que plataforma este protocolo será implementado?</h6>
+          <q-btn-toggle
+            v-model="form.platform"
+            push
+            glossy
+            :toggle-color="`${platform[form.platform].color}`"
+            :options="[
+              { label: 'WEB', value: 'web' },
+              { label: 'MOBILE', value: 'mobile' },
+            ]"
+          />
+        </div>
+        <div class="">
           <h6 class="q-mt-lg q-mb-md">Esse protocolo deve ser validado?</h6>
           <q-btn-toggle
             v-model="form.validated"
@@ -288,6 +301,7 @@ import impactsService from 'src/services/impacts';
 import status from 'src/support/tickets/status';
 import types from 'src/support/tickets/types';
 import priority from 'src/support/tickets/priority';
+import platform from 'src/support/tickets/platform';
 
 export default defineComponent({
   name: 'FormClient',
@@ -320,6 +334,7 @@ export default defineComponent({
       priority: ref('no'),
       type: ref('maintenance'),
       dufy: ref('no'),
+      platform: ref('web'),
       validated: ref('no'),
       subject: ref(''),
       message: ref(''),
@@ -443,6 +458,7 @@ export default defineComponent({
       form,
       status,
       priority,
+      platform,
       types,
       dialogAddClient,
       optionsClient,

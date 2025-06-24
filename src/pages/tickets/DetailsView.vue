@@ -115,7 +115,7 @@
             </div>
           </div>
           <div class="row">
-            <div class="col">
+            <div class="col-4">
               <span class="text-caption">Impacto do protocolo</span>
               <p class="q-mb-xs text-subtitle2">
                 <q-badge rounded :style="`background:${form?.impact?.color}`">
@@ -132,21 +132,33 @@
                 >
               </p>
             </div>
-            <div class="col">
+            <div class="col-4">
               <span class="text-caption">Postado</span>
               <p class="text-subtitle2">
                 {{ dateFormat(form.created_at ?? null) }}
                 {{ dateTimeFormat(form.created_at) }}
               </p>
             </div>
-            <div class="col">
+            <div class="col-4">
               <span class="text-caption">Iníciado</span>
               <p class="text-subtitle2">
                 {{ dateFormat(form.date_attribute_ticket ?? null) }}
                 {{ dateTimeFormat(form.date_attribute_ticket) }}
               </p>
             </div>
-            <div class="col">
+            <div class="col-4">
+              <span class="text-caption">Plataforma</span>
+              <p class="text-subtitle2">
+                {{ form.platform?.toUpperCase() ?? '[- - -]' }}
+                <span v-if="form.platform === 'web'"> (Web)</span>
+                <span v-else-if="form.platform === 'mobile'"> (Mobile)</span>
+                <span v-else-if="form.platform === 'desktop'"> (Desktop)</span>
+                <span v-else-if="form.platform === 'api'"> (API)</span>
+                <span v-else-if="form.platform === 'other'"> (Outro)</span>
+                <span v-else> ([- - -])</span>
+              </p>
+            </div>
+            <div class="col-4">
               <span class="text-caption" v-if="form.status === 'done'">
                 Finalizado
               </span>
