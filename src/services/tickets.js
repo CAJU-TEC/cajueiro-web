@@ -4,12 +4,22 @@ import { Buffer } from 'buffer';
 
 export default function ticketsService() {
   const endpoint = 'api/tickets';
-  const { list, getById, post, update, remove } = useApi(endpoint);
+  const { getById, post, update, remove } = useApi(endpoint);
 
   const addUserPatchTicket = async (form) => {
     try {
       const url = `${endpoint}`;
       const { data } = await api.patch(`${url}/${form.id}`, form);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
+  const addTesterPatchTicket = async (form) => {
+    try {
+      const url = `${endpoint}`;
+      const { data } = await api.patch(`${url}/${form.id}/tester`, form);
       return data;
     } catch (error) {
       throw (new Error(error.message));
@@ -88,11 +98,11 @@ export default function ticketsService() {
 
   return {
     addUserPatchTicket,
+    addTesterPatchTicket,
     findTicketsAtCode,
     ticketsGraphUsers,
     report,
     myTickets,
-    list,
     getById,
     post,
     update,

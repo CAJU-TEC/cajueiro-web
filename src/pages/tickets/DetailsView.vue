@@ -27,6 +27,28 @@
                 size="xs"
                 round
                 color="white"
+                class="text-green q-mr-xl"
+                icon="rocket_launch"
+                v-if="allowTicketsQa(form?.status) && !form.tester"
+                @click="
+                  () => {
+                    addUserTickerQa(form?.id);
+                  }
+                "
+              >
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <div>Quero testar esse protocolo</div>
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                unelevated
+                size="xs"
+                round
+                color="white"
                 class="text-green"
                 icon="rocket_launch"
                 v-if="allowTickets(form?.status)"
@@ -41,7 +63,7 @@
                   anchor="top middle"
                   self="bottom middle"
                 >
-                  <div>Quero esse protocolo</div>
+                  <div>Quero codar esse protocolo</div>
                 </q-tooltip>
               </q-btn>
             </div>
@@ -84,7 +106,7 @@
               </p>
             </div>
             <div class="col">
-              <span class="text-caption">Atribuição</span>
+              <span class="text-caption">Desenvolvedor</span>
               <p class="text-subtitle2">
                 <q-chip v-if="form.collaborator?.image">
                   <q-avatar>
@@ -96,6 +118,21 @@
                 </q-chip>
                 <span v-else>{{ form.collaborator?.first_name }}</span>
                 <span v-if="!form.collaborator">Sem colaborador</span>
+              </p>
+            </div>
+            <div class="col">
+              <span class="text-caption">Analista de Qualidade</span>
+              <p class="text-subtitle2">
+                <q-chip v-if="form.tester?.image">
+                  <q-avatar>
+                    <img
+                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.tester?.image?.uri}`"
+                    />
+                  </q-avatar>
+                  {{ form.tester?.first_name }}
+                </q-chip>
+                <span v-else>{{ form.tester?.first_name }}</span>
+                <span v-if="!form.tester">Sem colaborador</span>
               </p>
             </div>
             <div class="col">
@@ -506,7 +543,7 @@ import _ from 'lodash';
 export default defineComponent({
   name: 'DetailsView',
   setup() {
-    const { getById, addUserPatchTicket, timeAlterDuty } = ticketsService();
+    const { getById, addUserPatchTicket, addTesterPatchTicket, timeAlterDuty } = ticketsService();
     const { post } = commentsService();
     const $q = useQuasar();
     const route = useRoute();
@@ -579,6 +616,11 @@ export default defineComponent({
       return _.includes(statusRole, roles);
     };
 
+    const allowTicketsQa = (roles) => {
+      const statusRole = ['test', 'validation'];
+      return _.includes(statusRole, roles);
+    };
+
     onMounted(async () => {
       if (route.params.id) {
         getTicket(route.params.id);
@@ -610,6 +652,45 @@ export default defineComponent({
           });
 
           await addUserPatchTicket({
+            id,
+          })
+            .then(() => {
+              handleListClient(id);
+            })
+            .catch((error) => {
+              $q.notify({
+                message: error.message,
+                caption:
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendetes por seu usuário.',
+                icon: 'block',
+                color: 'negative',
+              });
+            });
+        });
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível associar você a este protocolo.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
+
+    const addUserTickerQa = async (id) => {
+      try {
+        $q.dialog({
+          title: 'Quero garantir a qualidade deste protocolo!',
+          message: 'Deixa comigo, blz?',
+          cancel: true,
+          persistent: true,
+        }).onOk(async () => {
+          $q.notify({
+            message: 'Esse protocolo agora é meu, não vou deixar passar nada!',
+            icon: 'check',
+            color: 'positive',
+          });
+
+          await addTesterPatchTicket({
             id,
           })
             .then(() => {
@@ -683,7 +764,9 @@ export default defineComponent({
 
     return {
       addUserTicker,
+      addUserTickerQa,
       allowTickets,
+      allowTicketsQa,
       dateFormat,
       dateTimeFormat,
       comments,

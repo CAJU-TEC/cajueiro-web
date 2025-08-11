@@ -135,7 +135,6 @@ export default defineComponent({
   setup() {
     const tickets = ref([]);
     const {
-      list,
       addUserPatchTicket,
       remove,
       report,
@@ -235,7 +234,6 @@ export default defineComponent({
 
     onMounted(() => {
       loading.value = true;
-      getClients();
       getPusher();
       getFetchUser();
       getTicketsOpenMyTickets();
@@ -277,21 +275,6 @@ export default defineComponent({
 
     const receiveEvent = (event) => {
       dialog.value = event;
-    };
-
-    const getClients = async () => {
-      try {
-        const data = await list();
-        tickets.value = data;
-        loading.value = false;
-        pusherMessage.value = [];
-      } catch (error) {
-        $q.notify({
-          message: 'Ops! Ocorreu algum erro',
-          icon: 'block',
-          color: 'negative',
-        });
-      }
     };
 
     const dialog = ref(false);
@@ -432,7 +415,6 @@ export default defineComponent({
               });
             });
 
-          await getClients();
           await getTicketsOpenNoPriority();
         });
       } catch (error) {
@@ -458,7 +440,6 @@ export default defineComponent({
             icon: 'check',
             color: 'positive',
           });
-          await getClients();
         });
       } catch (error) {
         $q.notify({
@@ -474,7 +455,6 @@ export default defineComponent({
     };
 
     return {
-      getClients,
       addUserTicker,
       pusherMessage,
       status,
