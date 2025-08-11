@@ -36,6 +36,7 @@
             :options="[
               { label: 'WEB', value: 'web' },
               { label: 'MOBILE', value: 'mobile' },
+              { label: 'WEB E MOBILE', value: 'web_mobile' },
             ]"
           />
         </div>
