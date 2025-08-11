@@ -27,7 +27,7 @@
                 size="xs"
                 round
                 color="white"
-                class="text-green q-mr-xl"
+                class="text-red q-mr-xl"
                 icon="rocket_launch"
                 v-if="allowTicketsQa(form?.status) && !form.tester"
                 @click="
