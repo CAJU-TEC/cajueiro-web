@@ -187,7 +187,7 @@
                   <q-card-section>
                     <div class="row">
                       <div class="col">
-                        <span class="text-caption">Atribuição</span>
+                        <span class="text-caption">Desenvolvedor</span>
                         <p class="text-caption">
                           <q-chip v-if="ticket.collaborator?.image">
                             <q-avatar>
@@ -201,6 +201,27 @@
                             ticket.collaborator?.first_name
                           }}</span>
                           <span v-if="!ticket.collaborator"
+                            >Sem colaborador</span
+                          >
+                        </p>
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col">
+                        <span class="text-caption">Analista de Qualidade</span>
+                        <p class="text-caption">
+                          <q-chip v-if="ticket.tester?.image">
+                            <q-avatar>
+                              <img
+                                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.tester?.image?.uri}`"
+                              />
+                            </q-avatar>
+                            {{ ticket.tester?.first_name }}
+                          </q-chip>
+                          <span v-else>{{
+                            ticket.tester?.first_name
+                          }}</span>
+                          <span v-if="!ticket.tester"
                             >Sem colaborador</span
                           >
                         </p>
