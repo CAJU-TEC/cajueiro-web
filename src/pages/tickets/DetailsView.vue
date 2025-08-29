@@ -118,6 +118,28 @@
                 </q-chip>
                 <span v-else>{{ form.collaborator?.first_name }}</span>
                 <span v-if="!form.collaborator">Sem colaborador</span>
+                <q-btn
+                  unelevated
+                  size="xs"
+                  round
+                  color="white"
+                  class="text-green"
+                  icon="rocket_launch"
+                  v-if="form.collaborator?.id === authUser?.collaborator?.id"
+                  @click="
+                    () => {
+                      transferUserTicker('developer');
+                    }
+                  "
+                >
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <div>Transferir para outro(a) desenvolvedor(a)</div>
+                  </q-tooltip>
+                </q-btn>
               </p>
             </div>
             <div class="col">
@@ -133,6 +155,28 @@
                 </q-chip>
                 <span v-else>{{ form.tester?.first_name }}</span>
                 <span v-if="!form.tester">Sem colaborador</span>
+                <q-btn
+                  unelevated
+                  size="xs"
+                  round
+                  color="white"
+                  class="text-green"
+                  icon="rocket_launch"
+                  v-if="form.tester?.id === authUser?.collaborator?.id"
+                  @click="
+                    () => {
+                      transferUserTicker('tester');
+                    }
+                  "
+                >
+                  <q-tooltip
+                    :offset="[10, 10]"
+                    anchor="top middle"
+                    self="bottom middle"
+                  >
+                    <div>Transferir para outro(a) Analista de Qualidade</div>
+                  </q-tooltip>
+                </q-btn>
               </p>
             </div>
             <div class="col">
@@ -526,6 +570,7 @@
 </template>
 <script>
 import { defineComponent, ref, onMounted, computed } from 'vue';
+import usersService from 'src/services/users';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
 import {
@@ -537,17 +582,24 @@ import { formatTimeDescription } from 'src/support/times/timeFormat';
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
 import { useQuasar } from 'quasar';
+import collaboratorsService from 'src/services/collaborators';
 import { useRoute } from 'vue-router';
 import _ from 'lodash';
 
 export default defineComponent({
   name: 'DetailsView',
   setup() {
-    const { getById, addUserPatchTicket, addTesterPatchTicket, timeAlterDuty } = ticketsService();
+    const { getById, addUserPatchTicket, addTesterPatchTicket, timeAlterDuty } =
+      ticketsService();
     const { post } = commentsService();
     const $q = useQuasar();
     const route = useRoute();
     const comments = ref([{}]);
+    const authUser = ref();
+    const { fetchUser } = usersService();
+    const { list: listCollaborators } = collaboratorsService();
+    const colaboradorList = ref([]);
+
     const sequencesInHours = computed(() => {
       const result = [];
       const maxMinutes = 120; // 2 horas em minutos
@@ -625,6 +677,12 @@ export default defineComponent({
       if (route.params.id) {
         getTicket(route.params.id);
       }
+
+      authUser.value = await fetchUser();
+      authUser.value = authUser.value.data.user;
+
+      const colaboradores = await listCollaborators();
+      colaboradorList.value = colaboradores;
     });
 
     const onChange = (event) => {
@@ -661,13 +719,73 @@ export default defineComponent({
               $q.notify({
                 message: error.message,
                 caption:
-                  'Tente primeiramente resolver os protocolos que estão abertos/pendetes por seu usuário.',
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendentes por seu usuário.',
                 icon: 'block',
                 color: 'negative',
               });
             });
         });
       } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível associar você a este protocolo.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
+
+    const transferUserTicker = async (type) => {
+      try {
+        let colaboradorsOptions = colaboradorList.value?.map((colaborador) => ({
+          label: colaborador.first_name,
+          value: colaborador.id,
+        }));
+
+        colaboradorsOptions = colaboradorsOptions?.sort((a, b) => () => {
+          return a.first_name - b.first_name;
+        });
+
+        const selectedColaborador = ref(null);
+
+        $q.dialog({
+          title: 'Transferir Protocolo',
+          message: 'Selecione o colaborador que receberá este protocolo:',
+          options: {
+            type: 'radio',
+            model: selectedColaborador.value,
+            items: colaboradorsOptions,
+          },
+          cancel: true,
+          persistent: true,
+        }).onOk(async (colaboradorId) => {
+          if (!colaboradorId) {
+            $q.notify({
+              message: 'Por favor, selecione um colaborador.',
+              icon: 'warning',
+              color: 'warning',
+            });
+            return;
+          }
+
+          await transferTicketTo({
+            type,
+            collaborator_id: colaboradorId,
+          })
+            .then(() => {
+              handleListClient(colaboradorId);
+            })
+            .catch((error) => {
+              $q.notify({
+                message: error.message,
+                caption:
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendentes por seu usuário.',
+                icon: 'block',
+                color: 'negative',
+              });
+            });
+        });
+      } catch (error) {
+        console.log(error);
         $q.notify({
           message: 'Ops! Não foi possível associar você a este protocolo.',
           icon: 'block',
@@ -700,7 +818,7 @@ export default defineComponent({
               $q.notify({
                 message: error.message,
                 caption:
-                  'Tente primeiramente resolver os protocolos que estão abertos/pendetes por seu usuário.',
+                  'Tente primeiramente resolver os protocolos que estão abertos/pendentes por seu usuário.',
                 icon: 'block',
                 color: 'negative',
               });
@@ -709,6 +827,68 @@ export default defineComponent({
       } catch (error) {
         $q.notify({
           message: 'Ops! Não foi possível associar você a este protocolo.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
+
+    const transferTicketTo = async (data) => {
+      try {
+        if (!data.collaborator_id) {
+          $q.notify({
+            message: 'Por favor, selecione um colaborador.',
+            icon: 'warning',
+            color: 'warning',
+          });
+          return;
+        }
+
+        try {
+          if (data.type === 'developer') {
+            await addUserPatchTicket({
+              id: route.params.id,
+              collaborator_id: data.collaborator_id,
+            });
+          }
+
+          if (data.type === 'tester') {
+            await addTesterPatchTicket({
+              id: route.params.id,
+              collaborator_id: data.collaborator_id,
+            });
+          }
+
+          if (!data.type) {
+            $q.notify({
+              message: 'Método Inválido',
+              caption: 'Tipo de transferência desconhecido.',
+              icon: 'block',
+              color: 'negative',
+            });
+            return;
+          }
+
+          $q.notify({
+            message: 'Protocolo transferido com sucesso!',
+            icon: 'check',
+            color: 'positive',
+          });
+
+          await handleListClient(route.params.id);
+        } catch (error) {
+          $q.notify({
+            message: error.message,
+            caption:
+              'Tente primeiramente resolver os protocolos que estão abertos/pendentes por seu usuário.',
+            icon: 'block',
+            color: 'negative',
+          });
+        }
+      } catch (error) {
+        $q.notify({
+          message:
+            'Ops! Não foi possível associar este usuário à este protocolo.',
           icon: 'block',
           color: 'negative',
         });
@@ -781,6 +961,8 @@ export default defineComponent({
       sequencesInHours,
       formatTimeDescription,
       setTimeTicketOfDuty,
+      authUser,
+      transferUserTicker,
     };
   },
 });
