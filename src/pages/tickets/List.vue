@@ -289,7 +289,7 @@ export default defineComponent({
       try {
         const user = await fetchUser();
         const data = await myTicketsService(
-          `?include=collaborator.image&filter[collaborator_id]=${user.data.user.collaborator?.id}&paginate=50`
+          `?include=collaborator.image,tester&filter[user_tickets]=${user.data.user.collaborator?.id}&paginate=50`
         );
         ticketsInMyTickets.value = data;
       } catch (error) {
