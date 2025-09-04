@@ -125,7 +125,7 @@
                   color="white"
                   class="text-green"
                   icon="rocket_launch"
-                  v-if="form.collaborator?.id === authUser?.collaborator?.id"
+                  v-if="form.collaborator?.id === authUser?.collaborator?.id && form.status !== 'done'"
                   @click="
                     () => {
                       transferUserTicker('developer');
@@ -162,7 +162,7 @@
                   color="white"
                   class="text-green"
                   icon="rocket_launch"
-                  v-if="form.tester?.id === authUser?.collaborator?.id"
+                  v-if="form.tester?.id === authUser?.collaborator?.id && form.status !== 'done'"
                   @click="
                     () => {
                       transferUserTicker('tester');
