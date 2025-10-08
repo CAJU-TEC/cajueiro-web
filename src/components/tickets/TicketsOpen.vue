@@ -125,7 +125,15 @@
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
                   {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
+
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -305,8 +313,15 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -526,6 +541,13 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -672,6 +694,13 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -820,6 +849,13 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -970,6 +1006,13 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -1117,6 +1160,13 @@
                     dia(s)</span
                   >
                   <span v-else>Hoje</span>
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -1255,6 +1305,13 @@
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
@@ -1393,6 +1450,13 @@
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
+                  <q-badge
+                    v-if="ticket?.validated === 'yes'"
+                    color="green"
+                    text-color="white"
+                    label="VALIDAR"
+                    class="q-ml-sm"
+                  />
                 </q-item-label>
               </q-item-section>
 
