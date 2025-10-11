@@ -65,7 +65,6 @@
 
               <q-card-section class="col">
                 <h5 class="text-overline q-ma-none q-pb-sm">PLANTÃO:</h5>
-
                 <DutiesComponent></DutiesComponent>
               </q-card-section>
             </q-card-section>

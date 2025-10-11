@@ -28,7 +28,8 @@
     "uuid": "^9.0.0",
     "vue": "^3.0.0",
     "vue-router": "^4.0.0",
-    "vue3-apexcharts": "^1.4.1"
+    "vue3-apexcharts": "^1.4.1",
+    "vuedraggable": "^4.1.0"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.0.0",

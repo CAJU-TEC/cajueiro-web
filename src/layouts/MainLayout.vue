@@ -2,15 +2,7 @@
   <q-layout view="lHh Lpr lFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          class="q-mr-sm"
-          @click="toggleLeftDrawer"
-        />
+        <q-btn flat dense round icon="menu" aria-label="Menu" class="q-mr-sm" @click="toggleLeftDrawer" />
         <q-separator dark vertical inset />
         <q-toolbar-title> Cajueiro App </q-toolbar-title>
 
@@ -21,31 +13,20 @@
     </q-header>
 
     <q-drawer v-model="leftDrawerOpen" show-if-above bordered>
-      <q-scroll-area
-        style="
+      <q-scroll-area style="
           height: calc(100% - 150px);
           margin-top: 150px;
           border-right: 1px solid #ddd;
-        "
-      >
+        ">
         <q-list>
           <q-item-label header> Menus </q-item-label>
 
-          <EssentialLink
-            v-for="link in essentialLinks"
-            :key="link.title"
-            :permissions="link.route.permissions"
-            v-bind="link"
-            :submenus="link.submenu"
-          />
+          <EssentialLink v-for="link in essentialLinks" :key="link.title" :permissions="link.route.permissions"
+            v-bind="link" :submenus="link.submenu" />
         </q-list>
       </q-scroll-area>
 
-      <q-img
-        class="absolute-top"
-        src="https://cdn.quasar.dev/img/material.png"
-        style="height: 150px"
-      >
+      <q-img class="absolute-top" src="https://cdn.quasar.dev/img/material.png" style="height: 150px">
         <div class="absolute-bottom bg-transparent">
           <q-avatar size="56px" class="q-mb-sm">
             <img :src="getImage()" />
@@ -101,6 +82,15 @@ export default defineComponent({
         caption: '',
         icon: 'groups',
         route: { name: 'clients.list', permissions: ['clients.*'] },
+      },
+      {
+        title: 'Kanban',
+        caption: '',
+        icon: 'groups',
+        route: {
+          name: 'kanban.list',
+          permissions: ['tickets.*', 'tickets.list'],
+        },
       },
       {
         title: 'Protocolos',

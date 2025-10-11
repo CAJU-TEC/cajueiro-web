@@ -8,7 +8,7 @@ import tickets from './tickets.js';
 import users from './users.js';
 import auth from './auth.js';
 import groups from './groups.js';
-
+import kanban from './kanban.js';
 const routes = [
   // path for login
   {
@@ -36,6 +36,7 @@ const routes = [
       ...tickets,
       ...users,
       ...groups,
+      ...kanban
     ],
   },
 

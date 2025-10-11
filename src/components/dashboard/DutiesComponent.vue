@@ -3,29 +3,23 @@
     <q-card class="q-mb-sm" flat bordered>
       <q-item>
         <q-item-section avatar>
+
           <q-avatar>
-            <img
-              :src="`https://cajueiroapi.cajutec.com.br/storage/images/${duty.image?.uri}`"
-            />
+            <img :src="`https://cajueiroapi.cajutec.com.br/storage/images/${duty.image?.uri}`" />
           </q-avatar>
         </q-item-section>
 
         <q-item-section>
           <q-item-label>{{
             duty.first_name ? duty.first_name : '- - -'
-          }}</q-item-label>
+            }}</q-item-label>
           <q-item-label class="text-caption"> Plantonista </q-item-label>
         </q-item-section>
 
         <q-item-section>
           <q-select
-            v-model="model"
-            :options="collaboratorsOptions"
-            label="Selecione um colaborador"
-            option-label="first_name"
-            option-value="id"
-            @update:model-value="handleSelectOptions"
-          />
+v-model="model" :options="collaboratorsOptions" label="Selecione um colaborador"
+            option-label="first_name" option-value="id" @update:model-value="handleSelectOptions" />
         </q-item-section>
       </q-item>
     </q-card>
@@ -38,11 +32,8 @@
           Protocolos de hoje
         </q-item-label>
         <q-item
-          :to="{ name: 'tickets.details', params: { id: ticket.id } }"
-          v-for="ticket in tickets"
-          :key="ticket.id"
-          :class="{ 'bg-teal-1 text-grey-8': ticket.dufy === 'yes' }"
-        >
+:to="{ name: 'tickets.details', params: { id: ticket.id } }" v-for="ticket in tickets" :key="ticket.id"
+          :class="{ 'bg-teal-1 text-grey-8': ticket.dufy === 'yes' }">
           <q-item-section>
             <q-item-label caption>#{{ ticket.code }}</q-item-label>
             <q-item-label class="text-weight-bold">
@@ -61,20 +52,12 @@
       <q-card>
         <q-card-section class="row items-center">
           <q-avatar icon="live_help" color="primary" text-color="white" />
-          <span class="q-ml-sm"
-            >Deseja realmente adicionar-lo(a) como plantonista?</span
-          >
+          <span class="q-ml-sm">Deseja realmente adicionar-lo(a) como plantonista?</span>
         </q-card-section>
 
         <q-card-actions align="right">
           <q-btn flat label="Não" color="primary" v-close-popup />
-          <q-btn
-            flat
-            label="Sim, agora!"
-            @click="() => (returnDuty = true)"
-            color="primary"
-            v-close-popup
-          />
+          <q-btn flat label="Sim, agora!" @click="() => (returnDuty = true)" color="primary" v-close-popup />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -134,9 +117,10 @@ const getTicketsToday = async () => {
   try {
     const timeStamp = ref(Date.now());
     const formattedString = ref(date.formatDate(timeStamp.value, 'YYYY-MM-DD'));
-    const data = await myTickets(
+    const url = (
       `?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,type,dufy,subject,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[starts_before]=${formattedString.value}&[collaborator_id]=null`
     );
+    const data = await myTickets(url);
     tickets.value = data;
   } catch (error) {
     console.log(error);
@@ -151,7 +135,7 @@ const getDutyLatest = async () => {
     const firstItem = _.head(data ?? []);
 
     const dutyable = firstItem?.dutyable ?? '[]';
-
+    console.table(data);
     duty.value = dutyable;
   } catch (e) {
     console.error('Erro ao tentar definir duty:', e);

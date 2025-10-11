@@ -104,6 +104,7 @@
                 <q-card-section horizontal class="text-grey-10">
                   <q-card-section>
                     <div class="row">
+
                       <div
                         class="col text-caption"
                         v-if="ticket.dufy === 'yes'"
