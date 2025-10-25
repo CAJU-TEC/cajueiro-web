@@ -5,6 +5,7 @@ import collaborators from './collaborators.js';
 import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
 import tickets from './tickets.js';
+import reports from './reports.js';
 import users from './users.js';
 import auth from './auth.js';
 import groups from './groups.js';
@@ -34,6 +35,7 @@ const routes = [
       ...jobPlans,
       ...corporates,
       ...tickets,
+      ...reports,
       ...users,
       ...groups,
     ],
