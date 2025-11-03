@@ -218,12 +218,8 @@
                             </q-avatar>
                             {{ ticket.tester?.first_name }}
                           </q-chip>
-                          <span v-else>{{
-                            ticket.tester?.first_name
-                          }}</span>
-                          <span v-if="!ticket.tester"
-                            >Sem colaborador</span
-                          >
+                          <span v-else>{{ ticket.tester?.first_name }}</span>
+                          <span v-if="!ticket.tester">Sem colaborador</span>
                         </p>
                       </div>
                     </div>

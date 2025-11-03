@@ -146,6 +146,37 @@ export default defineComponent({
         ],
       },
       {
+        title: 'Relatórios',
+        caption: 'Acompanhamento por setor',
+        icon: 'assessment',
+        route: { name: 'reports.performance' },
+        permissions: ['reports.*'],
+        submenu: [
+          {
+            title: 'Suporte',
+            caption: 'Desempenho do Help Desk',
+            icon: 'support_agent',
+            route: { name: 'reports.support' },
+            permissions: ['reports.*', 'reports.support'],
+          },
+          {
+            title: 'Desenvolvimento',
+            caption: 'Desempenho dos Devs',
+            icon: 'code',
+            route: { name: 'reports.development' },
+            permissions: ['reports.*', 'reports.development'],
+          },
+          {
+            title: 'Quality Assurance',
+            caption: 'Desempenho de QA',
+            icon: 'verified',
+            route: { name: 'reports.qa' },
+            permissions: ['reports.*', 'reports.qa'],
+          },
+        ],
+      },
+
+      {
         title: 'Colaboradores',
         caption: '',
         icon: 'groups',
