@@ -48,7 +48,7 @@
             <span v-if="col.name == 'roles'">
               <div class="q-pa-md q-gutter-xs">
                 <q-badge
-                  v-for="badge in props.row.roles.map((e) => e.name)"
+                  v-for="badge in props.row?.roles?.map((e) => e.name)"
                   color="grey"
                   :label="badge"
                   :key="badge"

@@ -24,6 +24,8 @@
                   <q-select
                     v-model="selectedMonth"
                     :options="monthOptions"
+                    map-options
+                    emit-value
                     outlined
                     dense
                     style="min-width: 150px"
@@ -36,14 +38,6 @@
                     outlined
                     dense
                     style="min-width: 120px"
-                  />
-                </div>
-                <div class="col-auto">
-                  <q-btn
-                    label="Filtrar"
-                    color="primary"
-                    @click="handleFilter"
-                    :loading="loading"
                   />
                 </div>
               </div>
@@ -136,7 +130,12 @@
           </div>
 
           <div class="chart-container q-mb-md">
-            <canvas ref="collaboratorChart"></canvas>
+            <apexchart
+              type="bar"
+              height="300"
+              :options="collaboratorChartOptions"
+              :series="collaboratorChartSeries"
+            />
           </div>
 
           <q-table
@@ -146,7 +145,7 @@
             flat
             bordered
           >
-            <template v-slot:body-cell-position="props">
+            <template #body-cell-position="props">
               <q-td :props="props">
                 <q-badge
                   rounded
@@ -156,7 +155,7 @@
                 />
               </q-td>
             </template>
-            <template v-slot:body-cell-total="props">
+            <template #body-cell-total="props">
               <q-td :props="props">
                 <span class="text-weight-bold">{{ props.row.total }}</span>
               </q-td>
@@ -186,7 +185,12 @@
                 Externos vs Internos
               </div>
               <div class="chart-container">
-                <canvas ref="externalInternalChart"></canvas>
+                <apexchart
+                  type="pie"
+                  height="300"
+                  :options="externalInternalChartOptions"
+                  :series="externalInternalChartSeries"
+                />
               </div>
             </div>
 
@@ -197,7 +201,12 @@
                 Mobile vs Web
               </div>
               <div class="chart-container">
-                <canvas ref="platformChart"></canvas>
+                <apexchart
+                  type="pie"
+                  height="300"
+                  :options="platformChartOptions"
+                  :series="platformChartSeries"
+                />
               </div>
             </div>
           </div>
@@ -209,7 +218,7 @@
             flat
             bordered
           >
-            <template v-slot:body-cell-externos="props">
+            <template #body-cell-externos="props">
               <q-td :props="props">
                 <q-badge
                   color="purple"
@@ -218,7 +227,7 @@
                 />
               </q-td>
             </template>
-            <template v-slot:body-cell-internos="props">
+            <template #body-cell-internos="props">
               <q-td :props="props">
                 <q-badge
                   color="orange"
@@ -227,7 +236,7 @@
                 />
               </q-td>
             </template>
-            <template v-slot:body-cell-mobile="props">
+            <template #body-cell-mobile="props">
               <q-td :props="props">
                 <q-badge
                   color="primary"
@@ -236,7 +245,7 @@
                 />
               </q-td>
             </template>
-            <template v-slot:body-cell-web="props">
+            <template #body-cell-web="props">
               <q-td :props="props">
                 <q-badge
                   color="positive"
@@ -245,12 +254,12 @@
                 />
               </q-td>
             </template>
-            <template v-slot:body-cell-total="props">
+            <template #body-cell-total="props">
               <q-td :props="props">
                 <span class="text-weight-bold">{{ props.row.total }}</span>
               </q-td>
             </template>
-            <template v-slot:bottom-row>
+            <template #bottom-row>
               <q-tr class="bg-grey-3 text-weight-bold">
                 <q-td>TOTAL GERAL</q-td>
                 <q-td class="text-center">{{ totalExternal }}</q-td>
@@ -268,9 +277,8 @@
 </template>
 
 <script>
-import { ref, computed, onMounted, nextTick, watch } from 'vue';
+import { ref, computed, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
-import Chart from 'chart.js/auto';
 import { reportsService } from 'src/services/reports';
 
 export default {
@@ -283,15 +291,6 @@ export default {
     const selectedYear = ref(new Date().getFullYear());
     const loading = ref(false);
 
-    const collaboratorChart = ref(null);
-    const externalInternalChart = ref(null);
-    const platformChart = ref(null);
-
-    let collaboratorChartInstance = null;
-    let externalInternalChartInstance = null;
-    let platformChartInstance = null;
-
-    // Dados reais da API
     const ticketsByCollaborator = ref([]);
     const ticketsByClient = ref([]);
 
@@ -345,38 +344,91 @@ export default {
       { name: 'total', label: 'Total', field: 'total', align: 'center' },
     ];
 
-    // Computados
+    // === GRÁFICOS ===
+    const collaboratorChartOptions = ref({
+      chart: { type: 'bar', toolbar: { show: false } },
+      plotOptions: { bar: { borderRadius: 8, horizontal: false } },
+      xaxis: { categories: [] },
+      colors: ['#1976D2'],
+      dataLabels: { enabled: false },
+      legend: { show: true },
+      responsive: [{ breakpoint: 480, options: { chart: { width: 200 } } }],
+    });
+
+    const collaboratorChartSeries = ref([{ name: 'Protocolos', data: [] }]);
+
+    const externalInternalChartOptions = ref({
+      chart: { type: 'pie', toolbar: { show: false } },
+      labels: ['Externos', 'Internos'],
+      colors: ['#9C27B0', '#FF9800'],
+      legend: { position: 'bottom' },
+      responsive: [{ breakpoint: 480, options: { chart: { width: 200 } } }],
+    });
+
+    const externalInternalChartSeries = ref([]);
+
+    const platformChartOptions = ref({
+      chart: { type: 'pie', toolbar: { show: false } },
+      labels: ['Mobile', 'Web'],
+      colors: ['#1976D2', '#4CAF50'],
+      legend: { position: 'bottom' },
+      responsive: [{ breakpoint: 480, options: { chart: { width: 200 } } }],
+    });
+
+    const platformChartSeries = ref([]);
+
+    // === COMPUTED ===
     const totalTickets = computed(() =>
       ticketsByCollaborator.value.reduce((sum, item) => sum + item.total, 0)
     );
 
     const totalClients = computed(() => ticketsByClient.value.length);
-
     const totalExternal = computed(() =>
       ticketsByClient.value.reduce((sum, item) => sum + item.externos, 0)
     );
-
     const totalInternal = computed(() =>
       ticketsByClient.value.reduce((sum, item) => sum + item.internos, 0)
     );
-
     const totalMobile = computed(() =>
       ticketsByClient.value.reduce((sum, item) => sum + item.mobile, 0)
     );
-
     const totalWeb = computed(() =>
       ticketsByClient.value.reduce((sum, item) => sum + item.web, 0)
     );
 
-    // Carregar dados da API
+    // === ATUALIZAR GRÁFICOS ===
+    const updateCharts = () => {
+      const categorias = ticketsByCollaborator.value.map(
+        (item) => item.nome || 'Sem nome'
+      );
+      const dados = ticketsByCollaborator.value.map((item) => item.total || 0);
+
+      // ✅ Atualiza o gráfico de colaboradores com novo objeto reativo
+      collaboratorChartOptions.value = {
+        ...collaboratorChartOptions.value,
+        xaxis: {
+          ...collaboratorChartOptions.value.xaxis,
+          categories: categorias,
+        },
+      };
+
+      collaboratorChartSeries.value = [{ name: 'Protocolos', data: dados }];
+
+      // Externos vs Internos
+      externalInternalChartSeries.value = [
+        totalExternal.value,
+        totalInternal.value,
+      ];
+
+      // Mobile vs Web
+      platformChartSeries.value = [totalMobile.value, totalWeb.value];
+    };
+
+    // === CARREGAR DADOS ===
     const loadData = async () => {
       loading.value = true;
       try {
-        const params = {
-          month: selectedMonth.value,
-          year: selectedYear.value,
-        };
-
+        const params = { month: selectedMonth.value, year: selectedYear.value };
         const [collabData, clientData] = await Promise.all([
           reportsService.getTicketsPorColaborador(params),
           reportsService.getTicketsPorCliente(params),
@@ -384,11 +436,7 @@ export default {
 
         ticketsByCollaborator.value = collabData;
         ticketsByClient.value = clientData;
-
-        await nextTick();
-        createCollaboratorChart();
-        createExternalInternalChart();
-        createPlatformChart();
+        updateCharts();
       } catch (error) {
         console.error('Erro ao carregar dados:', error);
         $q.notify({
@@ -405,108 +453,13 @@ export default {
       loadData();
     };
 
-    // Funções de gráfico
-    const createCollaboratorChart = () => {
-      if (collaboratorChartInstance) {
-        collaboratorChartInstance.destroy();
-      }
+    // Atualizar gráficos quando os dados mudarem
+    watch([ticketsByCollaborator, ticketsByClient], updateCharts);
 
-      const ctx = collaboratorChart.value?.getContext('2d');
-      if (!ctx) return;
-
-      collaboratorChartInstance = new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ticketsByCollaborator.value.map((item) => item.nome),
-          datasets: [
-            {
-              label: 'Total de Protocolos',
-              data: ticketsByCollaborator.value.map((item) => item.total),
-              backgroundColor: '#1976D2',
-              borderRadius: 8,
-              borderSkipped: false,
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { display: true },
-          },
-          scales: {
-            y: { beginAtZero: true, ticks: { precision: 0 } },
-          },
-        },
-      });
-    };
-
-    const createExternalInternalChart = () => {
-      if (externalInternalChartInstance) {
-        externalInternalChartInstance.destroy();
-      }
-
-      const ctx = externalInternalChart.value?.getContext('2d');
-      if (!ctx) return;
-
-      externalInternalChartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Externos', 'Internos'],
-          datasets: [
-            {
-              data: [totalExternal.value, totalInternal.value],
-              backgroundColor: ['#9C27B0', '#FF9800'],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom' },
-          },
-        },
-      });
-    };
-
-    const createPlatformChart = () => {
-      if (platformChartInstance) {
-        platformChartInstance.destroy();
-      }
-
-      const ctx = platformChart.value?.getContext('2d');
-      if (!ctx) return;
-
-      platformChartInstance = new Chart(ctx, {
-        type: 'pie',
-        data: {
-          labels: ['Mobile', 'Web'],
-          datasets: [
-            {
-              data: [totalMobile.value, totalWeb.value],
-              backgroundColor: ['#1976D2', '#4CAF50'],
-            },
-          ],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { position: 'bottom' },
-          },
-        },
-      });
-    };
-
-    // Recarregar gráficos quando os dados mudarem
-    watch([ticketsByCollaborator, ticketsByClient], () => {
-      createCollaboratorChart();
-      createExternalInternalChart();
-      createPlatformChart();
+    watch([selectedMonth, selectedYear], () => {
+      loadData();
     });
 
-    // Carregar inicialmente
     onMounted(() => {
       loadData();
     });
@@ -528,9 +481,14 @@ export default {
       totalMobile,
       totalWeb,
       handleFilter,
-      collaboratorChart,
-      externalInternalChart,
-      platformChart,
+
+      // Gráficos
+      collaboratorChartOptions,
+      collaboratorChartSeries,
+      externalInternalChartOptions,
+      externalInternalChartSeries,
+      platformChartOptions,
+      platformChartSeries,
     };
   },
 };
@@ -540,30 +498,20 @@ export default {
 .summary-card {
   border-left: 4px solid;
 }
-
 .border-left-primary {
   border-left-color: #1976d2;
 }
-
 .border-left-positive {
   border-left-color: #4caf50;
 }
-
 .border-left-purple {
   border-left-color: #9c27b0;
 }
-
 .border-left-orange {
   border-left-color: #ff9800;
 }
 
 .chart-container {
-  position: relative;
   height: 300px;
-  max-height: 400px;
-}
-
-.chart-container canvas {
-  max-height: 100%;
 }
 </style>

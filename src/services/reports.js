@@ -25,6 +25,7 @@ export const reportsService = {
 
   async getDesempenhoQuantidade(params = {}) {
     try {
+
       const { data } = await api.get(`${endpoint}/development/quantidade`, { params });
       return data;
     } catch (error) {
