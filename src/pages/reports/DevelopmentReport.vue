@@ -269,273 +269,289 @@
   </q-page>
 </template>
 
-<script setup>
+<script>
 import { ref, computed, onMounted, watch } from 'vue';
 import { useQuasar } from 'quasar';
 import { reportsService } from 'src/services/reports';
 
-const $q = useQuasar();
+export default {
+  name: 'DevelopmentReport',
 
-const selectedMonth = ref(new Date().getMonth() + 1);
-const selectedYear = ref(new Date().getFullYear());
-const loading = ref(false);
+  setup() {
+    const $q = useQuasar();
 
-const dadosQuantidade = ref([]);
-const dadosTempo = ref([]);
+    const selectedMonth = ref(new Date().getMonth() + 1);
+    const selectedYear = ref(new Date().getFullYear());
+    const loading = ref(false);
 
-const months = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
-];
+    const dadosQuantidade = ref([]);
+    const dadosTempo = ref([]);
 
-const monthOptions = months.map((label, idx) => ({ label, value: idx + 1 }));
-const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+    const months = [
+      'Janeiro',
+      'Fevereiro',
+      'Março',
+      'Abril',
+      'Maio',
+      'Junho',
+      'Julho',
+      'Agosto',
+      'Setembro',
+      'Outubro',
+      'Novembro',
+      'Dezembro',
+    ];
 
-// Colunas
-const colunasQuantidade = [
-  {
-    name: 'colaborador',
-    label: 'Colaborador',
-    field: 'colaborador',
-    align: 'left',
-  },
-  { name: 'quantidade', label: 'Qtd.', field: 'quantidade', align: 'center' },
-  { name: 'percentual', label: '%', field: 'percentual', align: 'left' },
-  {
-    name: 'produtividade',
-    label: 'Produtividade',
-    field: 'produtividade',
-    align: 'center',
-  },
-];
-
-const colunasTempo = [
-  {
-    name: 'colaborador',
-    label: 'Colaborador',
-    field: 'colaborador',
-    align: 'left',
-  },
-  {
-    name: 'tempoMedio',
-    label: 'Tempo Médio',
-    field: 'tempoMedio',
-    align: 'center',
-  },
-  { name: 'quantidade', label: 'Qtd.', field: 'quantidade', align: 'center' },
-];
-
-// Opções de gráficos otimizadas
-function updateCharts() {
-  quantidadeChartOptions.value = {
-    ...quantidadeChartOptions.value,
-    xaxis: {
-      categories: dadosQuantidade.value.map((item) => item.colaborador),
-    },
-  };
-  quantidadeChartSeries.value = [
-    {
-      name: 'Protocolos',
-      data: dadosQuantidade.value.map((item) => item.quantidade),
-    },
-  ];
-
-  distribuicaoChartOptions.value = {
-    ...distribuicaoChartOptions.value,
-    labels: dadosQuantidade.value.map((item) => item.colaborador),
-    // Gera um conjunto de cores suficientes para cada fatia do gráfico
-    colors: generateColors(dadosQuantidade.value.length),
-  };
-
-  distribuicaoChartSeries.value = dadosQuantidade.value.map(
-    (item) => item.quantidade
-  );
-}
-
-// Gera cores HSL distintas com base na quantidade de itens.
-// Retorna valores CSS (ex.: "hsl(120, 70%, 50%)") aceitos pelo ApexCharts.
-function generateColors(count) {
-  if (!count || count <= 0) return [];
-  return Array.from({ length: count }, (_, i) => {
-    const hue = Math.round((i / count) * 360);
-    const saturation = 68; // ajuste para paleta mais/menos vibrante
-    const lightness = 48; // ajuste para mais/menos claro
-    return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
-  });
-}
-
-async function loadData() {
-  loading.value = true;
-  try {
-    const params = { month: selectedMonth.value, year: selectedYear.value };
-
-    const [quantidadeData, tempoData] = await Promise.all([
-      reportsService.getDesempenhoQuantidade(params),
-      reportsService.getDesempenhoTempoMedio(params),
-    ]);
-
-    const total = quantidadeData.reduce(
-      (sum, item) => sum + item.quantidade,
-      0
+    const monthOptions = months.map((label, idx) => ({
+      label,
+      value: idx + 1,
+    }));
+    const years = Array.from(
+      { length: 5 },
+      (_, i) => new Date().getFullYear() - i
     );
-    const media = total / quantidadeData.length || 0;
 
-    dadosQuantidade.value = quantidadeData.map((item) => ({
-      colaborador: item.colaborador,
-      quantidade: item.quantidade,
-      percentual: total ? ((item.quantidade / total) * 100).toFixed(1) : '0.0',
-      produtividade: calcularProdutividade(item.quantidade, media),
-    }));
+    const colunasQuantidade = [
+      {
+        name: 'colaborador',
+        label: 'Colaborador',
+        field: 'colaborador',
+        align: 'left',
+      },
+      {
+        name: 'quantidade',
+        label: 'Qtd.',
+        field: 'quantidade',
+        align: 'center',
+      },
+      { name: 'percentual', label: '%', field: 'percentual', align: 'left' },
+      {
+        name: 'produtividade',
+        label: 'Produtividade',
+        field: 'produtividade',
+        align: 'center',
+      },
+    ];
 
-    dadosTempo.value = tempoData.map((item) => ({
-      colaborador: item.colaborador,
-      tempoMedio: item.tempo_medio,
-      quantidade: item.quantidade,
-    }));
+    const colunasTempo = [
+      {
+        name: 'colaborador',
+        label: 'Colaborador',
+        field: 'colaborador',
+        align: 'left',
+      },
+      {
+        name: 'tempoMedio',
+        label: 'Tempo Médio',
+        field: 'tempoMedio',
+        align: 'center',
+      },
+      {
+        name: 'quantidade',
+        label: 'Qtd.',
+        field: 'quantidade',
+        align: 'center',
+      },
+    ];
 
-    updateCharts(); // ✅ atualiza gráficos de forma eficiente
-  } catch (error) {
-    console.error('Erro ao carregar dados:', error);
-    $q.notify({
-      color: 'negative',
-      message: 'Erro ao carregar os dados.',
-      icon: 'warning',
+    const quantidadeChartOptions = ref({
+      chart: { type: 'bar', toolbar: { show: false } },
+      plotOptions: {
+        bar: { borderRadius: 6, horizontal: false, columnWidth: '50%' },
+      },
+      xaxis: { categories: [] },
+      colors: ['#2196F3'],
+      dataLabels: { enabled: false },
+      legend: { show: false },
+      tooltip: { enabled: true, followCursor: false },
+      grid: { show: true, strokeDashArray: 3 },
+      responsive: [{ breakpoint: 480, options: { chart: { width: 200 } } }],
     });
-  } finally {
-    loading.value = false;
-  }
-}
 
-// Computed
-const totalProtocolosQuantidade = computed(() =>
-  dadosQuantidade.value.reduce((sum, item) => sum + item.quantidade, 0)
-);
+    const quantidadeChartSeries = ref([{ name: 'Protocolos', data: [] }]);
 
-const mediaProtocolosPorColaborador = computed(() => {
-  const total = totalProtocolosQuantidade.value;
-  const qtd = dadosQuantidade.value.length;
-  return qtd > 0 ? Math.round(total / qtd) : 0;
-});
+    const distribuicaoChartOptions = ref({
+      chart: { type: 'pie', toolbar: { show: false } },
+      labels: [],
+      legend: { position: 'bottom', horizontalAlign: 'center' },
+      dataLabels: {
+        enabled: true,
+        formatter: (val) => (val > 3 ? `${val.toFixed(1)}%` : ''),
+      },
+      tooltip: {
+        enabled: true,
+        y: {
+          formatter: (value) => `${value} protocolos`,
+        },
+      },
+      responsive: [
+        {
+          breakpoint: 480,
+          options: { chart: { width: 200 }, legend: { position: 'bottom' } },
+        },
+      ],
+    });
 
-const tempoMedioGeral = computed(() => {
-  const totalDias = dadosTempo.value.reduce((sum, item) => {
-    const dias = parseFloat(item.tempoMedio) || 0;
-    return sum + dias * item.quantidade;
-  }, 0);
-  const totalProtocolos = dadosTempo.value.reduce(
-    (sum, item) => sum + item.quantidade,
-    0
-  );
-  return totalProtocolos > 0
-    ? (totalDias / totalProtocolos).toFixed(1) + ' dias'
-    : '0 dias';
-});
+    const distribuicaoChartSeries = ref([]);
 
-// ... após years ...
+    function generateColors(count) {
+      if (!count || count <= 0) return [];
+      return Array.from({ length: count }, (_, i) => {
+        const hue = Math.round((i / count) * 360);
+        const saturation = 68;
+        const lightness = 48;
+        return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+      });
+    }
 
-// Gráficos - refs
-const quantidadeChartOptions = ref({
-  chart: {
-    type: 'bar',
-    toolbar: { show: false },
-    animations: { enabled: true, easing: 'easeinout', speed: 350 },
+    const updateCharts = () => {
+      const categories = dadosQuantidade.value.map((item) => item.colaborador);
+      const seriesData = dadosQuantidade.value.map((item) => item.quantidade);
+
+      quantidadeChartOptions.value = {
+        ...quantidadeChartOptions.value,
+        xaxis: {
+          ...quantidadeChartOptions.value.xaxis,
+          categories,
+        },
+      };
+      quantidadeChartSeries.value = [{ name: 'Protocolos', data: seriesData }];
+
+      distribuicaoChartOptions.value = {
+        ...distribuicaoChartOptions.value,
+        labels: categories,
+        colors: generateColors(dadosQuantidade.value.length),
+      };
+      distribuicaoChartSeries.value = seriesData;
+    };
+
+    async function loadData() {
+      loading.value = true;
+      try {
+        const params = { month: selectedMonth.value, year: selectedYear.value };
+        const [quantidadeData, tempoData] = await Promise.all([
+          reportsService.getDesempenhoQuantidade(params),
+          reportsService.getDesempenhoTempoMedio(params),
+        ]);
+
+        const total = quantidadeData.reduce(
+          (sum, item) => sum + item.quantidade,
+          0
+        );
+        const media = total / quantidadeData.length || 0;
+
+        dadosQuantidade.value = quantidadeData.map((item) => ({
+          colaborador: item.colaborador,
+          quantidade: item.quantidade,
+          percentual: total
+            ? ((item.quantidade / total) * 100).toFixed(1)
+            : '0.0',
+          produtividade: calcularProdutividade(item.quantidade, media),
+        }));
+
+        dadosTempo.value = tempoData.map((item) => ({
+          colaborador: item.colaborador,
+          tempoMedio: item.tempo_medio,
+          quantidade: item.quantidade,
+        }));
+
+        updateCharts();
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        $q.notify({
+          color: 'negative',
+          message: 'Erro ao carregar os dados.',
+          icon: 'warning',
+        });
+      } finally {
+        loading.value = false;
+      }
+    }
+
+    const totalProtocolosQuantidade = computed(() =>
+      dadosQuantidade.value.reduce((sum, item) => sum + item.quantidade, 0)
+    );
+
+    const mediaProtocolosPorColaborador = computed(() => {
+      const total = totalProtocolosQuantidade.value;
+      const qtd = dadosQuantidade.value.length;
+      return qtd > 0 ? Math.round(total / qtd) : 0;
+    });
+
+    const tempoMedioGeral = computed(() => {
+      const totalDias = dadosTempo.value.reduce((sum, item) => {
+        const dias = parseFloat(item.tempoMedio) || 0;
+        return sum + dias * item.quantidade;
+      }, 0);
+      const totalProtocolos = dadosTempo.value.reduce(
+        (sum, item) => sum + item.quantidade,
+        0
+      );
+      return totalProtocolos > 0
+        ? (totalDias / totalProtocolos).toFixed(1) + ' dias'
+        : '0 dias';
+    });
+
+    function getInitials(name) {
+      if (!name) return '';
+      return name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase()
+        .slice(0, 2);
+    }
+
+    function getProdutividadeColor(produtividade) {
+      return produtividade === 'Alta'
+        ? 'green'
+        : produtividade === 'Média'
+          ? 'orange'
+          : 'red';
+    }
+
+    function getProdutividadeIcon(produtividade) {
+      return produtividade === 'Alta'
+        ? 'trending_up'
+        : produtividade === 'Média'
+          ? 'remove'
+          : 'trending_down';
+    }
+
+    function calcularProdutividade(quantidade, media) {
+      if (quantidade >= media * 1.2) return 'Alta';
+      if (quantidade >= media * 0.8) return 'Média';
+      return 'Baixa';
+    }
+
+    watch([selectedMonth, selectedYear], loadData);
+    watch([dadosQuantidade, dadosTempo], updateCharts, { deep: true });
+
+    onMounted(loadData);
+
+    return {
+      selectedMonth,
+      selectedYear,
+      loading,
+      dadosQuantidade,
+      dadosTempo,
+      monthOptions,
+      years,
+      colunasQuantidade,
+      colunasTempo,
+      totalProtocolosQuantidade,
+      mediaProtocolosPorColaborador,
+      tempoMedioGeral,
+      quantidadeChartOptions,
+      quantidadeChartSeries,
+      distribuicaoChartOptions,
+      distribuicaoChartSeries,
+      getInitials,
+      getProdutividadeColor,
+      getProdutividadeIcon,
+    };
   },
-  plotOptions: {
-    bar: { borderRadius: 6, horizontal: false, columnWidth: '50%' },
-  },
-  xaxis: { categories: [] },
-  colors: ['#2196F3'],
-  dataLabels: { enabled: false },
-  legend: { show: false },
-  tooltip: { enabled: true, followCursor: false },
-  grid: { show: true, strokeDashArray: 3 },
-  responsive: [{ breakpoint: 480, options: { chart: { width: 200 } } }],
-});
-
-const quantidadeChartSeries = ref([{ name: 'Protocolos', data: [] }]);
-
-const distribuicaoChartOptions = ref({
-  chart: {
-    type: 'pie',
-    toolbar: { show: false },
-    // animações leves para dar fluidez, sem exagerar no tempo
-    animations: { enabled: true, easing: 'easeinout', speed: 300 },
-  },
-  labels: [],
-  legend: { position: 'bottom', horizontalAlign: 'center' },
-  dataLabels: {
-    enabled: true,
-    formatter: (val) => (val > 3 ? `${val.toFixed(1)}%` : ''),
-  },
-  tooltip: {
-    enabled: true,
-    y: {
-      // Retorna apenas a quantidade para evitar repetir o nome do colaborador
-      // (o nome já aparece via labels/legend do gráfico)
-      formatter: (value) => `${value} protocolos`,
-    },
-  },
-  responsive: [
-    {
-      breakpoint: 480,
-      options: { chart: { width: 200 }, legend: { position: 'bottom' } },
-    },
-  ],
-});
-
-const distribuicaoChartSeries = ref([]);
-
-// Helpers
-function getInitials(name) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-function getProdutividadeColor(produtividade) {
-  return produtividade === 'Alta'
-    ? 'green'
-    : produtividade === 'Média'
-      ? 'orange'
-      : 'red';
-}
-
-function getProdutividadeIcon(produtividade) {
-  return produtividade === 'Alta'
-    ? 'trending_up'
-    : produtividade === 'Média'
-      ? 'remove'
-      : 'trending_down';
-}
-
-function calcularProdutividade(quantidade, media) {
-  if (quantidade >= media * 1.2) return 'Alta';
-  if (quantidade >= media * 0.8) return 'Média';
-  return 'Baixa';
-}
-
-const timeoutId = null;
-
-// Atualiza charts sempre que os filtros mudam ou os dados são atualizados
-watch([selectedMonth, selectedYear], loadData);
-watch([dadosQuantidade, dadosTempo], updateCharts);
-
-onMounted(() => {
-  loadData();
-});
+};
 </script>
 
 <style scoped>
