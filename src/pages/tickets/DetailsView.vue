@@ -575,7 +575,7 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref, onMounted, computed } from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted, computed } from 'vue';
 import usersService from 'src/services/users';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
@@ -587,13 +587,26 @@ import {
 import { formatTimeDescription } from 'src/support/times/timeFormat';
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
-import { useQuasar } from 'quasar';
+import { useQuasar, useMeta } from 'quasar';
 import collaboratorsService from 'src/services/collaborators';
 import { useRoute } from 'vue-router';
 import _ from 'lodash';
 
 export default defineComponent({
   name: 'DetailsView',
+  watch: {
+    form: {
+      handler(newVal) {
+        if (newVal?.code && newVal?.subject) {
+          useMeta({
+            title: `#${newVal.code} ${newVal.subject}`,
+          });
+        }
+      },
+      deep: true,
+      immediate: true,
+    },
+  },
   setup() {
     const { getById, addUserPatchTicket, addTesterPatchTicket, timeAlterDuty } =
       ticketsService();
@@ -605,6 +618,10 @@ export default defineComponent({
     const { fetchUser } = usersService();
     const { list: listCollaborators } = collaboratorsService();
     const colaboradorList = ref([]);
+
+    onUnmounted(() => {
+      useMeta({ title: 'Cajueiro' });
+    });
 
     const sequencesInHours = computed(() => {
       const result = [];
@@ -947,6 +964,9 @@ export default defineComponent({
         });
       }
     };
+    useMeta({
+      title: 'Carregando...',
+    });
 
     return {
       addUserTicker,
