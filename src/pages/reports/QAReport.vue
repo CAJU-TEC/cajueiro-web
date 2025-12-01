@@ -1,429 +1,583 @@
 <template>
-  <q-page class="q-pa-md">
-    <div class="q-pa-md" style="max-width: 1400px; margin: 0 auto">
-      <!-- Header -->
-      <q-card class="q-mb-md">
-        <q-card-section>
-          <div class="row items-center justify-between q-col-gutter-md">
-            <div class="col-12 col-md-6">
-              <div class="text-h4 text-weight-bold text-grey-8">
-                Relatório de Desempenho - Q.A.
-              </div>
-              <div class="text-subtitle1 text-grey-6">
-                Acompanhamento de protocolos testados e validados
-              </div>
-            </div>
-
-            <!-- Filtros -->
-            <div class="col-12 col-md-6">
-              <div class="row items-center justify-end q-col-gutter-sm">
-                <div class="col-auto">
-                  <q-icon name="event" color="primary" size="24px" />
-                </div>
-                <div class="col-auto">
-                  <q-select
-                    v-model="selectedMonth"
-                    :options="monthOptions"
-                    map-options
-                    emit-value
-                    outlined
-                    dense
-                    style="min-width: 150px"
-                  />
-                </div>
-                <div class="col-auto">
-                  <q-select
-                    v-model="selectedYear"
-                    :options="years"
-                    outlined
-                    dense
-                    style="min-width: 120px"
-                  />
-                </div>
-              </div>
-            </div>
+  <q-page class="qa-report">
+    <div class="page-container">
+      <!-- Header com filtros -->
+      <div class="header-section">
+        <div class="header-content">
+          <div class="title-section">
+            <h1 class="page-title">Relatório de Desempenho</h1>
+            <p class="page-subtitle">Q.A.</p>
           </div>
-        </q-card-section>
-      </q-card>
 
-      <!-- Cards de Resumo -->
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12 col-sm-6 col-md-3">
-          <q-card class="summary-card border-left-purple">
-            <q-card-section>
-              <div class="row items-center justify-between">
-                <div>
-                  <div class="text-caption text-grey-7 text-weight-medium">
-                    Total de Protocolos
-                  </div>
-                  <div class="text-h4 text-weight-bold text-grey-8 q-mt-sm">
-                    {{ totalProtocolos }}
-                  </div>
-                </div>
-                <q-icon name="description" color="purple" size="40px" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-3">
-          <q-card class="summary-card border-left-teal">
-            <q-card-section>
-              <div class="row items-center justify-between">
-                <div>
-                  <div class="text-caption text-grey-7 text-weight-medium">
-                    Q.A. Ativos
-                  </div>
-                  <div class="text-h4 text-weight-bold text-grey-8 q-mt-sm">
-                    {{ ticketsByQa.length }}
-                  </div>
-                </div>
-                <q-icon name="people" color="teal" size="40px" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-3">
-          <q-card class="summary-card border-left-green">
-            <q-card-section>
-              <div class="row items-center justify-between">
-                <div>
-                  <div class="text-caption text-grey-7 text-weight-medium">
-                    Finalizados
-                  </div>
-                  <div class="text-h4 text-weight-bold text-grey-8 q-mt-sm">
-                    {{ totalFinalizados }}
-                  </div>
-                </div>
-                <q-icon name="check_circle" color="green" size="40px" />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
-
-        <div class="col-12 col-sm-6 col-md-3">
-          <q-card class="summary-card border-left-orange">
-            <q-card-section>
-              <div class="row items-center justify-between">
-                <div>
-                  <div class="text-caption text-grey-7 text-weight-medium">
-                    Pendentes
-                  </div>
-                  <div class="text-h4 text-weight-bold text-grey-8 q-mt-sm">
-                    {{ totalPendentes }}
-                  </div>
-                </div>
-                <q-icon name="hourglass_empty" color="orange" size="40px" />
-              </div>
-            </q-card-section>
-          </q-card>
+          <div class="filters-section">
+            <q-icon name="event" color="primary" size="20px" class="q-mr-sm" />
+            <q-select
+              v-model="selectedMonth"
+              :options="monthOptions"
+              map-options
+              emit-value
+              outlined
+              dense
+              class="filter-select"
+            />
+            <q-select
+              v-model="selectedYear"
+              :options="years"
+              outlined
+              dense
+              class="filter-select"
+            />
+          </div>
         </div>
       </div>
 
-      <!-- Gráficos -->
-      <div class="row q-col-gutter-md q-mb-md">
-        <div class="col-12 col-md-7">
-          <q-card class="q-mb-md">
-            <q-card-section>
-              <div class="text-h6 text-weight-bold text-grey-8 q-mb-md">
-                Protocolos por Q.A.
-              </div>
-              <div class="chart-container">
-                <apexchart
-                  type="bar"
-                  height="300"
-                  :options="qaChartOptions"
-                  :series="qaChartSeries"
-                />
-              </div>
-            </q-card-section>
-          </q-card>
-        </div>
+      <!-- Loading overlay -->
+      <q-inner-loading :showing="loading" color="primary">
+        <q-spinner-gears size="50px" />
+      </q-inner-loading>
 
-        <div class="col-12 col-md-5">
-          <q-card class="q-mb-md">
-            <q-card-section>
-              <div class="text-h6 text-weight-bold text-grey-8 q-mb-md">
-                Status dos Protocolos
+      <!-- Content -->
+      <transition name="fade">
+        <div v-if="!loading" class="content-wrapper">
+          <!-- Cards de métricas -->
+          <div class="metrics-grid">
+            <div class="metric-card purple">
+              <div class="metric-icon">
+                <q-icon name="description" size="32px" />
               </div>
-              <div class="chart-container">
-                <apexchart
-                  type="pie"
-                  height="300"
-                  :options="statusChartOptions"
-                  :series="statusChartSeries"
-                />
+              <div class="metric-content">
+                <span class="metric-label">Total de Protocolos</span>
+                <span class="metric-value">{{ totalProtocolos }}</span>
               </div>
-            </q-card-section>
-          </q-card>
-        </div>
-      </div>
+            </div>
 
-      <!-- Tabela Principal -->
-      <q-card>
-        <q-card-section>
-          <div class="text-h6 text-weight-bold text-grey-8 q-mb-md">
-            Detalhamento por Analista de Q.A.
+            <div class="metric-card teal">
+              <div class="metric-icon">
+                <q-icon name="people" size="32px" />
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Q.A. Ativos</span>
+                <span class="metric-value">{{ ticketsByQa.length }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card green">
+              <div class="metric-icon">
+                <q-icon name="check_circle" size="32px" />
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Finalizados</span>
+                <span class="metric-value">{{ totalFinalizados }}</span>
+              </div>
+            </div>
+
+            <div class="metric-card orange">
+              <div class="metric-icon">
+                <q-icon name="hourglass_empty" size="32px" />
+              </div>
+              <div class="metric-content">
+                <span class="metric-label">Pendentes</span>
+                <span class="metric-value">{{ totalPendentes }}</span>
+              </div>
+            </div>
           </div>
-          <q-table
-            :rows="ticketsByQa"
-            :columns="qaColumns"
-            row-key="qaName"
-            flat
-            bordered
-          >
-            <template #body-cell-qaName="props">
-              <q-td :props="props">
-                <div class="row items-center">
-                  <q-avatar
-                    size="24px"
-                    color="purple"
-                    text-color="white"
-                    class="q-mr-sm"
-                  >
-                    {{ getInitials(props.row.qaName) }}
-                  </q-avatar>
-                  {{ props.row.qaName }}
+
+          <!-- Gráficos -->
+          <div class="charts-grid">
+            <q-card class="chart-card">
+              <q-card-section>
+                <div class="chart-header">
+                  <h3 class="chart-title">Protocolos por Q.A.</h3>
+                  <q-badge color="purple" :label="`${ticketsByQa.length} analistas`" />
                 </div>
-              </q-td>
-            </template>
+                <div class="chart-wrapper">
+                  <apexchart
+                    v-if="ticketsByQa.length > 0"
+                    type="bar"
+                    height="280"
+                    :options="qaChartOptions"
+                    :series="qaChartSeries"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
 
-            <template #body-cell-teste="props">
-              <q-td :props="props" class="text-center">
-                <q-badge color="blue" :label="props.row.teste" />
-              </q-td>
-            </template>
+            <q-card class="chart-card">
+              <q-card-section>
+                <div class="chart-header">
+                  <h3 class="chart-title">Status dos Protocolos</h3>
+                  <q-badge color="secondary" label="Distribuição" />
+                </div>
+                <div class="chart-wrapper">
+                  <apexchart
+                    v-if="totalProtocolos > 0"
+                    type="pie"
+                    height="280"
+                    :key="`status-${totalTeste}-${totalValidacao}-${totalPendentes}-${totalFinalizados}`"
+                    :options="statusChartOptions"
+                    :series="statusChartSeries"
+                  />
+                </div>
+              </q-card-section>
+            </q-card>
+          </div>
 
-            <template #body-cell-validacao="props">
-              <q-td :props="props" class="text-center">
-                <q-badge color="teal" :label="props.row.validacao" />
-              </q-td>
-            </template>
+          <!-- Tabela -->
+          <q-card class="table-card">
+            <q-card-section>
+              <div class="table-header">
+                <h3 class="table-title">Detalhamento por Analista de Q.A.</h3>
+                <q-chip
+                  color="purple"
+                  text-color="white"
+                  icon="analytics"
+                  :label="`${totalProtocolos} total`"
+                />
+              </div>
 
-            <template #body-cell-pendente="props">
-              <q-td :props="props" class="text-center">
-                <q-badge color="orange" :label="props.row.pendente" />
-              </q-td>
-            </template>
+              <q-table
+                :rows="ticketsByQa"
+                :columns="qaColumns"
+                row-key="qaName"
+                flat
+                :pagination="{ rowsPerPage: 10 }"
+                class="modern-table"
+              >
+                <template #body-cell-qaName="props">
+                  <q-td :props="props">
+                    <div class="colaborador-cell">
+                      <q-avatar size="28px" color="purple" text-color="white">
+                        {{ getInitials(props.row.qaName) }}
+                      </q-avatar>
+                      <span class="colaborador-name">{{ props.row.qaName }}</span>
+                    </div>
+                  </q-td>
+                </template>
 
-            <template #body-cell-finalizado="props">
-              <q-td :props="props" class="text-center">
-                <q-badge color="green" :label="props.row.finalizado" />
-              </q-td>
-            </template>
+                <template #body-cell-teste="props">
+                  <q-td :props="props">
+                    <q-badge color="blue" :label="props.row.teste" />
+                  </q-td>
+                </template>
 
-            <template #body-cell-total="props">
-              <q-td :props="props" class="text-weight-bold text-center">
-                {{ props.row.total }}
-              </q-td>
-            </template>
+                <template #body-cell-validacao="props">
+                  <q-td :props="props">
+                    <q-badge color="teal" :label="props.row.validacao" />
+                  </q-td>
+                </template>
 
-            <!-- Linha de total geral -->
-            <template #bottom-row>
-              <q-tr class="bg-grey-3 text-weight-bold">
-                <q-td>TOTAL GERAL</q-td>
-                <q-td class="text-center">{{ totalTeste }}</q-td>
-                <q-td class="text-center">{{ totalValidacao }}</q-td>
-                <q-td class="text-center">{{ totalPendentes }}</q-td>
-                <q-td class="text-center">{{ totalFinalizados }}</q-td>
-                <q-td class="text-center">{{ totalProtocolos }}</q-td>
-              </q-tr>
-            </template>
-          </q-table>
-        </q-card-section>
-      </q-card>
+                <template #body-cell-pendente="props">
+                  <q-td :props="props">
+                    <q-badge color="orange" :label="props.row.pendente" />
+                  </q-td>
+                </template>
+
+                <template #body-cell-finalizado="props">
+                  <q-td :props="props">
+                    <q-badge color="green" :label="props.row.finalizado" />
+                  </q-td>
+                </template>
+
+                <template #body-cell-total="props">
+                  <q-td :props="props">
+                    <q-badge color="purple" :label="props.row.total" />
+                  </q-td>
+                </template>
+
+                <template #bottom-row>
+                  <q-tr class="total-row">
+                    <q-td class="text-weight-bold">TOTAL GERAL</q-td>
+                    <q-td class="text-center">
+                      <q-badge color="blue" :label="totalTeste" />
+                    </q-td>
+                    <q-td class="text-center">
+                      <q-badge color="teal" :label="totalValidacao" />
+                    </q-td>
+                    <q-td class="text-center">
+                      <q-badge color="orange" :label="totalPendentes" />
+                    </q-td>
+                    <q-td class="text-center">
+                      <q-badge color="green" :label="totalFinalizados" />
+                    </q-td>
+                    <q-td class="text-center">
+                      <q-badge color="purple" :label="totalProtocolos" />
+                    </q-td>
+                  </q-tr>
+                </template>
+              </q-table>
+            </q-card-section>
+          </q-card>
+        </div>
+      </transition>
     </div>
   </q-page>
 </template>
 
-<script setup>
-import { ref, computed, onMounted, watch } from 'vue';
-import { useQuasar } from 'quasar';
-import { reportsService } from 'src/services/reports';
+<script>
+import { onMounted } from 'vue';
+import { useQAReport } from 'src/composables/useQAReport';
+import { useQACharts } from 'src/composables/useQACharts';
 
-const $q = useQuasar();
+export default {
+  name: 'QAReport',
 
-// Filtros
-const selectedMonth = ref(new Date().getMonth() + 1);
-const selectedYear = ref(new Date().getFullYear());
-const loading = ref(false);
+  setup() {
+    const {
+      selectedMonth,
+      selectedYear,
+      loading,
+      ticketsByQa,
+      monthOptions,
+      years,
+      totalTeste,
+      totalValidacao,
+      totalPendentes,
+      totalFinalizados,
+      totalProtocolos,
+      loadData,
+      getInitials,
+    } = useQAReport();
 
-// Dados
-const ticketsByQa = ref([]);
+    const {
+      qaChartOptions,
+      qaChartSeries,
+      statusChartOptions,
+      statusChartSeries,
+    } = useQACharts(
+      ticketsByQa,
+      totalTeste,
+      totalValidacao,
+      totalPendentes,
+      totalFinalizados
+    );
 
-// Meses e anos
-const months = [
-  'Janeiro',
-  'Fevereiro',
-  'Março',
-  'Abril',
-  'Maio',
-  'Junho',
-  'Julho',
-  'Agosto',
-  'Setembro',
-  'Outubro',
-  'Novembro',
-  'Dezembro',
-];
-const monthOptions = months.map((label, idx) => ({ label, value: idx + 1 }));
-const years = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
+    const qaColumns = [
+      { name: 'qaName', label: 'Analista de Q.A.', field: 'qaName', align: 'left' },
+      { name: 'teste', label: 'Em Teste', field: 'teste', align: 'center' },
+      { name: 'validacao', label: 'Em Validação', field: 'validacao', align: 'center' },
+      { name: 'pendente', label: 'Pendentes', field: 'pendente', align: 'center' },
+      { name: 'finalizado', label: 'Finalizados', field: 'finalizado', align: 'center' },
+      { name: 'total', label: 'Total', field: 'total', align: 'center' },
+    ];
 
-// Colunas da tabela
-const qaColumns = [
-  { name: 'qaName', label: 'Analista de Q.A.', field: 'qaName', align: 'left' },
-  { name: 'teste', label: 'Em Teste', field: 'teste', align: 'center' },
-  {
-    name: 'validacao',
-    label: 'Em Validação',
-    field: 'validacao',
-    align: 'center',
+    onMounted(loadData);
+
+    return {
+      selectedMonth,
+      selectedYear,
+      loading,
+      ticketsByQa,
+      monthOptions,
+      years,
+      qaColumns,
+      totalTeste,
+      totalValidacao,
+      totalPendentes,
+      totalFinalizados,
+      totalProtocolos,
+      qaChartOptions,
+      qaChartSeries,
+      statusChartOptions,
+      statusChartSeries,
+      getInitials,
+    };
   },
-  { name: 'pendente', label: 'Pendentes', field: 'pendente', align: 'center' },
-  {
-    name: 'finalizado',
-    label: 'Finalizados',
-    field: 'finalizado',
-    align: 'center',
-  },
-  { name: 'total', label: 'Total', field: 'total', align: 'center' },
-];
-
-// Gráficos
-const qaChartOptions = ref({
-  chart: { type: 'bar', toolbar: { show: false } },
-  plotOptions: {
-    bar: { borderRadius: 6, horizontal: false, columnWidth: '50%' },
-  },
-  xaxis: { categories: [] },
-  colors: ['#9C27B0'],
-  dataLabels: { enabled: false },
-  legend: { show: false },
-});
-const qaChartSeries = ref([{ name: 'Total', data: [] }]);
-
-const statusChartOptions = ref({
-  chart: { type: 'pie', toolbar: { show: false } },
-  labels: ['Em Teste', 'Em Validação', 'Pendentes', 'Finalizados'],
-  colors: ['#2196F3', '#009688', '#FF9800', '#4CAF50'],
-  legend: { position: 'bottom' },
-});
-const statusChartSeries = ref([]);
-
-// Computed
-const totalTeste = computed(() =>
-  ticketsByQa.value.reduce((sum, item) => sum + item.teste, 0)
-);
-const totalValidacao = computed(() =>
-  ticketsByQa.value.reduce((sum, item) => sum + item.validacao, 0)
-);
-const totalPendentes = computed(() =>
-  ticketsByQa.value.reduce((sum, item) => sum + item.pendente, 0)
-);
-const totalFinalizados = computed(() =>
-  ticketsByQa.value.reduce((sum, item) => sum + item.finalizado, 0)
-);
-const totalProtocolos = computed(() =>
-  ticketsByQa.value.reduce((sum, item) => sum + item.total, 0)
-);
-
-// Helpers
-function getInitials(name) {
-  return name
-    .split(' ')
-    .map((n) => n[0])
-    .join('')
-    .toUpperCase()
-    .slice(0, 2);
-}
-
-// Atualizar gráficos
-function updateCharts() {
-  // Gráfico por Q.A.
-  qaChartOptions.value = {
-    ...qaChartOptions.value,
-    xaxis: {
-      ...qaChartOptions.value.xaxis,
-      categories: ticketsByQa.value.map((item) => item.qaName),
-    },
-  };
-  qaChartSeries.value = [
-    {
-      name: 'Total',
-      data: ticketsByQa.value.map((item) => item.total),
-    },
-  ];
-
-  // Gráfico por status
-  statusChartSeries.value = [
-    totalTeste.value,
-    totalValidacao.value,
-    totalPendentes.value,
-    totalFinalizados.value,
-  ];
-}
-
-// Carregar dados
-async function loadData() {
-  loading.value = true;
-  try {
-    const params = { month: selectedMonth.value, year: selectedYear.value };
-    const data = await reportsService.getTicketsPorQA(params);
-
-    // Transformar para o formato da tabela
-    ticketsByQa.value = data.map((item) => ({
-      qaName: item.qaName,
-      teste: item.statusCounts.teste,
-      validacao: item.statusCounts.validacao,
-      pendente: item.statusCounts.pendente,
-      finalizado: item.statusCounts.finalizado,
-      total:
-        item.statusCounts.teste +
-        item.statusCounts.validacao +
-        item.statusCounts.pendente +
-        item.statusCounts.finalizado,
-    }));
-
-    updateCharts();
-  } catch (error) {
-    console.error('Erro ao carregar dados de Q.A.:', error);
-    $q.notify({
-      color: 'negative',
-      message: 'Erro ao carregar os dados.',
-      icon: 'warning',
-    });
-  } finally {
-    loading.value = false;
-  }
-}
-
-// Recarregar ao mudar filtros
-watch([selectedMonth, selectedYear], loadData);
-
-onMounted(() => {
-  loadData();
-});
+};
 </script>
 
 <style scoped>
-.summary-card {
-  border-left: 4px solid;
-}
-.border-left-purple {
-  border-left-color: #9c27b0;
-}
-.border-left-teal {
-  border-left-color: #009688;
-}
-.border-left-green {
-  border-left-color: #4caf50;
-}
-.border-left-orange {
-  border-left-color: #ff9800;
+.qa-report {
+  background: linear-gradient(135deg, #f5f7fa 0%, #e8eef5 100%);
+  min-height: 100vh;
 }
 
-.chart-container {
-  height: 300px;
+.page-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* Header */
+.header-section {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
+
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+}
+
+.title-section {
+  flex: 1;
+  min-width: 250px;
+}
+
+.page-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.25rem 0;
+  line-height: 1.2;
+}
+
+.page-subtitle {
+  font-size: 0.95rem;
+  color: #7f8c8d;
+  margin: 0;
+}
+
+.filters-section {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.filter-select {
+  min-width: 140px;
+}
+
+/* Metrics Grid */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.metric-card {
+  background: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+}
+
+.metric-card.purple::before { background: #9C27B0; }
+.metric-card.teal::before { background: #009688; }
+.metric-card.green::before { background: #4CAF50; }
+.metric-card.orange::before { background: #FF9800; }
+
+.metric-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.metric-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.metric-card.purple .metric-icon { background: #f3e5f5; color: #9C27B0; }
+.metric-card.teal .metric-icon { background: #e0f2f1; color: #009688; }
+.metric-card.green .metric-icon { background: #e8f5e9; color: #4CAF50; }
+.metric-card.orange .metric-icon { background: #fff3e0; color: #FF9800; }
+
+.metric-content {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.metric-label {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+/* Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chart-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.chart-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.chart-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.chart-wrapper {
+  min-height: 280px;
+}
+
+/* Table */
+.table-card {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  border-radius: 12px;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.table-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin: 0;
+}
+
+.modern-table {
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.modern-table :deep(thead tr) {
+  background: #f8f9fa;
+}
+
+.modern-table :deep(thead th) {
+  font-weight: 600;
+  color: #5a6c7d;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.modern-table :deep(tbody tr) {
+  transition: background 0.2s;
+}
+
+.modern-table :deep(tbody tr:hover) {
+  background: #f8f9fa;
+}
+
+.colaborador-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.colaborador-name {
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.total-row {
+  background: #f8f9fa;
+  font-weight: 600;
+}
+
+/* Animations */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .page-container {
+    padding: 1rem;
+  }
+
+  .header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .filters-section {
+    justify-content: flex-start;
+  }
+
+  .page-title {
+    font-size: 1.5rem;
+  }
+
+  .metrics-grid {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .metric-card {
+    padding: 1rem;
+  }
+
+  .metric-icon {
+    width: 48px;
+    height: 48px;
+  }
+
+  .metric-value {
+    font-size: 1.5rem;
+  }
+
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .chart-wrapper {
+    min-height: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metric-card {
+    flex-direction: row;
+  }
 }
 </style>
