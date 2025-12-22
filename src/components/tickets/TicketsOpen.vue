@@ -132,6 +132,21 @@
                     label="VALIDAR"
                     class="q-ml-sm"
                   />
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
                 </q-item-label>
 
                 <q-item-label caption lines="1">
@@ -321,6 +336,21 @@
                     label="VALIDAR"
                     class="q-ml-sm"
                   />
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
                 </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
@@ -502,8 +532,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -655,8 +700,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -810,8 +870,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -967,8 +1042,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -1121,8 +1211,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -1275,8 +1380,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -1420,8 +1540,23 @@
                     </q-icon>
                   </div>
                   <span class="text-weight-bold">#{{ ticket?.code }}</span>
-                  {{ ticket?.subject }}</q-item-label
-                >
+                  {{ ticket?.subject }}
+                  <q-badge
+                    v-if="ticket?.platform"
+                    rounded
+                    :style="`background:${platform[ticket.platform]?.hex}`"
+                    class="q-ml-sm"
+                  >
+                    <q-tooltip
+                      :offset="[10, 10]"
+                      anchor="top middle"
+                      self="bottom middle"
+                    >
+                      {{ platform[ticket.platform]?.title }}
+                    </q-tooltip>
+                    {{ platform[ticket.platform]?.title }}
+                  </q-badge>
+                </q-item-label>
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
@@ -1522,6 +1657,7 @@ import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
 import ticketsService from 'src/services/tickets';
 import types from 'src/support/tickets/types';
+import platform from 'src/support/tickets/platform';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import _ from 'lodash';
 
@@ -1686,6 +1822,7 @@ export default defineComponent({
       status,
       priority,
       types,
+      platform,
       betweenDates,
       dateFormat,
       tab: ref('ticketsOpen'),
