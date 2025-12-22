@@ -180,6 +180,27 @@
                         {{ ticket.impact?.description ?? '[- - -]' }}
                       </div>
                     </div>
+                    <div class="row">
+                      <div class="col text-caption">
+                        <q-badge
+                          rounded
+                          :style="`background:${
+                            platform[ticket.platform]?.hex
+                          }`"
+                        >
+                          <q-tooltip
+                            :offset="[10, 10]"
+                            anchor="top middle"
+                            self="bottom middle"
+                          >
+                            <span>
+                              {{ platform[ticket.platform]?.title }}
+                            </span>
+                          </q-tooltip>
+                        </q-badge>
+                        {{ platform[ticket.platform]?.title ?? '[- - -]' }}
+                      </div>
+                    </div>
                   </q-card-section>
 
                   <q-separator vertical />
@@ -270,6 +291,7 @@ import ticketsService from 'src/services/tickets';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
 import { useRouter } from 'vue-router';
+import platform from 'src/support/tickets/platform';
 import _ from 'lodash';
 
 const state = reactive({
@@ -338,6 +360,7 @@ export default {
       priority,
       handleListClient,
       getFirst,
+      platform,
     };
   },
 };
