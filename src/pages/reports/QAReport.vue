@@ -43,11 +43,22 @@
           <div class="metrics-grid">
             <div class="metric-card purple">
               <div class="metric-icon">
-                <q-icon name="description" size="32px" />
+                <q-icon name="assignment" size="32px" />
               </div>
               <div class="metric-content">
-                <span class="metric-label">Total de Protocolos</span>
+                <span class="metric-label">Total de Pontos</span>
                 <span class="metric-value">{{ totalProtocolos }}</span>
+                <div class="metric-breakdown">
+                  <span class="breakdown-item">
+                    <q-icon name="check_circle" size="14px" color="purple" />
+                    Externos: {{ totalExternos }}
+                  </span>
+
+                  <span class="breakdown-item interno">
+                    <q-icon name="home" size="14px" color="blue-6" />
+                    Internos: {{ totalInternos }}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -68,6 +79,17 @@
               <div class="metric-content">
                 <span class="metric-label">Finalizados</span>
                 <span class="metric-value">{{ totalFinalizados }}</span>
+
+                <div class="metric-breakdown">
+                  <span class="breakdown-item">
+                    <q-icon name="check_circle" size="14px" color="green-6" />
+                    Externos: {{ totalFinalizadosExternos }}
+                  </span>
+                  <span class="breakdown-item interno">
+                    <q-icon name="home" size="14px" color="blue-6" />
+                    Internos: {{ totalFinalizadosInternos }}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -78,6 +100,17 @@
               <div class="metric-content">
                 <span class="metric-label">Pendentes</span>
                 <span class="metric-value">{{ totalPendentes }}</span>
+
+                <div class="metric-breakdown">
+                  <span class="breakdown-item">
+                    <q-icon name="check_circle" size="14px" color="orange-6" />
+                    Externos: {{ totalPendentesExternos }}
+                  </span>
+                  <span class="breakdown-item interno">
+                    <q-icon name="home" size="14px" color="blue-6" />
+                    Internos: {{ totalPendentesInternos }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -87,8 +120,11 @@
             <q-card class="chart-card">
               <q-card-section>
                 <div class="chart-header">
-                  <h3 class="chart-title">Protocolos por Q.A.</h3>
-                  <q-badge color="purple" :label="`${ticketsByQa.length} analistas`" />
+                  <h3 class="chart-title">Pontos por Q.A.</h3>
+                  <q-badge
+                    color="purple"
+                    :label="`${ticketsByQa.length} analistas`"
+                  />
                 </div>
                 <div class="chart-wrapper">
                   <apexchart
@@ -149,7 +185,9 @@
                       <q-avatar size="28px" color="purple" text-color="white">
                         {{ getInitials(props.row.qaName) }}
                       </q-avatar>
-                      <span class="colaborador-name">{{ props.row.qaName }}</span>
+                      <span class="colaborador-name">{{
+                        props.row.qaName
+                      }}</span>
                     </div>
                   </q-td>
                 </template>
@@ -234,6 +272,12 @@ export default {
       totalPendentes,
       totalFinalizados,
       totalProtocolos,
+      totalExternos,
+      totalInternos,
+      totalFinalizadosExternos,
+      totalFinalizadosInternos,
+      totalPendentesExternos,
+      totalPendentesInternos,
       loadData,
       getInitials,
     } = useQAReport();
@@ -252,11 +296,31 @@ export default {
     );
 
     const qaColumns = [
-      { name: 'qaName', label: 'Analista de Q.A.', field: 'qaName', align: 'left' },
+      {
+        name: 'qaName',
+        label: 'Analista de Q.A.',
+        field: 'qaName',
+        align: 'left',
+      },
       { name: 'teste', label: 'Em Teste', field: 'teste', align: 'center' },
-      { name: 'validacao', label: 'Em Validação', field: 'validacao', align: 'center' },
-      { name: 'pendente', label: 'Pendentes', field: 'pendente', align: 'center' },
-      { name: 'finalizado', label: 'Finalizados', field: 'finalizado', align: 'center' },
+      {
+        name: 'validacao',
+        label: 'Em Validação',
+        field: 'validacao',
+        align: 'center',
+      },
+      {
+        name: 'pendente',
+        label: 'Pendentes',
+        field: 'pendente',
+        align: 'center',
+      },
+      {
+        name: 'finalizado',
+        label: 'Finalizados',
+        field: 'finalizado',
+        align: 'center',
+      },
       { name: 'total', label: 'Total', field: 'total', align: 'center' },
     ];
 
@@ -275,6 +339,12 @@ export default {
       totalPendentes,
       totalFinalizados,
       totalProtocolos,
+      totalExternos,
+      totalInternos,
+      totalFinalizadosExternos,
+      totalFinalizadosInternos,
+      totalPendentesExternos,
+      totalPendentesInternos,
       qaChartOptions,
       qaChartSeries,
       statusChartOptions,
@@ -373,10 +443,18 @@ export default {
   width: 4px;
 }
 
-.metric-card.purple::before { background: #9C27B0; }
-.metric-card.teal::before { background: #009688; }
-.metric-card.green::before { background: #4CAF50; }
-.metric-card.orange::before { background: #FF9800; }
+.metric-card.purple::before {
+  background: #9c27b0;
+}
+.metric-card.teal::before {
+  background: #009688;
+}
+.metric-card.green::before {
+  background: #4caf50;
+}
+.metric-card.orange::before {
+  background: #ff9800;
+}
 
 .metric-card:hover {
   transform: translateY(-2px);
@@ -393,10 +471,22 @@ export default {
   flex-shrink: 0;
 }
 
-.metric-card.purple .metric-icon { background: #f3e5f5; color: #9C27B0; }
-.metric-card.teal .metric-icon { background: #e0f2f1; color: #009688; }
-.metric-card.green .metric-icon { background: #e8f5e9; color: #4CAF50; }
-.metric-card.orange .metric-icon { background: #fff3e0; color: #FF9800; }
+.metric-card.purple .metric-icon {
+  background: #f3e5f5;
+  color: #9c27b0;
+}
+.metric-card.teal .metric-icon {
+  background: #e0f2f1;
+  color: #009688;
+}
+.metric-card.green .metric-icon {
+  background: #e8f5e9;
+  color: #4caf50;
+}
+.metric-card.orange .metric-icon {
+  background: #fff3e0;
+  color: #ff9800;
+}
 
 .metric-content {
   display: flex;
@@ -526,6 +616,21 @@ export default {
   opacity: 0;
 }
 
+.metric-breakdown {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #5a6c7d;
+  font-weight: 500;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   .page-container {
@@ -556,10 +661,6 @@ export default {
   .metric-icon {
     width: 48px;
     height: 48px;
-  }
-
-  .metric-value {
-    font-size: 1.5rem;
   }
 
   .charts-grid {

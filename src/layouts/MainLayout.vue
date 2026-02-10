@@ -120,6 +120,14 @@ export default defineComponent({
             },
           },
           {
+            title: 'Controle de Protocolos',
+            icon: 'fa-solid fa-angle-right',
+            route: {
+              name: 'control.list',
+              permissions: ['tickets.*', 'tickets.list'],
+            },
+          },
+          {
             title: 'Listas de Protocolos',
             icon: 'fa-solid fa-angle-right',
             route: {

@@ -39,6 +39,86 @@ export function useQAReport() {
     ticketsByQa.value.reduce((sum, item) => sum + item.total, 0)
   );
 
+  const totalExternos = computed(() =>
+    ticketsByQa.value.reduce((total, item) => {
+      return (
+        total +
+        (item.teste_externos || 0) +
+        (item.validacao_externos || 0) +
+        (item.pendente_externos || 0) +
+        (item.finalizado_externos || 0)
+      );
+    }, 0)
+  );
+
+  const totalInternos = computed(() =>
+    ticketsByQa.value.reduce((total, item) => {
+      return (
+        total +
+        (item.teste_internos || 0) +
+        (item.validacao_internos || 0) +
+        (item.pendente_internos || 0) +
+        (item.finalizado_internos || 0)
+      );
+    }, 0)
+  );
+
+  const totalTesteExternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.teste_externos || 0),
+      0
+    )
+  );
+
+  const totalTesteInternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.teste_internos || 0),
+      0
+    )
+  );
+
+  const totalValidacaoExternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.validacao_externos || 0),
+      0
+    )
+  );
+
+  const totalValidacaoInternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.validacao_internos || 0),
+      0
+    )
+  );
+
+  const totalPendentesExternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.pendente_externos || 0),
+      0
+    )
+  );
+
+  const totalPendentesInternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.pendente_internos || 0),
+      0
+    )
+  );
+
+  const totalFinalizadosExternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.finalizado_externos || 0),
+      0
+    )
+  );
+
+  const totalFinalizadosInternos = computed(() =>
+    ticketsByQa.value.reduce(
+      (total, item) => total + (item.finalizado_internos || 0),
+      0
+    )
+  );
+
   // Load data
   async function loadData() {
     loading.value = true;
@@ -46,18 +126,43 @@ export function useQAReport() {
       const params = { month: selectedMonth.value, year: selectedYear.value };
       const data = await reportsService.getTicketsPorQA(params);
 
-      ticketsByQa.value = data.map((item) => ({
-        qaName: item.qaName,
-        teste: item.statusCounts.teste,
-        validacao: item.statusCounts.validacao,
-        pendente: item.statusCounts.pendente,
-        finalizado: item.statusCounts.finalizado,
-        total:
-          item.statusCounts.teste +
-          item.statusCounts.validacao +
-          item.statusCounts.pendente +
-          item.statusCounts.finalizado,
-      }));
+      ticketsByQa.value = data.map(item => {
+        const { teste, validacao, pendente, finalizado } = item.statusCounts;
+
+        const totalExternos = teste.externos + validacao.externos + pendente.externos + finalizado.externos;
+        const totalInternos = teste.internos + validacao.internos + pendente.internos + finalizado.internos;
+
+        return {
+          qaName: item.qaName,
+
+          // totais por status
+          teste: teste.total,
+          validacao: validacao.total,
+          pendente: pendente.total,
+          finalizado: finalizado.total,
+
+          total:
+            teste.total +
+            validacao.total +
+            pendente.total +
+            finalizado.total,
+
+          // totais de externos e internos por analista
+          totalExternos,
+          totalInternos,
+
+          // flat breakdown properties for template
+          teste_externos: teste.externos,
+          teste_internos: teste.internos,
+          validacao_externos: validacao.externos,
+          validacao_internos: validacao.internos,
+          pendente_externos: pendente.externos,
+          pendente_internos: pendente.internos,
+          finalizado_externos: finalizado.externos,
+          finalizado_internos: finalizado.internos,
+        };
+      });
+
     } catch (error) {
       console.error('Erro ao carregar dados de Q.A.:', error);
       $q.notify({
@@ -101,6 +206,16 @@ export function useQAReport() {
     totalPendentes,
     totalFinalizados,
     totalProtocolos,
+    totalExternos,
+    totalInternos,
+    totalTesteExternos,
+    totalTesteInternos,
+    totalValidacaoExternos,
+    totalValidacaoInternos,
+    totalPendentesExternos,
+    totalPendentesInternos,
+    totalFinalizadosExternos,
+    totalFinalizadosInternos,
     loadData,
     getInitials,
   };
