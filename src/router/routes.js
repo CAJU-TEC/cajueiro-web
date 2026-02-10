@@ -1,4 +1,5 @@
 import checkLists from './checkLists.js';
+import control from './control.js';
 import clients from './clients.js';
 import impacts from './impacts.js';
 import collaborators from './collaborators.js';
@@ -29,6 +30,7 @@ const routes = [
         component: () => import('pages/IndexPage.vue')
       },
       ...checkLists,
+      ...control,
       ...clients,
       ...impacts,
       ...collaborators,

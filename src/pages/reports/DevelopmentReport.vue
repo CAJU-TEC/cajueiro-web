@@ -47,7 +47,19 @@
               </div>
               <div class="metric-content">
                 <span class="metric-label">Total de Protocolos</span>
-                <span class="metric-value">{{ totalProtocolosQuantidade }}</span>
+                <span class="metric-value">{{
+                  totalProtocolosQuantidade
+                }}</span>
+                <div class="metric-breakdown">
+                  <span class="breakdown-item">
+                    <q-icon name="check_circle" size="14px" color="green-6" />
+                    Externos: {{ totalExternos }}
+                  </span>
+                  <span class="breakdown-item">
+                    <q-icon name="home" size="14px" color="blue-6" />
+                    Internos: {{ totalInternos }}
+                  </span>
+                </div>
               </div>
             </div>
 
@@ -61,7 +73,7 @@
               </div>
             </div>
 
-            <div class="metric-card purple">
+            <!-- <div class="metric-card purple">
               <div class="metric-icon">
                 <q-icon name="schedule" size="32px" />
               </div>
@@ -69,7 +81,7 @@
                 <span class="metric-label">Tempo Médio</span>
                 <span class="metric-value">{{ tempoMedioGeral }}</span>
               </div>
-            </div>
+            </div> -->
 
             <div class="metric-card orange">
               <div class="metric-icon">
@@ -77,7 +89,9 @@
               </div>
               <div class="metric-content">
                 <span class="metric-label">Média por Dev</span>
-                <span class="metric-value">{{ mediaProtocolosPorColaborador }}</span>
+                <span class="metric-value">{{
+                  mediaProtocolosPorColaborador
+                }}</span>
               </div>
             </div>
           </div>
@@ -88,7 +102,10 @@
               <q-card-section>
                 <div class="chart-header">
                   <h3 class="chart-title">Protocolos por Colaborador</h3>
-                  <q-badge color="primary" :label="`${dadosQuantidade.length} devs`" />
+                  <q-badge
+                    color="primary"
+                    :label="`${dadosQuantidade.length} devs`"
+                  />
                 </div>
                 <div class="chart-wrapper">
                   <apexchart
@@ -140,22 +157,53 @@
                   :columns="colunasQuantidade"
                   row-key="colaborador"
                   flat
-                  :pagination="{ rowsPerPage: 10 }"
+                  :pagination="{
+                    rowsPerPage: 10,
+                    sortBy: 'performance',
+                    descending: true,
+                  }"
                   class="modern-table"
                 >
                   <template #body-cell-colaborador="props">
                     <q-td :props="props">
-                      <div class="colaborador-cell">
-                        <q-avatar size="28px" color="primary" text-color="white">
-                          {{ getInitials(props.row.colaborador) }}
+                      <div class="colaborador-cell-clean">
+                        <q-avatar size="36px" class="colaborador-avatar">
+                          <img v-if="false" src="" alt="" />
+                          <span class="avatar-initials">{{
+                            getInitials(props.row.colaborador)
+                          }}</span>
                         </q-avatar>
-                        <span class="colaborador-name">{{ props.row.colaborador }}</span>
+                        <span class="colaborador-name-clean">{{
+                          props.row.colaborador
+                        }}</span>
                       </div>
                     </q-td>
                   </template>
                   <template #body-cell-quantidade="props">
                     <q-td :props="props">
-                      <q-badge color="blue" :label="props.row.quantidade" />
+                      <div class="quantidade-cell-clean">
+                        <span class="quantidade-number">{{
+                          props.row.quantidade
+                        }}</span>
+                      </div>
+                    </q-td>
+                  </template>
+                  <template #body-cell-tickets_breakdown="props">
+                    <q-td :props="props">
+                      <div class="breakdown-cell-clean">
+                        <div class="breakdown-box ext">
+                          <span class="breakdown-value">{{
+                            props.row.externos
+                          }}</span>
+                          <span class="breakdown-label-clean">Ext</span>
+                        </div>
+                        <div class="breakdown-box int">
+                          <span class="breakdown-value">{{
+                            props.row.internos
+                          }}</span>
+                          <span class="breakdown-label-clean">Int</span>
+                        </div>
+                      </div>
                     </q-td>
                   </template>
                   <template #body-cell-percentual="props">
@@ -164,30 +212,33 @@
                         <q-linear-progress
                           :value="props.row.percentual / 100"
                           color="teal"
-                          size="8px"
+                          size="10px"
                           rounded
+                          class="percentual-progress"
                         />
-                        <span class="percentual-text">{{ props.row.percentual }}%</span>
+                        <span class="percentual-text"
+                          >{{ props.row.percentual }}%</span
+                        >
                       </div>
                     </q-td>
                   </template>
-                  <template #body-cell-produtividade="props">
+                  <template #body-cell-impacto_medio="props">
                     <q-td :props="props">
-                      <q-chip
-                        :color="getProdutividadeColor(props.row.produtividade)"
-                        text-color="white"
-                        :icon="getProdutividadeIcon(props.row.produtividade)"
-                        size="sm"
+                      <div
+                        class="impacto-cell-clean"
+                        :class="`impacto-${props.row.descricao_impacto.toLowerCase()}`"
                       >
-                        {{ props.row.produtividade }}
-                      </q-chip>
+                        <span class="impacto-text">{{
+                          props.row.descricao_impacto
+                        }}</span>
+                      </div>
                     </q-td>
                   </template>
                 </q-table>
               </q-card-section>
             </q-card>
 
-            <q-card class="table-card">
+            <!-- <q-card class="table-card">
               <q-card-section>
                 <div class="table-header">
                   <h3 class="table-title">Tempo de Execução</h3>
@@ -228,7 +279,7 @@
                   </template>
                 </q-table>
               </q-card-section>
-            </q-card>
+            </q-card> -->
           </div>
         </div>
       </transition>
@@ -254,12 +305,19 @@ export default {
       monthOptions,
       years,
       totalProtocolosQuantidade,
+      totalExternos,
+      totalInternos,
       mediaProtocolosPorColaborador,
       tempoMedioGeral,
       loadData,
       getInitials,
       getProdutividadeColor,
       getProdutividadeIcon,
+      getAvaliacaoImpactoColor,
+      getAvaliacaoImpactoIcon,
+      getDescricaoImpacto,
+      getPerformanceColor,
+      getPerformanceIcon,
     } = useDevelopmentReport();
 
     const {
@@ -270,16 +328,61 @@ export default {
     } = useChartConfigs(dadosQuantidade);
 
     const colunasQuantidade = [
-      { name: 'colaborador', label: 'Colaborador', field: 'colaborador', align: 'left' },
-      { name: 'quantidade', label: 'Qtd.', field: 'quantidade', align: 'center' },
-      { name: 'percentual', label: 'Participação', field: 'percentual', align: 'left' },
-      { name: 'produtividade', label: 'Produtividade', field: 'produtividade', align: 'center' },
+      {
+        name: 'colaborador',
+        label: 'Colaborador',
+        field: 'colaborador',
+        align: 'left',
+        sortable: true,
+      },
+      {
+        name: 'quantidade',
+        label: 'Total',
+        field: 'quantidade',
+        align: 'center',
+        sortable: true,
+      },
+      {
+        name: 'tickets_breakdown',
+        label: 'Externos / Internos',
+        field: 'externos',
+        align: 'center',
+      },
+      {
+        name: 'impacto_medio',
+        label: 'Impacto Médio',
+        field: 'descricao_impacto',
+        align: 'center',
+        sortable: true,
+      },
+      {
+        name: 'percentual',
+        label: 'Participação',
+        field: 'percentual',
+        align: 'center',
+        sortable: true,
+      },
     ];
 
     const colunasTempo = [
-      { name: 'colaborador', label: 'Colaborador', field: 'colaborador', align: 'left' },
-      { name: 'tempoMedio', label: 'Tempo Médio', field: 'tempoMedio', align: 'center' },
-      { name: 'quantidade', label: 'Qtd.', field: 'quantidade', align: 'center' },
+      {
+        name: 'colaborador',
+        label: 'Colaborador',
+        field: 'colaborador',
+        align: 'left',
+      },
+      {
+        name: 'tempoMedio',
+        label: 'Tempo Médio',
+        field: 'tempoMedio',
+        align: 'center',
+      },
+      {
+        name: 'quantidade',
+        label: 'Qtd.',
+        field: 'quantidade',
+        align: 'center',
+      },
     ];
 
     onMounted(loadData);
@@ -295,6 +398,8 @@ export default {
       colunasQuantidade,
       colunasTempo,
       totalProtocolosQuantidade,
+      totalExternos,
+      totalInternos,
       mediaProtocolosPorColaborador,
       tempoMedioGeral,
       quantidadeChartOptions,
@@ -304,6 +409,11 @@ export default {
       getInitials,
       getProdutividadeColor,
       getProdutividadeIcon,
+      getAvaliacaoImpactoColor,
+      getAvaliacaoImpactoIcon,
+      getDescricaoImpacto,
+      getPerformanceColor,
+      getPerformanceIcon,
     };
   },
 };
@@ -397,10 +507,18 @@ export default {
   width: 4px;
 }
 
-.metric-card.blue::before { background: #2196F3; }
-.metric-card.teal::before { background: #009688; }
-.metric-card.purple::before { background: #9C27B0; }
-.metric-card.orange::before { background: #FF9800; }
+.metric-card.blue::before {
+  background: #2196f3;
+}
+.metric-card.teal::before {
+  background: #009688;
+}
+.metric-card.purple::before {
+  background: #9c27b0;
+}
+.metric-card.orange::before {
+  background: #ff9800;
+}
 
 .metric-card:hover {
   transform: translateY(-2px);
@@ -417,10 +535,22 @@ export default {
   flex-shrink: 0;
 }
 
-.metric-card.blue .metric-icon { background: #e3f2fd; color: #2196F3; }
-.metric-card.teal .metric-icon { background: #e0f2f1; color: #009688; }
-.metric-card.purple .metric-icon { background: #f3e5f5; color: #9C27B0; }
-.metric-card.orange .metric-icon { background: #fff3e0; color: #FF9800; }
+.metric-card.blue .metric-icon {
+  background: #e3f2fd;
+  color: #2196f3;
+}
+.metric-card.teal .metric-icon {
+  background: #e0f2f1;
+  color: #009688;
+}
+.metric-card.purple .metric-icon {
+  background: #f3e5f5;
+  color: #9c27b0;
+}
+.metric-card.orange .metric-icon {
+  background: #fff3e0;
+  color: #ff9800;
+}
 
 .metric-content {
   display: flex;
@@ -439,6 +569,21 @@ export default {
   font-weight: 700;
   color: #2c3e50;
   line-height: 1;
+}
+
+.metric-breakdown {
+  display: flex;
+  gap: 1rem;
+  margin-top: 0.5rem;
+}
+
+.breakdown-item {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.75rem;
+  color: #5a6c7d;
+  font-weight: 500;
 }
 
 /* Charts Grid */
@@ -535,25 +680,245 @@ export default {
 }
 
 .colaborador-name {
-  font-weight: 500;
+  font-weight: 600;
   color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.quantidade-cell {
+  display: flex;
+  justify-content: center;
+}
+
+.quantidade-badge {
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 12px;
+}
+
+.breakdown-cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.breakdown-item-compact {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.breakdown-badge {
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  min-width: 28px;
+}
+
+.breakdown-label {
+  font-size: 0.7rem;
+  color: #7f8c8d;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.breakdown-separator {
+  color: #bdc3c7;
+  font-weight: 300;
+  font-size: 1.1rem;
+}
+
+/* Clean cells */
+.colaborador-cell-clean {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.colaborador-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-weight: 600;
+}
+
+.avatar-initials {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}
+
+.colaborador-name-clean {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.quantidade-cell-clean {
+  display: flex;
+  justify-content: center;
+}
+
+.quantidade-number {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  background: #f0f4f8;
+  padding: 6px 14px;
+  border-radius: 8px;
+  min-width: 42px;
+  text-align: center;
+}
+
+.breakdown-cell-clean {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.breakdown-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 48px;
+}
+
+.breakdown-box.ext {
+  background: #e8f5e9;
+}
+
+.breakdown-box.int {
+  background: #e3f2fd;
+}
+
+.breakdown-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+.breakdown-label-clean {
+  font-size: 0.65rem;
+  color: #7f8c8d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.impacto-cell-clean {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  text-transform: capitalize;
+}
+
+.impacto-cell-clean.impacto-baixo {
+  background: #fff3e0;
+  color: #ef6c00;
+}
+
+.impacto-cell-clean.impacto-médio {
+  background: #fff9c4;
+  color: #f57f17;
+}
+
+.impacto-cell-clean.impacto-alto {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.impacto-cell-clean.impacto-crítico {
+  background: #f3e5f5;
+  color: #6a1b9a;
+}
+
+.tooltip-clean {
+  font-size: 0.85rem;
+  background: #2c3e50;
+  padding: 8px 12px;
+  border-radius: 6px;
+}
+
+.tooltip-subtitle {
+  font-size: 0.75rem;
+  color: #95a5a6;
 }
 
 .percentual-cell {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  justify-content: center;
 }
 
-.percentual-cell .q-linear-progress {
+.percentual-progress {
   flex: 1;
-  max-width: 100px;
+  max-width: 80px;
 }
 
 .percentual-text {
-  font-weight: 500;
+  font-weight: 600;
   color: #2c3e50;
   min-width: 45px;
+  font-size: 0.85rem;
+}
+
+.impacto-badge {
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 6px 10px;
+  display: flex;
+  align-items: center;
+}
+
+.impacto-badge-descricao {
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  text-transform: capitalize;
+  letter-spacing: 0.3px;
+  cursor: help;
+  transition: transform 0.2s;
+}
+
+.impacto-badge-descricao:hover {
+  transform: scale(1.05);
+}
+
+.avaliacao-chip {
+  font-weight: 600;
+  min-width: 90px;
+  justify-content: center;
+}
+
+.pontos-badge {
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  display: flex;
+  align-items: center;
+  cursor: help;
+}
+
+.performance-chip {
+  font-weight: 700;
+  min-width: 100px;
+  justify-content: center;
+  font-size: 0.85rem;
+  padding: 8px 12px;
+  cursor: help;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.performance-chip:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 /* Animations */
