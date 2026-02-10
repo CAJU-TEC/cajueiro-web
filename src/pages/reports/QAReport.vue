@@ -181,11 +181,14 @@
               >
                 <template #body-cell-qaName="props">
                   <q-td :props="props">
-                    <div class="colaborador-cell">
-                      <q-avatar size="28px" color="purple" text-color="white">
-                        {{ getInitials(props.row.qaName) }}
+                    <div class="colaborador-cell-clean">
+                      <q-avatar size="36px" class="colaborador-avatar">
+                        <img v-if="false" src="" alt="" />
+                        <span class="avatar-initials">{{
+                          getInitials(props.row.qaName)
+                        }}</span>
                       </q-avatar>
-                      <span class="colaborador-name">{{
+                      <span class="colaborador-name-clean">{{
                         props.row.qaName
                       }}</span>
                     </div>
@@ -194,31 +197,87 @@
 
                 <template #body-cell-teste="props">
                   <q-td :props="props">
-                    <q-badge color="blue" :label="props.row.teste" />
+                    <div class="breakdown-cell-clean">
+                      <div class="breakdown-box ext">
+                        <span class="breakdown-value">{{
+                          props.row.teste_externos
+                        }}</span>
+                        <span class="breakdown-label-clean">Ext</span>
+                      </div>
+                      <div class="breakdown-box int">
+                        <span class="breakdown-value">{{
+                          props.row.teste_internos
+                        }}</span>
+                        <span class="breakdown-label-clean">Int</span>
+                      </div>
+                    </div>
                   </q-td>
                 </template>
 
                 <template #body-cell-validacao="props">
                   <q-td :props="props">
-                    <q-badge color="teal" :label="props.row.validacao" />
+                    <div class="breakdown-cell-clean">
+                      <div class="breakdown-box ext">
+                        <span class="breakdown-value">{{
+                          props.row.validacao_externos
+                        }}</span>
+                        <span class="breakdown-label-clean">Ext</span>
+                      </div>
+                      <div class="breakdown-box int">
+                        <span class="breakdown-value">{{
+                          props.row.validacao_internos
+                        }}</span>
+                        <span class="breakdown-label-clean">Int</span>
+                      </div>
+                    </div>
                   </q-td>
                 </template>
 
                 <template #body-cell-pendente="props">
                   <q-td :props="props">
-                    <q-badge color="orange" :label="props.row.pendente" />
+                    <div class="breakdown-cell-clean">
+                      <div class="breakdown-box ext">
+                        <span class="breakdown-value">{{
+                          props.row.pendente_externos
+                        }}</span>
+                        <span class="breakdown-label-clean">Ext</span>
+                      </div>
+                      <div class="breakdown-box int">
+                        <span class="breakdown-value">{{
+                          props.row.pendente_internos
+                        }}</span>
+                        <span class="breakdown-label-clean">Int</span>
+                      </div>
+                    </div>
                   </q-td>
                 </template>
 
                 <template #body-cell-finalizado="props">
                   <q-td :props="props">
-                    <q-badge color="green" :label="props.row.finalizado" />
+                    <div class="breakdown-cell-clean">
+                      <div class="breakdown-box ext">
+                        <span class="breakdown-value">{{
+                          props.row.finalizado_externos
+                        }}</span>
+                        <span class="breakdown-label-clean">Ext</span>
+                      </div>
+                      <div class="breakdown-box int">
+                        <span class="breakdown-value">{{
+                          props.row.finalizado_internos
+                        }}</span>
+                        <span class="breakdown-label-clean">Int</span>
+                      </div>
+                    </div>
                   </q-td>
                 </template>
 
                 <template #body-cell-total="props">
                   <q-td :props="props">
-                    <q-badge color="purple" :label="props.row.total" />
+                    <div class="quantidade-cell-clean">
+                      <span class="quantidade-number">{{
+                        props.row.total
+                      }}</span>
+                    </div>
                   </q-td>
                 </template>
 
@@ -226,19 +285,75 @@
                   <q-tr class="total-row">
                     <q-td class="text-weight-bold">TOTAL GERAL</q-td>
                     <q-td class="text-center">
-                      <q-badge color="blue" :label="totalTeste" />
+                      <div class="breakdown-cell-clean">
+                        <div class="breakdown-box ext">
+                          <span class="breakdown-value">{{
+                            totalTesteExternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Ext</span>
+                        </div>
+                        <div class="breakdown-box int">
+                          <span class="breakdown-value">{{
+                            totalTesteInternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Int</span>
+                        </div>
+                      </div>
                     </q-td>
                     <q-td class="text-center">
-                      <q-badge color="teal" :label="totalValidacao" />
+                      <div class="breakdown-cell-clean">
+                        <div class="breakdown-box ext">
+                          <span class="breakdown-value">{{
+                            totalValidacaoExternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Ext</span>
+                        </div>
+                        <div class="breakdown-box int">
+                          <span class="breakdown-value">{{
+                            totalValidacaoInternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Int</span>
+                        </div>
+                      </div>
                     </q-td>
                     <q-td class="text-center">
-                      <q-badge color="orange" :label="totalPendentes" />
+                      <div class="breakdown-cell-clean">
+                        <div class="breakdown-box ext">
+                          <span class="breakdown-value">{{
+                            totalPendentesExternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Ext</span>
+                        </div>
+                        <div class="breakdown-box int">
+                          <span class="breakdown-value">{{
+                            totalPendentesInternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Int</span>
+                        </div>
+                      </div>
                     </q-td>
                     <q-td class="text-center">
-                      <q-badge color="green" :label="totalFinalizados" />
+                      <div class="breakdown-cell-clean">
+                        <div class="breakdown-box ext">
+                          <span class="breakdown-value">{{
+                            totalFinalizadosExternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Ext</span>
+                        </div>
+                        <div class="breakdown-box int">
+                          <span class="breakdown-value">{{
+                            totalFinalizadosInternos
+                          }}</span>
+                          <span class="breakdown-label-clean">Int</span>
+                        </div>
+                      </div>
                     </q-td>
                     <q-td class="text-center">
-                      <q-badge color="purple" :label="totalProtocolos" />
+                      <div class="quantidade-cell-clean">
+                        <span class="quantidade-number">{{
+                          totalProtocolos
+                        }}</span>
+                      </div>
                     </q-td>
                   </q-tr>
                 </template>
@@ -274,6 +389,10 @@ export default {
       totalProtocolos,
       totalExternos,
       totalInternos,
+      totalTesteExternos,
+      totalTesteInternos,
+      totalValidacaoExternos,
+      totalValidacaoInternos,
       totalFinalizadosExternos,
       totalFinalizadosInternos,
       totalPendentesExternos,
@@ -341,6 +460,10 @@ export default {
       totalProtocolos,
       totalExternos,
       totalInternos,
+      totalTesteExternos,
+      totalTesteInternos,
+      totalValidacaoExternos,
+      totalValidacaoInternos,
       totalFinalizadosExternos,
       totalFinalizadosInternos,
       totalPendentesExternos,
@@ -598,6 +721,85 @@ export default {
 .colaborador-name {
   font-weight: 500;
   color: #2c3e50;
+}
+
+/* Clean cells */
+.colaborador-cell-clean {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.colaborador-avatar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  font-weight: 600;
+}
+
+.avatar-initials {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: white;
+}
+
+.colaborador-name-clean {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+}
+
+.quantidade-cell-clean {
+  display: flex;
+  justify-content: center;
+}
+
+.quantidade-number {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #2c3e50;
+  background: #f0f4f8;
+  padding: 6px 14px;
+  border-radius: 8px;
+  min-width: 42px;
+  text-align: center;
+}
+
+.breakdown-cell-clean {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.breakdown-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 48px;
+}
+
+.breakdown-box.ext {
+  background: #e8f5e9;
+}
+
+.breakdown-box.int {
+  background: #e3f2fd;
+}
+
+.breakdown-value {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #2c3e50;
+  line-height: 1;
+}
+
+.breakdown-label-clean {
+  font-size: 0.65rem;
+  color: #7f8c8d;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
 }
 
 .total-row {

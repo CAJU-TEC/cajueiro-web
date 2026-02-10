@@ -36,13 +36,13 @@ export function useQACharts(ticketsByQa, totalTeste, totalValidacao, totalPenden
         },
       },
       yaxis: {
-        title: { text: 'Quantidade de Protocolos' },
+        title: { text: 'Quantidade de Pontos' },
       },
       colors: ['#9C27B0'],
       grid: { show: true, strokeDashArray: 3, borderColor: '#e0e0e0' },
       tooltip: {
         enabled: true,
-        y: { formatter: (val) => `${val} protocolos` },
+        y: { formatter: (val) => `${val} pontos` },
       },
     };
   });
