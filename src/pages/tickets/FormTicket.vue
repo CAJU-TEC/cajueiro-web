@@ -316,7 +316,6 @@ export default defineComponent({
     const dialogAddClient = ref(false);
     const optionsClient = ref([]);
     const stringOptionsClient = ref([]);
-
     const optionsImpacts = ref();
     const optionsStatus = ref([
       { value: 'backlog', label: 'Aguardando' },
@@ -350,7 +349,6 @@ export default defineComponent({
         getClient(route.params.id);
       }
       getClientSelect();
-
       getImpactSelect();
     });
 
