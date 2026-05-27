@@ -314,8 +314,9 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const dialogAddClient = ref(false);
-    const optionsClient = ref();
-    const stringOptionsClient = ref(optionsClient);
+    const optionsClient = ref([]);
+    const stringOptionsClient = ref([]);
+
     const optionsImpacts = ref();
     const optionsStatus = ref([
       { value: 'backlog', label: 'Aguardando' },
@@ -349,6 +350,7 @@ export default defineComponent({
         getClient(route.params.id);
       }
       getClientSelect();
+
       getImpactSelect();
     });
 
@@ -396,6 +398,7 @@ export default defineComponent({
             label: `${m.full_name} (${m.email?.description})`,
           };
         });
+        stringOptionsClient.value = optionsClient.value;
       } catch (error) {
         $q.notify({
           message: 'Ops! Ocorreu algum erro.',
