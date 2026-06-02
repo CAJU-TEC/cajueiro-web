@@ -8,7 +8,7 @@
     </div>
     <q-table
       v-model="pagination"
-      :rows="clients"
+      :rows="clientsFiltered"
       :columns="columns"
       row-key="full_name"
       no-data-label="Não existe dados no momento."
@@ -19,6 +19,12 @@
       <template #top>
         <span class="text-h4">Clientes</span>
         <q-space />
+        <q-input v-model="search" placeholder="Buscar por nome ou organização" dense outlined clearable @clear="search = '' " style="width: min(600px, 50%);">
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+        <q-space/>
         <q-btn color="primary" push :to="{ name: 'clients.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
@@ -27,8 +33,11 @@
         </q-btn>
       </template>
       <template #body="props">
-        <q-tr :props="props">
-          <q-td
+        <q-tr 
+            :props="props"
+            style="cursor: pointer;"
+          >
+         <q-td
             class="q-gutter-sm"
             v-for="col in props.cols"
             :key="col.name"
@@ -79,10 +88,11 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import clientsService from 'src/services/clients';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
+
 
 export default defineComponent({
   name: 'ListPage',
@@ -90,12 +100,20 @@ export default defineComponent({
     const clients = ref([]);
     const { list, remove } = clientsService();
     const pagination = ref({
-      sortBy: 'description',
-      descending: false,
+      sortBy: 'id',
+      descending: true,
       page: 1,
       rowsPerPage: 15,
     });
-    const loading = ref();
+    const search = ref('');
+    const clientsFiltered = computed(() => {
+      return clients.value.filter(c =>
+        c.full_name?.toLowerCase().includes(search.value.toLowerCase()) ||
+        c.corporate?.first_name?.toLowerCase().includes(search.value.toLowerCase())
+      );
+    });
+
+    const loading = ref(true);
 
     const columns = [
       {
@@ -108,13 +126,15 @@ export default defineComponent({
         name: 'corporates',
         align: 'center',
         label: 'Organização',
-        field: (row) => row.corporate?.first_name,
+        field: (row) => row.corporate?.first_name ?? '---',
+        sortable: true,
       },
       {
         name: 'full_name',
         align: 'center',
-        label: 'Me chamam!',
+        label: 'Nome',
         field: 'full_name',
+        sortable: true,
       },
       {
         name: 'actions',
@@ -149,11 +169,13 @@ export default defineComponent({
     const handleDeleteClient = async (id) => {
       try {
         $q.dialog({
-          title: 'Remover',
-          message: 'Deseja remover ou deletar?',
-          cancel: true,
+          title: 'Confirmar exclusão',
+          message: 'Deseja excluir o cliente? Esta ação não pode ser desfeita.',         
+          cancel: {label: 'Cancelar', flat: true},
+          ok: {label: 'Excluir', color: 'red'},
           persistent: true,
-        }).onOk(async () => {
+        }).onOk(async () => 
+        {
           try {
             await remove(id);
             $q.notify({
@@ -186,6 +208,8 @@ export default defineComponent({
 
     return {
       clients,
+      clientsFiltered,
+      search,
       columns,
       handleDeleteClient,
       handleEditClient,
