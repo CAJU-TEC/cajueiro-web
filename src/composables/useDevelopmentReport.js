@@ -10,6 +10,8 @@ export function useDevelopmentReport() {
   const loading = ref(false);
   const dadosQuantidade = ref([]);
   const dadosTempo = ref([]);
+  const protocolosSemPendencia = ref([]);
+  const loadingSemPendencia = ref(false);
 
   const months = [
     'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
@@ -96,6 +98,27 @@ export function useDevelopmentReport() {
     if (pontuacaoMedia >= 0.5) return 'Normal';
     if (pontuacaoMedia >= 0.25) return 'Fácil';
     return 'Sem Impacto';
+  }
+
+  // Formata duração (em minutos): >= 1 dia -> dias; < 1 dia -> horas;
+  // < 1 hora -> horas com 1 casa decimal (ex.: "0,3 horas").
+  function formatDuracao(minutos) {
+    if (minutos === null || minutos === undefined) return null;
+    const min = Math.max(0, minutos);
+    const horas = min / 60;
+
+    if (horas >= 24) {
+      const dias = Math.round(horas / 24);
+      return `${dias} ${dias === 1 ? 'dia' : 'dias'}`;
+    }
+
+    if (horas >= 1) {
+      const h = Math.round(horas);
+      return `${h} ${h === 1 ? 'hora' : 'horas'}`;
+    }
+
+    const h = horas.toFixed(1).replace('.', ',');
+    return `${h} ${h === '1,0' ? 'hora' : 'horas'}`;
   }
 
   function getInitials(name) {
@@ -230,12 +253,45 @@ export function useDevelopmentReport() {
     }, 300);
   });
 
+  // Protocolos finalizados sem pendência (carregamento independente)
+  async function loadProtocolosSemPendencia() {
+    loadingSemPendencia.value = true;
+    try {
+      const params = { month: selectedMonth.value, year: selectedYear.value };
+      const data = await reportsService.getProtocolosSemPendencia(params);
+      protocolosSemPendencia.value = data.map((item) => ({
+        codigo: item.codigo,
+        protocolo: item.protocolo,
+        colaborador: item.colaborador,
+        tempoExecucao: item.tempo_execucao,
+        tempoVida: item.tempo_vida,
+        dufy: item.dufy,
+      }));
+    } catch (error) {
+      console.error('Erro ao carregar protocolos sem pendência:', error);
+      protocolosSemPendencia.value = [];
+    } finally {
+      loadingSemPendencia.value = false;
+    }
+  }
+
+  let debounceTimerSemPendencia = null;
+  watch([selectedMonth, selectedYear], () => {
+    if (debounceTimerSemPendencia) clearTimeout(debounceTimerSemPendencia);
+    debounceTimerSemPendencia = setTimeout(() => {
+      loadProtocolosSemPendencia();
+    }, 300);
+  });
+
   return {
     selectedMonth,
     selectedYear,
     loading,
     dadosQuantidade,
     dadosTempo,
+    protocolosSemPendencia,
+    loadingSemPendencia,
+    loadProtocolosSemPendencia,
     monthOptions,
     years,
     totalProtocolosQuantidade,
@@ -244,6 +300,7 @@ export function useDevelopmentReport() {
     mediaProtocolosPorColaborador,
     tempoMedioGeral,
     loadData,
+    formatDuracao,
     getInitials,
     getProdutividadeColor,
     getProdutividadeIcon,
