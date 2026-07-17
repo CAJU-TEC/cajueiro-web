@@ -42,6 +42,15 @@ export const reportsService = {
     }
   },
 
+  async getProtocolosSemPendencia(params = {}) {
+    try {
+      const { data } = await api.get(`${endpoint}/development/protocolos-sem-pendencia`, { params });
+      return data;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  },
+
   async getTicketsPorQA(params = {}) {
     try {
       const { data } = await api.get(`${endpoint}/qa/tickets-por-qa`, { params });

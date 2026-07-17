@@ -238,6 +238,84 @@
               </q-card-section>
             </q-card>
 
+            <!-- Protocolos finalizados sem pendência -->
+            <q-card class="table-card">
+              <q-card-section>
+                <div class="table-header">
+                  <h3 class="table-title">Protocolos sem Pendência</h3>
+                  <q-chip
+                    color="green"
+                    text-color="white"
+                    icon="task_alt"
+                    :label="`${protocolosSemPendencia.length} finalizados`"
+                  />
+                </div>
+                <q-table
+                  :rows="protocolosSemPendencia"
+                  :columns="colunasSemPendencia"
+                  :loading="loadingSemPendencia"
+                  row-key="codigo"
+                  flat
+                  :pagination="{ rowsPerPage: 10 }"
+                  class="modern-table"
+                >
+                  <template #body-cell-codigo="props">
+                    <q-td :props="props">
+                      <span class="codigo-badge">#{{ props.row.codigo }}</span>
+                    </q-td>
+                  </template>
+                  <template #body-cell-protocolo="props">
+                    <q-td :props="props">
+                      <div class="protocolo-cell">
+                        <q-icon
+                          v-if="props.row.dufy"
+                          name="fiber_manual_record"
+                          color="green"
+                          size="12px"
+                          class="dufy-dot"
+                        >
+                          <q-tooltip>Plantão (Dufy)</q-tooltip>
+                        </q-icon>
+                        <span>{{ props.row.protocolo }}</span>
+                      </div>
+                    </q-td>
+                  </template>
+                  <template #body-cell-colaborador="props">
+                    <q-td :props="props">
+                      <div class="colaborador-cell-clean">
+                        <q-avatar size="36px" class="colaborador-avatar">
+                          <span class="avatar-initials">{{
+                            getInitials(props.row.colaborador)
+                          }}</span>
+                        </q-avatar>
+                        <span class="colaborador-name-clean">{{
+                          props.row.colaborador
+                        }}</span>
+                      </div>
+                    </q-td>
+                  </template>
+                  <template #body-cell-tempoExecucao="props">
+                    <q-td :props="props">
+                      <q-badge
+                        v-if="props.row.tempoExecucao !== null"
+                        color="teal"
+                        :label="formatDuracao(props.row.tempoExecucao)"
+                      />
+                      <span v-else class="tempo-vazio">—</span>
+                    </q-td>
+                  </template>
+                  <template #body-cell-tempoVida="props">
+                    <q-td :props="props">
+                      <q-badge
+                        color="indigo"
+                        :label="formatDuracao(props.row.tempoVida)"
+                      />
+                    </q-td>
+                  </template>
+                </q-table>
+              </q-card-section>
+            </q-card>
+
             <!-- <q-card class="table-card">
               <q-card-section>
                 <div class="table-header">
@@ -302,6 +380,9 @@ export default {
       loading,
       dadosQuantidade,
       dadosTempo,
+      protocolosSemPendencia,
+      loadingSemPendencia,
+      loadProtocolosSemPendencia,
       monthOptions,
       years,
       totalProtocolosQuantidade,
@@ -310,6 +391,7 @@ export default {
       mediaProtocolosPorColaborador,
       tempoMedioGeral,
       loadData,
+      formatDuracao,
       getInitials,
       getProdutividadeColor,
       getProdutividadeIcon,
@@ -385,7 +467,46 @@ export default {
       },
     ];
 
+    const colunasSemPendencia = [
+      {
+        name: 'codigo',
+        label: 'Código',
+        field: 'codigo',
+        align: 'center',
+        sortable: true,
+      },
+      {
+        name: 'protocolo',
+        label: 'Protocolo',
+        field: 'protocolo',
+        align: 'left',
+        sortable: true,
+      },
+      {
+        name: 'colaborador',
+        label: 'Colaborador',
+        field: 'colaborador',
+        align: 'left',
+        sortable: true,
+      },
+      {
+        name: 'tempoExecucao',
+        label: 'Tempo de Execução',
+        field: 'tempoExecucao',
+        align: 'center',
+        sortable: true,
+      },
+      {
+        name: 'tempoVida',
+        label: 'Tempo de Vida',
+        field: 'tempoVida',
+        align: 'center',
+        sortable: true,
+      },
+    ];
+
     onMounted(loadData);
+    onMounted(loadProtocolosSemPendencia);
 
     return {
       selectedMonth,
@@ -393,10 +514,13 @@ export default {
       loading,
       dadosQuantidade,
       dadosTempo,
+      protocolosSemPendencia,
+      loadingSemPendencia,
       monthOptions,
       years,
       colunasQuantidade,
       colunasTempo,
+      colunasSemPendencia,
       totalProtocolosQuantidade,
       totalExternos,
       totalInternos,
@@ -406,6 +530,7 @@ export default {
       quantidadeChartSeries,
       distribuicaoChartOptions,
       distribuicaoChartSeries,
+      formatDuracao,
       getInitials,
       getProdutividadeColor,
       getProdutividadeIcon,
@@ -767,6 +892,30 @@ export default {
   border-radius: 8px;
   min-width: 42px;
   text-align: center;
+}
+
+.codigo-badge {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #2c3e50;
+  background: #eef2f7;
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+
+.protocolo-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dufy-dot {
+  flex-shrink: 0;
+}
+
+.tempo-vazio {
+  color: #b0bec5;
+  font-weight: 600;
 }
 
 .breakdown-cell-clean {
