@@ -395,7 +395,7 @@
             <div class="col">
               <span class="text-caption">Atribuição</span>
               <p class="text-subtitle2">
-                <q-chip v-if="comment.collaborator?.images">
+                <q-chip v-if="comment.collaborator?.image">
                   <q-avatar>
                     <img
                       :src="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.collaborator?.image?.uri}`"
