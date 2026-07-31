@@ -27,7 +27,7 @@
         <div class="col">
           <q-card style="width: 100%" flat bordered>
             <q-card-section horizontal style="width: 100%">
-              <q-card-section class="col-6">
+              <q-card-section :class="birthdays.length ? 'col-4' : 'col-6'">
                 <h5 class="text-overline q-ma-none q-pb-sm">
                   GALERA NA ATIVA:
                 </h5>
@@ -63,10 +63,20 @@
 
               <q-separator vertical />
 
-              <q-card-section class="col">
+              <q-card-section :class="birthdays.length ? 'col-4' : 'col'">
                 <h5 class="text-overline q-ma-none q-pb-sm">PLANTÃO:</h5>
 
                 <DutiesComponent></DutiesComponent>
+              </q-card-section>
+
+              <q-separator vertical v-if="birthdays.length" />
+
+              <q-card-section class="col-4" v-if="birthdays.length">
+                <h5 class="text-overline q-ma-none q-pb-sm">
+                  ANIVERSARIANTES:
+                </h5>
+
+                <BirthdaysComponent :birthdays="birthdays"></BirthdaysComponent>
               </q-card-section>
             </q-card-section>
           </q-card>
@@ -149,23 +159,27 @@
 import { defineComponent, onMounted, ref, reactive, provide, watch } from 'vue';
 import ApexBar from 'src/components/charts/apexBar.vue';
 import DutiesComponent from 'src/components/dashboard/DutiesComponent.vue';
+import BirthdaysComponent from 'src/components/dashboard/BirthdaysComponent.vue';
 import ticketsService from 'src/services/tickets';
+import collaboratorsService from 'src/services/collaborators';
 import _ from 'lodash';
 import status from 'src/support/tickets/status';
 import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { ApexBar, DutiesComponent },
+  components: { ApexBar, DutiesComponent, BirthdaysComponent },
   setup() {
     onMounted(async () => {
       await getTickets();
       await getTicketsInDevelop();
+      await getBirthdays();
     });
 
     const options = ref();
     const tickets = ref();
     const ticketsInDevelop = ref();
+    const birthdays = ref([]);
     const dataCollaborators = ref();
     const loading = reactive({
       results: true,
@@ -185,6 +199,7 @@ export default defineComponent({
       { index: 12, mes: 'DEZ' },
     ];
     const { myTickets, ticketsGraphUsers } = ticketsService();
+    const { list: listCollaborators } = collaboratorsService();
     const monthSelect = ref(Number(0));
 
     const onAlterMonth = (month) => {
@@ -272,6 +287,25 @@ export default defineComponent({
       }
     };
 
+    const getBirthdays = async () => {
+      try {
+        const today = new Intl.DateTimeFormat('pt-BR', {
+          day: '2-digit',
+          month: '2-digit',
+        }).format(new Date());
+
+        const data = await listCollaborators();
+        birthdays.value = _.filter(
+          data,
+          (collaborator) =>
+            !collaborator.egress &&
+            collaborator.birth?.substring(0, 5) === today
+        );
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     const getResults = () => {
       const countSum = ref(
         averang(
@@ -310,6 +344,7 @@ export default defineComponent({
       monthSelect,
       averang,
       ticketsInDevelop,
+      birthdays,
       status,
       priority,
       loading,

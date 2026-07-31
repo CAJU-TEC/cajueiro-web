@@ -14,12 +14,22 @@ export default function collaboratorsService() {
     }
   };
 
+  const birthdaysReport = async () => {
+    try {
+      const { data } = await api.get(`${endpoint}/birthdays/report`, { responseType: 'blob' });
+      return new Blob([data], { type: 'application/pdf' });
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   return {
     list,
     getById,
     post,
     update,
     remove,
-    syncDuty
+    syncDuty,
+    birthdaysReport
   };
 }
