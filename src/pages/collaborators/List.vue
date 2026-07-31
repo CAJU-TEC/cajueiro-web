@@ -19,6 +19,19 @@
       <template #top>
         <span class="text-h4">Colaboradores</span>
         <q-space />
+        <q-btn
+          color="orange-8"
+          push
+          class="q-mr-sm"
+          :loading="downloading"
+          @click="handleDownloadBirthdays"
+        >
+          <div class="row items-center no-wrap">
+            <q-icon left name="cake" />
+            <div class="text-center">Aniversários</div>
+          </div>
+          <q-tooltip>Baixar o cartaz de aniversariantes em PDF</q-tooltip>
+        </q-btn>
         <q-btn color="primary" push :to="{ name: 'collaborators.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
@@ -104,7 +117,7 @@ export default defineComponent({
   name: 'ListPage',
   setup() {
     const collaborators = ref([]);
-    const { list, remove } = collaboratorsService();
+    const { list, remove, birthdaysReport } = collaboratorsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -112,6 +125,7 @@ export default defineComponent({
       rowsPerPage: 15,
     });
     const loading = ref();
+    const downloading = ref(false);
 
     const columns = [
       {
@@ -201,13 +215,36 @@ export default defineComponent({
       router.push({ name: 'collaborators.form', params: { id } });
     };
 
+    const handleDownloadBirthdays = async () => {
+      downloading.value = true;
+      let url = null;
+      try {
+        url = URL.createObjectURL(await birthdaysReport());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'aniversarios-caju.pdf';
+        link.click();
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível gerar o cartaz de aniversários',
+          icon: 'block',
+          color: 'negative',
+        });
+      } finally {
+        if (url) URL.revokeObjectURL(url);
+        downloading.value = false;
+      }
+    };
+
     return {
       collaborators,
       columns,
       handleDeleteClient,
       handleEditClient,
+      handleDownloadBirthdays,
       pagination,
       loading,
+      downloading,
     };
   },
 });
