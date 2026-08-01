@@ -25,9 +25,11 @@
         <q-separator vertical inset class="q-mx-lg" />
 
         <div class="column items-center">
-          <q-avatar size="72px">
-            <img :src="getImage()" />
-          </q-avatar>
+          <CollaboratorAvatar
+            size="80px"
+            :collaborator="user.collaborator"
+            fallback-image="https://cdn.quasar.dev/img/boy-avatar.png"
+          />
 
           <div class="text-subtitle1 q-mt-md q-mb-xs">{{ user.name }}</div>
 
@@ -57,6 +59,7 @@ import usersService from 'src/services/users';
 import ticketsService from 'src/services/tickets';
 import { onMounted, ref } from 'vue';
 import TicketsNotifications from 'src/components/dialogs/notifications/TicketsNotifications.vue';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 
 export default {
   name: 'NavbarPerfil',
@@ -118,13 +121,6 @@ export default {
       const dados = await fetchUser();
       user.value = dados.data.user;
     };
-    const getImage = () => {
-      if (!user.value.collaborator?.image?.uri) {
-        return 'https://cdn.quasar.dev/img/boy-avatar.png';
-      }
-      return `https://cajueiroapi.cajutec.com.br/storage/images/${user.value.collaborator?.image?.uri}`;
-    };
-
     const openDialog = () => {
       return (inputValue.value = !inputValue.value);
     };
@@ -134,7 +130,6 @@ export default {
     };
     return {
       logout,
-      getImage,
       user,
       inputValue,
       openDialog,
@@ -145,6 +140,6 @@ export default {
       notificationsAll,
     };
   },
-  components: { TicketsNotifications },
+  components: { TicketsNotifications, CollaboratorAvatar },
 };
 </script>

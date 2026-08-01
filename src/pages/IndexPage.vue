@@ -38,11 +38,10 @@
                     :key="ticket?.id"
                   >
                     <q-chip size="sm" v-if="ticket?.collaborator">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                     <q-badge
@@ -160,6 +159,7 @@ import { defineComponent, onMounted, ref, reactive, provide, watch } from 'vue';
 import ApexBar from 'src/components/charts/apexBar.vue';
 import DutiesComponent from 'src/components/dashboard/DutiesComponent.vue';
 import BirthdaysComponent from 'src/components/dashboard/BirthdaysComponent.vue';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import ticketsService from 'src/services/tickets';
 import collaboratorsService from 'src/services/collaborators';
 import _ from 'lodash';
@@ -168,7 +168,7 @@ import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { ApexBar, DutiesComponent, BirthdaysComponent },
+  components: { ApexBar, DutiesComponent, BirthdaysComponent, CollaboratorAvatar },
   setup() {
     onMounted(async () => {
       await getTickets();

@@ -3,14 +3,14 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Planos de trabalho" />
+        <q-breadcrumbs-el label="Times" />
       </q-breadcrumbs>
     </div>
     <q-table
       v-model="pagination"
-      :rows="jobPlans"
+      :rows="teams"
       :columns="columns"
-      row-key="description"
+      row-key="name"
       no-data-label="Não existe dados no momento."
       rows-per-page-label="10"
       :rows-per-page-options="[10, 15, 20]"
@@ -25,42 +25,30 @@
             :props="props"
           >
             <q-badge
-              :style="`background:${props.row.color}`"
-              v-if="col.name == 'description'"
+              :style="`background:${props.row.color || '#1976d2'}`"
+              v-if="col.name == 'name'"
             >
               {{ col.value }}
             </q-badge>
-            <span v-if="col.name == 'value'">{{ col.value }}</span>
-            <span v-if="col.name == 'time'">{{ col.value }}</span>
+            <span v-if="col.name == 'description'">{{ col.value }}</span>
+            <span v-if="col.name == 'collaborators_count'">{{ col.value }}</span>
+            <span v-if="col.name == 'job_plans_count'">{{ col.value }}</span>
+            <span v-if="col.name == 'trails_count'">{{ col.value }}</span>
 
-            <span v-if="col.name == 'team'">
-              {{ props.row.team?.name ?? '-' }}
-            </span>
-
-            <span v-if="col.name == 'badge'">
-              <q-icon
-                v-if="props.row.badge_icon"
-                :name="props.row.badge_icon"
-                size="22px"
-                :style="`color: ${props.row.badge_color || '#1976d2'}`"
-              />
-              <span v-else class="text-grey-6">-</span>
-            </span>
-
-            <q-btn-group v-if="col.name == 'actions'" push size="˜xs">
+            <q-btn-group v-if="col.name == 'actions'" push size="xs">
               <q-btn
                 push
                 size="xs"
                 icon="edit"
                 color="blue"
-                @click="handleEditClient(props.row.id)"
+                @click="handleEditTeam(props.row.id)"
               />
               <q-btn
                 push
                 size="xs"
                 icon="delete_outline"
                 color="red"
-                @click="handleDeleteClient(props.row.id)"
+                @click="handleDeleteTeam(props.row.id)"
               />
             </q-btn-group>
           </q-td>
@@ -77,9 +65,9 @@
         </div>
       </template>
       <template #top>
-        <span class="text-h4">Planos de trabalho</span>
+        <span class="text-h4">Times</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'jobPlans.form' }">
+        <q-btn color="primary" push :to="{ name: 'teams.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
             <div class="text-center">Novo</div>
@@ -92,17 +80,17 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import jobPlansService from 'src/services/jobPlans';
+import teamsService from 'src/services/teams';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'ListPage',
+  name: 'TeamsListPage',
   setup() {
-    const jobPlans = ref([]);
-    const { list, remove } = jobPlansService();
+    const teams = ref([]);
+    const { list, remove } = teamsService();
     const pagination = ref({
-      sortBy: 'description',
+      sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 15,
@@ -111,34 +99,34 @@ export default defineComponent({
 
     const columns = [
       {
+        name: 'name',
+        align: 'center',
+        label: 'Time',
+        field: 'name',
+      },
+      {
         name: 'description',
         align: 'center',
         label: 'Descrição',
         field: 'description',
       },
       {
-        name: 'value',
+        name: 'collaborators_count',
         align: 'center',
-        label: 'Valor R$',
-        field: 'value',
+        label: 'Colaboradores',
+        field: 'collaborators_count',
       },
       {
-        name: 'time',
+        name: 'job_plans_count',
         align: 'center',
-        label: 'Tempo/Período',
-        field: 'time',
+        label: 'Planos',
+        field: 'job_plans_count',
       },
       {
-        name: 'team',
+        name: 'trails_count',
         align: 'center',
-        label: 'Time',
-        field: 'team',
-      },
-      {
-        name: 'badge',
-        align: 'center',
-        label: 'Badge',
-        field: 'badge_icon',
+        label: 'Trilhas',
+        field: 'trails_count',
       },
       {
         name: 'actions',
@@ -152,14 +140,14 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      getClients();
+      getTeams();
       loading.value = true;
     });
 
-    const getClients = async () => {
+    const getTeams = async () => {
       try {
         const data = await list();
-        jobPlans.value = data;
+        teams.value = data;
         loading.value = false;
       } catch (error) {
         $q.notify({
@@ -171,40 +159,41 @@ export default defineComponent({
       }
     };
 
-    const handleDeleteClient = async (id) => {
-      try {
-        $q.dialog({
-          title: 'Remover',
-          message: 'Deseja remover ou deletar?',
-          cancel: true,
-          persistent: true,
-        }).onOk(async () => {
+    const handleDeleteTeam = async (id) => {
+      $q.dialog({
+        title: 'Remover',
+        message: 'Deseja remover esse time?',
+        cancel: true,
+        persistent: true,
+      }).onOk(async () => {
+        try {
           await remove(id);
           $q.notify({
             message: 'Apagado com sucesso',
             icon: 'check',
             color: 'positive',
           });
-          await getClients();
-        });
-      } catch (error) {
-        $q.notify({
-          message: 'Erro ao apagar cliente',
-          icon: 'times',
-          color: 'negative',
-        });
-      }
+          await getTeams();
+        } catch (error) {
+          $q.notify({
+            message: 'Não foi possível apagar o time',
+            caption: error.message,
+            icon: 'block',
+            color: 'negative',
+          });
+        }
+      });
     };
 
-    const handleEditClient = async (id) => {
-      router.push({ name: 'jobPlans.form', params: { id } });
+    const handleEditTeam = async (id) => {
+      router.push({ name: 'teams.form', params: { id } });
     };
 
     return {
-      jobPlans,
+      teams,
       columns,
-      handleDeleteClient,
-      handleEditClient,
+      handleDeleteTeam,
+      handleEditTeam,
       pagination,
       loading,
     };

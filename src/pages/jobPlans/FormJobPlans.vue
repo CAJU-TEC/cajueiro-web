@@ -15,6 +15,20 @@
       class="row q-col-gutter-sm"
       @submit="onSubmit"
     >
+      <q-select
+        v-model="form.team_id"
+        filled
+        clearable
+        emit-value
+        map-options
+        option-value="id"
+        option-label="name"
+        :options="teams"
+        label="Time"
+        class="col-lg-3 col-xs-12"
+        hint="Time ao qual esse plano pertence"
+      />
+
       <q-input
         v-model="form.description"
         filled
@@ -67,6 +81,62 @@
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
+      <!-- badge exibido junto da foto do colaborador a cada etapa concluída -->
+      <q-input
+        v-model="form.badge_icon"
+        filled
+        bottom-slots
+        label="Ícone do badge"
+        class="col-lg-3 col-xs-12"
+      >
+        <template #prepend>
+          <q-icon
+            v-if="form.badge_icon"
+            :name="form.badge_icon"
+            :style="`color: ${form.badge_color || '#1976d2'}`"
+          />
+        </template>
+        <template #hint>
+          Nome do ícone Material, ex.: military_tech —
+          <a
+            href="https://fonts.google.com/icons?icon.set=Material+Icons"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="text-primary"
+            @click.stop
+          >
+            ver biblioteca
+          </a>
+        </template>
+      </q-input>
+
+      <q-input
+        filled
+        :input-style="{ backgroundColor: form.badge_color }"
+        v-model="form.badge_color"
+        label="Cor do badge"
+        :rules="['anyColor']"
+        class="col-lg-3 col-xs-12"
+      >
+        <template #append>
+          <q-icon name="colorize" class="cursor-pointer">
+            <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+              <q-color v-model="form.badge_color" />
+            </q-popup-proxy>
+          </q-icon>
+        </template>
+      </q-input>
+
+      <q-input
+        v-model.number="form.position"
+        filled
+        type="number"
+        min="0"
+        label="Ordem no time"
+        hint="Sequência do plano dentro do time"
+        class="col-lg-3 col-xs-12"
+      />
+
       <div class="col-lg-12 col-xs-12">
         <q-input
           v-model="form.note"
@@ -105,6 +175,7 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import jobPlansService from 'src/services/jobPlans';
+import teamsService from 'src/services/teams';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -112,19 +183,37 @@ export default defineComponent({
   name: 'FormJobPlans',
   setup() {
     const { post, getById, update } = jobPlansService();
+    const { list: listTeams } = teamsService();
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
 
+    const teams = ref([]);
+
     const form = ref({
+      team_id: null,
       description: '',
       color: '',
       value: '',
       time: '',
       note: '',
+      badge_icon: '',
+      badge_color: '',
+      position: 0,
     });
 
     onMounted(async () => {
+      try {
+        teams.value = await listTeams();
+      } catch (error) {
+        $q.notify({
+          message: 'Não foi possível carregar os times.',
+          caption: error.message,
+          icon: 'block',
+          color: 'warning',
+        });
+      }
+
       if (route.params.id) {
         getClient(route.params.id);
       }
@@ -169,6 +258,7 @@ export default defineComponent({
 
     return {
       form,
+      teams,
       onSubmit,
     };
   },

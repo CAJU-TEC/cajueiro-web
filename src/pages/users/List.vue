@@ -35,16 +35,13 @@
             :props="props"
           >
             <span v-if="col.name != 'image'">{{ col.value }}</span>
-            <q-avatar v-if="col.name == 'image' && props.row.image">
-              <img
-                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.image.uri}`"
-              />
-            </q-avatar>
-            <q-avatar
-              v-if="col.name == 'image' && !props.row.image"
-              color="primary"
-              >{{ props.row.letter }}</q-avatar
-            >
+            <CollaboratorAvatar
+              v-if="col.name == 'image'"
+              :collaborator="{
+                ...(props.row.collaborator ?? {}),
+                letter: props.row.collaborator?.letter ?? props.row.letter,
+              }"
+            />
             <span v-if="col.name == 'roles'">
               <div class="q-pa-md q-gutter-xs">
                 <q-badge
@@ -91,10 +88,12 @@
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
 import usersService from 'src/services/users';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
+  components: { CollaboratorAvatar },
   name: 'ListPage',
   setup() {
     const users = ref([]);

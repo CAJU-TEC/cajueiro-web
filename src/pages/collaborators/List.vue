@@ -48,16 +48,10 @@
             :props="props"
           >
             <span v-if="col.name != 'image'">{{ col.value }}</span>
-            <q-avatar v-if="col.name == 'image' && props.row.image">
-              <img
-                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${props.row.image.uri}`"
-              />
-            </q-avatar>
-            <q-avatar
-              v-if="col.name == 'image' && !props.row.image"
-              color="primary"
-              >{{ props.row.letter }}</q-avatar
-            >
+            <CollaboratorAvatar
+              v-if="col.name == 'image'"
+              :collaborator="props.row"
+            />
 
             <span v-if="col.name === 'full_name'">
               {{ props.row.full_name }}
@@ -72,6 +66,17 @@
                 {{ props.row.jobplan?.description }}
                 <q-tooltip> Valor: {{ props.row.jobplan?.value }} </q-tooltip>
               </q-badge>
+            </span>
+
+            <span v-if="col.name === 'team'">
+              <q-badge
+                v-if="props.row.team"
+                rounded
+                :style="`background: ${props.row.team?.color || '#1976d2'};`"
+              >
+                {{ props.row.team?.name }}
+              </q-badge>
+              <span v-else class="text-grey-6">-</span>
             </span>
 
             <q-btn-group v-if="col.name == 'actions'" push>
@@ -112,8 +117,10 @@ import { defineComponent, ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import collaboratorsService from 'src/services/collaborators';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 
 export default defineComponent({
+  components: { CollaboratorAvatar },
   name: 'ListPage',
   setup() {
     const collaborators = ref([]);
@@ -143,6 +150,11 @@ export default defineComponent({
         name: 'jobplan',
         align: 'center',
         label: 'Que tipo de caju sou eu?',
+      },
+      {
+        name: 'team',
+        align: 'center',
+        label: 'Time',
       },
       {
         name: 'cpf',

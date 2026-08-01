@@ -3,11 +3,7 @@
     <q-card class="q-mb-sm" flat bordered>
       <q-item>
         <q-item-section avatar>
-          <q-avatar>
-            <img
-              :src="`https://cajueiroapi.cajutec.com.br/storage/images/${duty.image?.uri}`"
-            />
-          </q-avatar>
+          <CollaboratorAvatar :collaborator="duty" />
         </q-item-section>
 
         <q-item-section>
@@ -87,6 +83,7 @@ import { date, useQuasar } from 'quasar';
 import ticketsService from 'src/services/tickets';
 import dutiesService from 'src/services/duties';
 import collaboratorsService from 'src/services/collaborators';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'loadsh';
 
 const model = ref('');

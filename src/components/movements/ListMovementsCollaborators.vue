@@ -2,16 +2,10 @@
   <q-card class="my-card q-mb-lg shadow-2 bg-light-blue-1" bordered>
     <q-item>
       <q-item-section avatar>
-        <q-avatar>
-          <img
-            v-if="!collaborator?.image"
-            src="https://cdn.quasar.dev/img/boy-avatar.png"
-          />
-          <img
-            v-else
-            :src="`https://cajueiroapi.cajutec.com.br/storage/images/${collaborator?.image?.uri}`"
-          />
-        </q-avatar>
+        <CollaboratorAvatar
+          :collaborator="collaborator"
+          fallback-image="https://cdn.quasar.dev/img/boy-avatar.png"
+        />
       </q-item-section>
 
       <q-item-section>
@@ -177,6 +171,7 @@
 import { useQuasar, date } from 'quasar';
 import _ from 'loadsh';
 import ticketsService from 'src/services/tickets';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import { onMounted, ref, reactive, watch, computed } from 'vue';
 const { myTickets: myTicketsService } = ticketsService();
 

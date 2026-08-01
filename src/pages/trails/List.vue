@@ -3,12 +3,12 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Planos de trabalho" />
+        <q-breadcrumbs-el label="Trilhas de aprendizado" />
       </q-breadcrumbs>
     </div>
     <q-table
       v-model="pagination"
-      :rows="jobPlans"
+      :rows="trails"
       :columns="columns"
       row-key="description"
       no-data-label="Não existe dados no momento."
@@ -25,42 +25,46 @@
             :props="props"
           >
             <q-badge
-              :style="`background:${props.row.color}`"
+              :style="`background:${props.row.color || '#1976d2'}`"
               v-if="col.name == 'description'"
             >
               {{ col.value }}
             </q-badge>
-            <span v-if="col.name == 'value'">{{ col.value }}</span>
-            <span v-if="col.name == 'time'">{{ col.value }}</span>
 
-            <span v-if="col.name == 'team'">
-              {{ props.row.team?.name ?? '-' }}
-            </span>
+            <span v-if="col.name == 'team'">{{ props.row.team?.name ?? '-' }}</span>
+            <span v-if="col.name == 'stages_count'">{{ col.value }}</span>
+            <span v-if="col.name == 'collaborators_count'">{{ col.value }}</span>
 
-            <span v-if="col.name == 'badge'">
-              <q-icon
-                v-if="props.row.badge_icon"
-                :name="props.row.badge_icon"
-                size="22px"
-                :style="`color: ${props.row.badge_color || '#1976d2'}`"
-              />
-              <span v-else class="text-grey-6">-</span>
-            </span>
+            <q-badge
+              v-if="col.name == 'active'"
+              :color="props.row.active ? 'positive' : 'grey-6'"
+            >
+              {{ props.row.active ? 'Ativa' : 'Inativa' }}
+            </q-badge>
 
-            <q-btn-group v-if="col.name == 'actions'" push size="˜xs">
+            <q-btn-group v-if="col.name == 'actions'" push size="xs">
+              <q-btn
+                push
+                size="xs"
+                icon="timeline"
+                color="teal"
+                @click="handleProgress(props.row.id)"
+              >
+                <q-tooltip>Acompanhamento</q-tooltip>
+              </q-btn>
               <q-btn
                 push
                 size="xs"
                 icon="edit"
                 color="blue"
-                @click="handleEditClient(props.row.id)"
+                @click="handleEditTrail(props.row.id)"
               />
               <q-btn
                 push
                 size="xs"
                 icon="delete_outline"
                 color="red"
-                @click="handleDeleteClient(props.row.id)"
+                @click="handleDeleteTrail(props.row.id)"
               />
             </q-btn-group>
           </q-td>
@@ -77,12 +81,12 @@
         </div>
       </template>
       <template #top>
-        <span class="text-h4">Planos de trabalho</span>
+        <span class="text-h4">Trilhas de aprendizado</span>
         <q-space />
-        <q-btn color="primary" push :to="{ name: 'jobPlans.form' }">
+        <q-btn color="primary" push :to="{ name: 'trails.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
-            <div class="text-center">Novo</div>
+            <div class="text-center">Nova</div>
           </div>
         </q-btn>
       </template>
@@ -92,15 +96,15 @@
 
 <script>
 import { defineComponent, ref, onMounted } from 'vue';
-import jobPlansService from 'src/services/jobPlans';
+import trailsService from 'src/services/trails';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 
 export default defineComponent({
-  name: 'ListPage',
+  name: 'TrailsListPage',
   setup() {
-    const jobPlans = ref([]);
-    const { list, remove } = jobPlansService();
+    const trails = ref([]);
+    const { list, remove } = trailsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -113,20 +117,8 @@ export default defineComponent({
       {
         name: 'description',
         align: 'center',
-        label: 'Descrição',
+        label: 'Trilha',
         field: 'description',
-      },
-      {
-        name: 'value',
-        align: 'center',
-        label: 'Valor R$',
-        field: 'value',
-      },
-      {
-        name: 'time',
-        align: 'center',
-        label: 'Tempo/Período',
-        field: 'time',
       },
       {
         name: 'team',
@@ -135,10 +127,22 @@ export default defineComponent({
         field: 'team',
       },
       {
-        name: 'badge',
+        name: 'stages_count',
         align: 'center',
-        label: 'Badge',
-        field: 'badge_icon',
+        label: 'Etapas',
+        field: 'stages_count',
+      },
+      {
+        name: 'collaborators_count',
+        align: 'center',
+        label: 'Colaboradores',
+        field: 'collaborators_count',
+      },
+      {
+        name: 'active',
+        align: 'center',
+        label: 'Situação',
+        field: 'active',
       },
       {
         name: 'actions',
@@ -152,14 +156,14 @@ export default defineComponent({
     const router = useRouter();
 
     onMounted(() => {
-      getClients();
+      getTrails();
       loading.value = true;
     });
 
-    const getClients = async () => {
+    const getTrails = async () => {
       try {
         const data = await list();
-        jobPlans.value = data;
+        trails.value = data;
         loading.value = false;
       } catch (error) {
         $q.notify({
@@ -171,40 +175,46 @@ export default defineComponent({
       }
     };
 
-    const handleDeleteClient = async (id) => {
-      try {
-        $q.dialog({
-          title: 'Remover',
-          message: 'Deseja remover ou deletar?',
-          cancel: true,
-          persistent: true,
-        }).onOk(async () => {
+    const handleDeleteTrail = async (id) => {
+      $q.dialog({
+        title: 'Remover',
+        message: 'Deseja remover essa trilha e todas as suas etapas?',
+        cancel: true,
+        persistent: true,
+      }).onOk(async () => {
+        try {
           await remove(id);
           $q.notify({
             message: 'Apagado com sucesso',
             icon: 'check',
             color: 'positive',
           });
-          await getClients();
-        });
-      } catch (error) {
-        $q.notify({
-          message: 'Erro ao apagar cliente',
-          icon: 'times',
-          color: 'negative',
-        });
-      }
+          await getTrails();
+        } catch (error) {
+          $q.notify({
+            message: 'Não foi possível apagar a trilha',
+            caption: error.message,
+            icon: 'block',
+            color: 'negative',
+          });
+        }
+      });
     };
 
-    const handleEditClient = async (id) => {
-      router.push({ name: 'jobPlans.form', params: { id } });
+    const handleEditTrail = async (id) => {
+      router.push({ name: 'trails.form', params: { id } });
+    };
+
+    const handleProgress = async (id) => {
+      router.push({ name: 'trails.progress', params: { id } });
     };
 
     return {
-      jobPlans,
+      trails,
       columns,
-      handleDeleteClient,
-      handleEditClient,
+      handleDeleteTrail,
+      handleEditTrail,
+      handleProgress,
       pagination,
       loading,
     };
