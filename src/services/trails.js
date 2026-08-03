@@ -33,6 +33,9 @@ export default function trailsService() {
   // minha trilha (colaborador autenticado)
   const mine = () => request('get', `${endpoint}/mine`);
 
+  // meu cajueiro: conquistas do colaborador (o pôster é desenhado no front)
+  const myCajueiro = () => request('get', `${endpoint}/my-cajueiro`);
+
   // etapas
   const storeStage = (trailId, form) => request('post', `${endpoint}/${trailId}/stages`, form);
   const updateStage = (stageId, form) => request('put', `${endpoint}/stages/${stageId}`, form);
@@ -107,5 +110,6 @@ export default function trailsService() {
     advanceStage,
     undoStage,
     certificate,
+    myCajueiro,
   };
 }

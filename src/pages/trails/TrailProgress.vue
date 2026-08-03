@@ -45,124 +45,168 @@
 
     <div v-else-if="progress">
       <q-card flat bordered class="q-mb-md">
-        <q-card-section class="row items-center q-col-gutter-md">
+        <q-card-section class="trail-header">
           <CollaboratorAvatar :collaborator="progress.collaborator" size="56px" />
-          <div>
+
+          <div class="trail-header__info">
             <div class="text-subtitle1">{{ progress.collaborator.full_name }}</div>
             <div class="text-caption text-grey-7">
-              {{ progress.completed_stages_count }} de {{ progress.stages_count }} etapas concluídas
+              {{ progress.completed_stages_count }} de {{ progress.stages_count }} etapas
+              <template v-if="levels.required">
+                &middot; {{ levels.done }} de {{ levels.required }} níveis
+              </template>
             </div>
           </div>
-          <q-space />
+
+          <q-btn
+            v-if="lastCompletedStage"
+            push
+            class="trail-header__action"
+            color="teal"
+            icon="workspace_premium"
+            label="Certificado"
+            @click="openCertificate(lastCompletedStage)"
+          >
+            <q-tooltip>Certificado de "{{ lastCompletedStage.description }}"</q-tooltip>
+          </q-btn>
+
           <q-linear-progress
             rounded
-            size="14px"
-            class="col-lg-4 col-xs-12"
+            size="28px"
+            class="trail-header__progress"
             :value="completionRatio"
-            color="positive"
-          />
+            :color="isComplete ? 'positive' : 'light-green-6'"
+          >
+            <div class="absolute-full flex flex-center">
+              <q-badge
+                color="white"
+                :text-color="isComplete ? 'positive' : 'green-9'"
+                class="text-weight-bold"
+              >
+                <q-icon v-if="isComplete" name="check_circle" size="15px" class="q-mr-xs" />
+                {{ completionPercent }}%
+              </q-badge>
+            </div>
+            <q-tooltip>
+              Cada etapa vale a mesma fatia; os níveis já concluídos contam dentro dela.
+            </q-tooltip>
+          </q-linear-progress>
         </q-card-section>
       </q-card>
 
-      <q-list bordered separator class="rounded-borders">
-        <q-expansion-item
-          v-for="stage in progress.stages"
-          :key="stage.id"
-          expand-separator
-          :default-opened="stage.state === 'unlocked'"
-        >
-          <template #header>
-            <q-item-section avatar>
-              <q-icon :name="stateIcon(stage.state)" :color="stateColor(stage.state)" size="28px" />
-            </q-item-section>
-            <q-item-section>
-              <q-item-label>{{ stage.position }}. {{ stage.description }}</q-item-label>
-              <q-item-label caption>
-                {{ stage.completed_levels_count }} de {{ stage.required_count }} níveis necessários
-                <span v-if="stage.job_plan"> &middot; promove para {{ stage.job_plan.description }}</span>
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-badge :color="stateColor(stage.state)">{{ stateLabel(stage.state) }}</q-badge>
-            </q-item-section>
-          </template>
+      <!-- No celular a lista lê melhor que um grafo com pan e zoom. -->
+      <q-card v-if="$q.screen.gt.xs" flat bordered>
+        <TrailFlow
+          :stages="progress.stages"
+          :trail="{ description: trail.description, team: trail.team?.name }"
+          :can-advance="canAdvance"
+          :on-advance="advance"
+          :on-undo="undo"
+          :on-toggle-level="toggleLevel"
+          @stage-click="openStageDetail"
+          @level-click="openLevelDetail"
+        />
+      </q-card>
 
-          <q-card>
-            <q-card-section>
-              <div v-if="stage.materials?.length" class="q-mb-md">
-                <div class="text-subtitle2 q-mb-xs">Material de apoio da etapa</div>
-                <q-chip
-                  v-for="material in stage.materials"
-                  :key="material.id"
-                  icon="link"
-                  color="blue-1"
-                  text-color="primary"
-                >
-                  <a :href="material.url" target="_blank" rel="noopener">{{ material.description }}</a>
-                </q-chip>
-              </div>
-
-              <q-list bordered separator class="rounded-borders">
-                <q-item v-for="level in stage.levels" :key="level.id">
-                  <q-item-section side>
-                    <q-checkbox
-                      :model-value="level.completed"
-                      :disable="stage.state === 'locked' || !canAdvance"
-                      @update:model-value="(value) => toggleLevel(level, value)"
-                    />
-                  </q-item-section>
-                  <q-item-section>
-                    <q-item-label :class="level.completed ? 'text-strike text-grey-6' : ''">
-                      {{ level.description }}
-                    </q-item-label>
-                    <q-item-label caption>{{ level.note }}</q-item-label>
-                    <q-item-label v-if="level.materials?.length" class="q-mt-xs">
-                      <q-chip
-                        v-for="material in level.materials"
-                        :key="material.id"
-                        dense
-                        icon="link"
-                        color="blue-1"
-                        text-color="primary"
-                      >
-                        <a :href="material.url" target="_blank" rel="noopener">{{ material.description }}</a>
-                      </q-chip>
-                    </q-item-label>
-                  </q-item-section>
-                </q-item>
-              </q-list>
-
-              <div class="row q-gutter-sm q-mt-md justify-end">
-                <q-btn
-                  v-if="stage.state === 'completed'"
-                  push
-                  color="teal"
-                  icon="workspace_premium"
-                  label="Certificado"
-                  @click="openCertificate(stage)"
-                />
-                <q-btn
-                  v-if="stage.state === 'completed' && canAdvance"
-                  push
-                  color="orange-9"
-                  icon="undo"
-                  label="Desfazer etapa"
-                  @click="undo(stage)"
-                />
-                <q-btn
-                  v-if="stage.state === 'unlocked' && canAdvance"
-                  push
-                  color="primary"
-                  icon="done_all"
-                  label="Concluir etapa"
-                  @click="advance(stage)"
-                />
-              </div>
-            </q-card-section>
-          </q-card>
-        </q-expansion-item>
-      </q-list>
+      <TrailStageList v-else :stages="progress.stages" @certificate="openCertificate" />
     </div>
+
+    <!-- detalhe da etapa -->
+    <q-dialog v-model="stageDialog">
+      <q-card v-if="selectedStage" style="min-width: 340px; max-width: 560px">
+        <q-card-section class="row items-center">
+          <q-icon
+            :name="stateIcon(selectedStage.state)"
+            :color="stateColor(selectedStage.state)"
+            size="28px"
+            class="q-mr-sm"
+          />
+          <div>
+            <div class="text-h6">{{ selectedStage.position }}. {{ selectedStage.description }}</div>
+            <div class="text-caption text-grey-7">
+              {{ stateLabel(selectedStage.state) }} &middot;
+              {{ selectedStage.completed_levels_count }} de
+              {{ selectedStage.required_count }} níveis necessários
+            </div>
+          </div>
+        </q-card-section>
+
+        <q-card-section v-if="selectedStage.job_plan || selectedStage.note" class="q-pt-none">
+          <div v-if="selectedStage.job_plan" class="q-mb-sm">
+            Promove para
+            <q-badge :style="`background: ${selectedStage.job_plan.badge_color || '#1976d2'}`">
+              {{ selectedStage.job_plan.description }}
+            </q-badge>
+          </div>
+          <div v-if="selectedStage.note" class="text-body2 text-grey-8">{{ selectedStage.note }}</div>
+        </q-card-section>
+
+        <q-card-section v-if="selectedStage.materials?.length" class="q-pt-none">
+          <div class="text-subtitle2 q-mb-xs">Material de apoio</div>
+          <q-chip
+            v-for="material in selectedStage.materials"
+            :key="material.id"
+            icon="link"
+            color="blue-1"
+            text-color="primary"
+          >
+            <a :href="material.url" target="_blank" rel="noopener">{{ material.description }}</a>
+          </q-chip>
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn
+            v-if="selectedStage.state === 'completed'"
+            push
+            color="teal"
+            icon="workspace_premium"
+            label="Certificado"
+            @click="openCertificate(selectedStage)"
+          />
+          <q-btn flat label="Fechar" color="blue-10" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
+
+    <!-- detalhe do nível -->
+    <q-dialog v-model="levelDialog">
+      <q-card v-if="selectedLevel" style="min-width: 320px; max-width: 520px">
+        <q-card-section class="row items-center">
+          <q-icon
+            :name="selectedLevel.completed ? 'check_circle' : 'radio_button_unchecked'"
+            :color="selectedLevel.completed ? 'positive' : 'grey-5'"
+            size="26px"
+            class="q-mr-sm"
+          />
+          <div class="text-h6">{{ selectedLevel.description }}</div>
+        </q-card-section>
+
+        <q-card-section v-if="selectedLevel.note" class="q-pt-none text-body2 text-grey-8">
+          {{ selectedLevel.note }}
+        </q-card-section>
+
+        <q-card-section v-if="selectedLevel.materials?.length" class="q-pt-none">
+          <div class="text-subtitle2 q-mb-xs">Material de apoio</div>
+          <q-chip
+            v-for="material in selectedLevel.materials"
+            :key="material.id"
+            icon="link"
+            color="blue-1"
+            text-color="primary"
+          >
+            <a :href="material.url" target="_blank" rel="noopener">{{ material.description }}</a>
+          </q-chip>
+        </q-card-section>
+
+        <q-card-section v-else class="q-pt-none text-grey-6">
+          Sem material de apoio cadastrado.
+        </q-card-section>
+
+        <q-card-actions align="right">
+          <q-btn flat label="Fechar" color="blue-10" v-close-popup />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
     <q-dialog v-model="enrollDialog">
       <q-card style="min-width: 380px">
@@ -193,20 +237,19 @@ import { computed, defineComponent, onMounted, ref } from 'vue';
 import trailsService from 'src/services/trails';
 import collaboratorsService from 'src/services/collaborators';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
+import TrailFlow from 'src/components/trails/TrailFlow.vue';
+import TrailStageList from 'src/components/trails/TrailStageList.vue';
 import { useBadgesStore } from 'src/stores/badges/badges-store';
+import { STATES } from 'src/support/trails/states';
+import { levelTotals, trailComplete, trailPercent, trailRatio } from 'src/support/trails/progress';
 import can from 'src/middleware/authMiddleware';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
 
-const STATES = {
-  completed: { label: 'Concluída', color: 'positive', icon: 'check_circle' },
-  unlocked: { label: 'Liberada', color: 'primary', icon: 'radio_button_unchecked' },
-  locked: { label: 'Bloqueada', color: 'grey-6', icon: 'lock' },
-};
 
 export default defineComponent({
   name: 'TrailProgressPage',
-  components: { CollaboratorAvatar },
+  components: { CollaboratorAvatar, TrailFlow, TrailStageList },
   setup() {
     const {
       getById,
@@ -230,14 +273,27 @@ export default defineComponent({
     const enrolled = ref([]);
     const collaborators = ref([]);
     const enrollDialog = ref(false);
+    const stageDialog = ref(false);
+    const levelDialog = ref(false);
+    const selectedStage = ref(null);
+    const selectedLevel = ref(null);
     const enrollCollaboratorId = ref(null);
 
     const canAdvance = computed(() => !!can(['super-admin', 'trails.advance', 'trails.*']));
 
-    const completionRatio = computed(() => {
-      if (!progress.value?.stages_count) return 0;
-      return progress.value.completed_stages_count / progress.value.stages_count;
-    });
+    const completionRatio = computed(() => trailRatio(progress.value));
+    const completionPercent = computed(() => trailPercent(progress.value));
+    const isComplete = computed(() => trailComplete(progress.value));
+    const levels = computed(() => levelTotals(progress.value));
+
+    // O certificado é por etapa; no cabeçalho mostramos o da conquista mais
+    // avançada, que é a que interessa exibir.
+    const lastCompletedStage = computed(
+      () =>
+        [...(progress.value?.stages ?? [])]
+          .reverse()
+          .find((stage) => stage.state === 'completed') ?? null
+    );
 
     const teamCollaborators = computed(() =>
       collaborators.value.filter((collaborator) => collaborator.team_id === trail.value.team_id)
@@ -347,9 +403,25 @@ export default defineComponent({
       }
     };
 
+    const openStageDetail = (stage) => {
+      selectedStage.value = stage;
+      stageDialog.value = true;
+    };
+
+    const openLevelDetail = (level) => {
+      selectedLevel.value = level;
+      levelDialog.value = true;
+    };
+
     return {
       trail,
       progress,
+      stageDialog,
+      levelDialog,
+      selectedStage,
+      selectedLevel,
+      openStageDetail,
+      openLevelDetail,
       collaboratorId,
       enrolled,
       teamCollaborators,
@@ -357,6 +429,10 @@ export default defineComponent({
       enrollCollaboratorId,
       canAdvance,
       completionRatio,
+      completionPercent,
+      isComplete,
+      levels,
+      lastCompletedStage,
       loadProgress,
       toggleLevel,
       advance,

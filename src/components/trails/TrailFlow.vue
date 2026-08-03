@@ -1,0 +1,238 @@
+<template>
+  <div class="trail-flow">
+    <VueFlow
+      :id="flowId"
+      :nodes="nodes"
+      :edges="edges"
+      :node-types="nodeTypes"
+      :nodes-draggable="false"
+      :nodes-connectable="false"
+      :elements-selectable="false"
+      :zoom-on-scroll="false"
+      :pan-on-scroll="true"
+      :min-zoom="0.3"
+      :max-zoom="1.4"
+      fit-view-on-init
+      @node-click="onNodeClick"
+    >
+      <Background pattern-color="#c8e6c9" :gap="22" />
+      <Controls :show-interactive="false" position="bottom-right" />
+    </VueFlow>
+  </div>
+</template>
+
+<script>
+import { computed, defineComponent, markRaw, nextTick, watch } from 'vue';
+import { VueFlow, useVueFlow, Position } from '@vue-flow/core';
+import { Background } from '@vue-flow/background';
+import { Controls } from '@vue-flow/controls';
+import dagre from '@dagrejs/dagre';
+import TrailRootNode from './nodes/TrailRootNode.vue';
+import StageNode from './nodes/StageNode.vue';
+import LevelNode from './nodes/LevelNode.vue';
+
+// CSS da lib pelo script: o resolver do Vite cuida do caminho em node_modules,
+// o que não acontece com @import dentro do bloco de estilo.
+import '@vue-flow/core/dist/style.css';
+import '@vue-flow/core/dist/theme-default.css';
+import '@vue-flow/controls/dist/style.css';
+
+const COLORS = {
+  completed: '#43A047',
+  unlocked: '#F9A825',
+  locked: '#CFD8DC',
+};
+
+// Precisam bater com o CSS dos nós: o dagre posiciona pela caixa.
+const ROOT_SIZE = { width: 200, height: 76 };
+const STAGE_SIZE = { width: 240, height: 96 };
+const LEVEL_SIZE = { width: 280, height: 40 };
+
+let instances = 0;
+
+export default defineComponent({
+  name: 'TrailFlow',
+  components: { VueFlow, Background, Controls },
+  emits: ['stage-click', 'level-click'],
+  props: {
+    stages: {
+      type: Array,
+      default: () => [],
+    },
+    // { description, team } — vira o nó raiz.
+    trail: {
+      type: Object,
+      default: null,
+    },
+    // Quando true, os nós expõem as ações de avançar/desfazer/marcar nível.
+    canAdvance: {
+      type: Boolean,
+      default: false,
+    },
+    onAdvance: {
+      type: Function,
+      default: null,
+    },
+    onUndo: {
+      type: Function,
+      default: null,
+    },
+    onToggleLevel: {
+      type: Function,
+      default: null,
+    },
+  },
+  setup(props, { emit }) {
+    // "Minha trilha" renderiza um TrailFlow por trilha. Sem id explícito cada
+    // instância cria um store implícito e o fitView pode agir no gráfico errado.
+    instances += 1;
+    const flowId = `trail-flow-${instances}`;
+
+    const { fitView } = useVueFlow(flowId);
+
+    const nodeTypes = {
+      root: markRaw(TrailRootNode),
+      stage: markRaw(StageNode),
+      level: markRaw(LevelNode),
+    };
+
+    // Monta o grafo e deixa o dagre resolver as posições no sentido
+    // esquerda -> direita. Sem cálculo de layout na mão.
+    const graph = computed(() => {
+      const g = new dagre.graphlib.Graph();
+      g.setDefaultEdgeLabel(() => ({}));
+      g.setGraph({ rankdir: 'LR', nodesep: 18, ranksep: 90, marginx: 20, marginy: 20 });
+
+      const nodes = [];
+      const edges = [];
+
+      // Raiz = a trilha. Sem ela o dagre encadearia etapa a etapa numa escada
+      // diagonal; com ela sai o mesmo desenho do mapa mental: raiz, etapas e
+      // níveis em três colunas.
+      g.setNode('root', { ...ROOT_SIZE });
+      nodes.push({
+        id: 'root',
+        type: 'root',
+        position: { x: 0, y: 0 },
+        sourcePosition: Position.Right,
+        data: {
+          description: props.trail?.description ?? 'Trilha',
+          team: props.trail?.team,
+          completed: props.stages.filter((s) => s.state === 'completed').length,
+          total: props.stages.length,
+        },
+      });
+
+      props.stages.forEach((stage) => {
+        const stageId = `stage-${stage.id}`;
+
+        g.setNode(stageId, { ...STAGE_SIZE });
+        g.setEdge('root', stageId);
+
+        edges.push({
+          id: `e-root-${stageId}`,
+          source: 'root',
+          target: stageId,
+          type: 'smoothstep',
+          style: {
+            stroke: stage.state === 'locked' ? COLORS.locked : COLORS.completed,
+            strokeWidth: stage.state === 'locked' ? 2 : 5,
+          },
+        });
+        nodes.push({
+          id: stageId,
+          type: 'stage',
+          position: { x: 0, y: 0 },
+          sourcePosition: Position.Right,
+          targetPosition: Position.Left,
+          data: {
+            ...stage,
+            stage,
+            canAdvance: props.canAdvance,
+            onAdvance: props.onAdvance,
+            onUndo: props.onUndo,
+          },
+        });
+
+        (stage.levels ?? []).forEach((level) => {
+          const levelId = `level-${level.id}`;
+
+          g.setNode(levelId, { ...LEVEL_SIZE });
+          g.setEdge(stageId, levelId);
+
+          nodes.push({
+            id: levelId,
+            type: 'level',
+            position: { x: 0, y: 0 },
+            sourcePosition: Position.Right,
+            targetPosition: Position.Left,
+            data: {
+              ...level,
+              level,
+              stageState: stage.state,
+              canAdvance: props.canAdvance,
+              onToggle: props.onToggleLevel,
+            },
+          });
+
+          edges.push({
+            id: `e-${stageId}-${levelId}`,
+            source: stageId,
+            target: levelId,
+            type: 'smoothstep',
+            animated: stage.state === 'unlocked' && !level.completed,
+            style: {
+              stroke: level.completed ? COLORS.completed : COLORS.locked,
+              strokeWidth: level.completed ? 3 : 2,
+            },
+          });
+        });
+      });
+
+      dagre.layout(g);
+
+      // O dagre devolve o centro do nó; o Vue Flow espera o canto superior esquerdo.
+      nodes.forEach((node) => {
+        const { x, y, width, height } = g.node(node.id);
+        node.position = { x: x - width / 2, y: y - height / 2 };
+      });
+
+      return { nodes, edges };
+    });
+
+    const nodes = computed(() => graph.value.nodes);
+    const edges = computed(() => graph.value.edges);
+
+    // Depois de recalcular (avanço de etapa, por exemplo) reenquadra.
+    watch(
+      () => props.stages,
+      async () => {
+        await nextTick();
+        fitView({ padding: 0.12 });
+      },
+      { deep: true }
+    );
+
+    const onNodeClick = ({ node }) => {
+      if (node.type === 'stage') emit('stage-click', node.data.stage);
+      if (node.type === 'level') emit('level-click', node.data.level);
+    };
+
+    return { flowId, nodes, edges, nodeTypes, onNodeClick };
+  },
+});
+</script>
+
+<style lang="scss">
+/* Sem scoped: as regras precisam alcançar os elementos que a lib renderiza. */
+.trail-flow {
+  width: 100%;
+  height: 520px;
+  background: linear-gradient(180deg, #f6fbf4 0%, #ffffff 100%);
+  border-radius: 6px;
+}
+
+.trail-flow .vue-flow__handle {
+  opacity: 0;
+}
+</style>

@@ -29,4 +29,11 @@ export default [
     component: () => import('src/pages/trails/MyTrail.vue'),
     beforeEnter: [can]
   },
+  {
+    path: 'trails/my-cajueiro',
+    name: 'trails.cajueiro',
+    meta: {permissions: ['trails.mine', 'trails.index', 'trails.*']},
+    component: () => import('src/pages/trails/MyCajueiro.vue'),
+    beforeEnter: [can]
+  },
 ];

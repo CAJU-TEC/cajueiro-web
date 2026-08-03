@@ -240,6 +240,15 @@ export default defineComponent({
               permissions: ['trails.*', 'trails.mine', 'trails.index'],
             },
           },
+          {
+            title: 'Meu Cajueiro',
+            caption: '',
+            icon: 'park',
+            route: {
+              name: 'trails.cajueiro',
+              permissions: ['trails.*', 'trails.mine', 'trails.index'],
+            },
+          },
         ],
       },
       {
