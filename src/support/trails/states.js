@@ -32,6 +32,13 @@ export const SKILLS = {
   hard: { label: 'Hard skill', color: 'blue-8', hex: '#1565c0', icon: 'build' },
 };
 
+// Onde o nível está no fluxo de envio e avaliação (level_state na API).
+export const LEVEL_STATES = {
+  pending: { label: 'A fazer', color: 'grey-6', icon: 'radio_button_unchecked' },
+  submitted: { label: 'Aguardando avaliação', color: 'amber-8', icon: 'hourglass_top' },
+  completed: { label: 'Concluído', color: 'positive', icon: 'check_circle' },
+};
+
 // Rótulo do prazo com as datas, usado no diálogo do nível nas duas visões
 // (líder e colaborador).
 export function periodCaption(level) {

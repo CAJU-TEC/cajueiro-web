@@ -45,7 +45,10 @@ const COLORS = {
 
 // Precisam bater com o CSS dos nós: o dagre posiciona pela caixa.
 const ROOT_SIZE = { width: 200, height: 76 };
-const STAGE_SIZE = { width: 240, height: 96 };
+// Altura no pior caso: o card da etapa cresce com a linha de "aguardando
+// avaliação" e com os botões do líder. Superestimar só afasta um pouco os nós;
+// subestimar faz um card cobrir o outro.
+const STAGE_SIZE = { width: 240, height: 124 };
 const LEVEL_SIZE = { width: 280, height: 40 };
 
 let instances = 0;

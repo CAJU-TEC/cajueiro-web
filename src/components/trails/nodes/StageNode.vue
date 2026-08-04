@@ -12,7 +12,17 @@
 
     <div class="stage-node__meta">
       {{ data.completed_levels_count }}/{{ data.required_count }} níveis
+      <!-- Duas porcentagens: conclusão é o quórum, avaliação é a média das
+           notas dos níveis já avaliados (R9). -->
+      <template v-if="data.evaluation_percent !== null">
+        · nota {{ data.evaluation_percent }}%
+      </template>
       <template v-if="data.job_plan"> · {{ data.job_plan.description }}</template>
+    </div>
+
+    <div v-if="data.submitted_levels_count" class="stage-node__pending">
+      <q-icon name="hourglass_top" size="13px" />
+      {{ data.submitted_levels_count }} aguardando avaliação
     </div>
 
     <div v-if="data.materials?.length" class="stage-node__materials">
@@ -160,6 +170,13 @@ export default defineComponent({
   margin-top: 4px;
   font-size: 11px;
   color: #1976d2;
+}
+
+.stage-node__pending {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #f57f17;
 }
 
 .stage-node__actions {

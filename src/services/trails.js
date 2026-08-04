@@ -69,8 +69,21 @@ export default function trailsService() {
     request('get', `${endpoint}/${trailId}/collaborators/${collaboratorId}/progress`);
 
   // avanço
-  const completeLevel = (levelId, collaboratorId, note) =>
-    request('post', `${endpoint}/levels/${levelId}/complete`, { collaborator_id: collaboratorId, note });
+  // concluir o nível é o mesmo ato de avaliar: a nota vai junto (R9)
+  const completeLevel = (levelId, collaboratorId, note, score) =>
+    request('post', `${endpoint}/levels/${levelId}/complete`, {
+      collaborator_id: collaboratorId,
+      note,
+      score,
+    });
+
+  // o colaborador envia o nível para avaliação, com certificado opcional em
+  // data URI — mesmo formato dos anexos de protocolo
+  const submitLevel = (levelId, collaboratorId, certificate) =>
+    request('post', `${endpoint}/levels/${levelId}/submit`, {
+      collaborator_id: collaboratorId,
+      certificate,
+    });
   const undoLevel = (levelId, collaboratorId) =>
     request('delete', `${endpoint}/levels/${levelId}/complete`, { data: { collaborator_id: collaboratorId } });
   const advanceStage = (stageId, collaboratorId, note) =>
@@ -111,6 +124,7 @@ export default function trailsService() {
     updateMaterial,
     removeMaterial,
     setLevelPeriod,
+    submitLevel,
     enroll,
     unenroll,
     progress,

@@ -4,6 +4,7 @@
     :class="{
       'level-node--done': data.completed,
       'level-node--late': data.period_state === 'late',
+      'level-node--submitted': data.level_state === 'submitted',
     }"
   >
     <Handle type="target" :position="Position.Left" />
@@ -45,6 +46,21 @@
 
     <!-- Prazo: só ícone, que o nó tem 280px e o rótulo já briga por espaço.
          O texto vai no tooltip. -->
+    <q-badge
+      v-if="hasScore"
+      :color="data.reproved ? 'negative' : 'positive'"
+      :label="`${data.score}%`"
+      class="level-node__score"
+    />
+
+    <q-icon
+      v-if="data.level_state === 'submitted'"
+      name="hourglass_top"
+      color="amber-9"
+      size="15px"
+      class="level-node__period"
+    />
+
     <q-icon
       v-if="period && data.period_state !== 'not_started' && data.period_state !== 'done'"
       :name="period.icon"
@@ -56,6 +72,10 @@
     <q-tooltip>
       {{ data.description }}
       <template v-if="skill"><br />{{ skill.label }}</template>
+      <template v-if="data.level_state === 'submitted'"><br />Aguardando avaliação</template>
+      <template v-if="hasScore">
+        <br />Nota {{ data.score }}%{{ data.reproved ? ' — abaixo do corte' : '' }}
+      </template>
       <template v-if="deadline"><br />{{ deadline }}</template>
     </q-tooltip>
 
@@ -80,6 +100,8 @@ export default defineComponent({
   setup(props) {
     const period = computed(() => PERIODS[props.data.period_state]);
     const skill = computed(() => SKILLS[props.data.skill]);
+    // 0 é nota válida (e reprova), então comparar com null e não com falsy.
+    const hasScore = computed(() => props.data.score !== null && props.data.score !== undefined);
 
     const deadline = computed(() => {
       const { period_state: state, starts_at: from, ends_at: to } = props.data;
@@ -91,7 +113,7 @@ export default defineComponent({
       return null;
     });
 
-    return { Position, period, skill, deadline };
+    return { Position, period, skill, hasScore, deadline };
   },
 });
 </script>
@@ -121,6 +143,12 @@ export default defineComponent({
   background: #ffebee;
 }
 
+/* Enviado e esperando o líder: âmbar, o mesmo tom de "liberada" da etapa. */
+.level-node--submitted:not(.level-node--done) {
+  border-color: #f9a825;
+  background: #fffdf5;
+}
+
 .level-node__check {
   flex: 0 0 auto;
 }
@@ -141,7 +169,8 @@ export default defineComponent({
 
 .level-node__link,
 .level-node__period,
-.level-node__skill {
+.level-node__skill,
+.level-node__score {
   flex: 0 0 auto;
 }
 </style>

@@ -194,7 +194,7 @@
                         :label="SKILLS[level.skill]?.label"
                         class="q-mr-xs"
                       />
-                      {{ levelTypeLabel(level.type) }}
+                      {{ levelTypeLabel(level.type) }} · corte {{ level.cut_score }}%
                     </q-item-label>
                     <q-item-label v-if="level.materials?.length" class="q-mt-xs">
                       <q-chip
@@ -313,6 +313,16 @@
                 hint="Soft aparece acima, hard abaixo"
               />
             </div>
+            <q-input
+              v-model.number="levelForm.cut_score"
+              filled
+              type="number"
+              min="0"
+              max="100"
+              suffix="%"
+              label="Nota de corte"
+              hint="Abaixo disso o nível fica reprovado, mas a etapa não trava"
+            />
             <q-input v-model="levelForm.note" filled type="textarea" label="Observações" />
           </q-card-section>
           <q-card-actions align="right">
@@ -587,8 +597,16 @@ export default defineComponent({
           note: level.note,
           type: level.type,
           skill: level.skill,
+          cut_score: level.cut_score,
         }
-        : { stage_id: stageId, description: '', note: '', type: 'task', skill: 'hard' };
+        : {
+          stage_id: stageId,
+          description: '',
+          note: '',
+          type: 'task',
+          skill: 'hard',
+          cut_score: 70,
+        };
       levelDialog.value = true;
     };
 

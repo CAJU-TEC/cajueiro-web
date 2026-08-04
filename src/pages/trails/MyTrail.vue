@@ -205,7 +205,68 @@
           Sem material de apoio cadastrado.
         </q-card-section>
 
+        <!-- Resposta do líder, quando já avaliou -->
+        <q-card-section v-if="selectedLevel.score !== null || selectedLevel.evaluation_note" class="q-pt-none">
+          <q-banner dense :class="selectedLevel.reproved ? 'bg-red-1' : 'bg-green-1'">
+            <template #avatar>
+              <q-icon
+                :name="selectedLevel.reproved ? 'error_outline' : 'grading'"
+                :color="selectedLevel.reproved ? 'negative' : 'positive'"
+              />
+            </template>
+            <div v-if="selectedLevel.score !== null" class="text-weight-bold">
+              Nota {{ selectedLevel.score }}%
+              <span v-if="selectedLevel.reproved" class="text-negative">
+                (abaixo do corte de {{ selectedLevel.cut_score }}%)
+              </span>
+            </div>
+            <div v-if="selectedLevel.evaluation_note" class="text-body2">
+              {{ selectedLevel.evaluation_note }}
+            </div>
+          </q-banner>
+        </q-card-section>
+
+        <!-- Envio para avaliação: o colaborador manda, o líder avalia depois -->
+        <q-card-section v-if="!selectedLevel.completed" class="q-pt-none">
+          <q-banner v-if="selectedLevel.level_state === 'submitted'" dense class="bg-amber-1">
+            <template #avatar><q-icon name="hourglass_top" color="amber-9" /></template>
+            Enviado, aguardando a avaliação do seu líder.
+            <a
+              v-if="selectedLevel.certificate_uri"
+              :href="certificateUrl(selectedLevel.certificate_uri)"
+              target="_blank"
+              rel="noopener"
+            >
+              Ver certificado enviado
+            </a>
+          </q-banner>
+
+          <q-file
+            v-model="certificateFile"
+            dense
+            filled
+            clearable
+            class="q-mt-sm"
+            accept=".pdf,image/*"
+            label="Certificado (opcional)"
+            hint="PDF ou imagem, se o nível for um curso"
+            :max-file-size="5 * 1024 * 1024"
+            @rejected="notifyRejected"
+          >
+            <template #prepend><q-icon name="attach_file" /></template>
+          </q-file>
+        </q-card-section>
+
         <q-card-actions align="right">
+          <q-btn
+            v-if="!selectedLevel.completed"
+            push
+            color="primary"
+            icon="send"
+            :label="selectedLevel.level_state === 'submitted' ? 'Reenviar' : 'Enviar para avaliação'"
+            :loading="sending"
+            @click="submit(selectedLevel)"
+          />
           <q-btn flat label="Fechar" color="blue-10" v-close-popup />
         </q-card-actions>
       </q-card>
@@ -227,7 +288,7 @@ export default defineComponent({
   name: 'MyTrailPage',
   components: { CollaboratorAvatar, TrailFlow, TrailStageList },
   setup() {
-    const { mine, certificate } = trailsService();
+    const { mine, certificate, submitLevel } = trailsService();
     const $q = useQuasar();
 
     const trails = ref([]);
@@ -238,6 +299,8 @@ export default defineComponent({
     const selectedStage = ref(null);
     const selectedLevel = ref(null);
     const selectedCollaboratorId = ref(null);
+    const certificateFile = ref(null);
+    const sending = ref(false);
 
     const notifyError = (error) => {
       $q.notify({
@@ -266,8 +329,55 @@ export default defineComponent({
 
     const openLevel = (level) => {
       selectedLevel.value = level;
+      certificateFile.value = null;
       levelDialog.value = true;
     };
+
+    // O anexo vai como data URI, o mesmo formato dos anexos de protocolo.
+    const toDataUri = (file) =>
+      new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = () => reject(new Error('Não foi possível ler o arquivo.'));
+        reader.readAsDataURL(file);
+      });
+
+    const notifyRejected = () => {
+      $q.notify({
+        icon: 'block',
+        message: 'Arquivo recusado.',
+        caption: 'Envie PDF ou imagem de até 5 MB.',
+        color: 'negative',
+      });
+    };
+
+    const submit = async (level) => {
+      sending.value = true;
+
+      try {
+        const certificate = certificateFile.value ? await toDataUri(certificateFile.value) : null;
+        const item = trails.value.find((entry) =>
+          entry.stages.some((stage) => stage.levels.some((each) => each.id === level.id))
+        );
+
+        const updated = await submitLevel(level.id, item.collaborator.id, certificate);
+
+        // Recarrega só a trilha afetada, no lugar dela na lista.
+        trails.value = trails.value.map((entry) =>
+          entry.trail.id === updated.trail.id ? updated : entry
+        );
+        levelDialog.value = false;
+        certificateFile.value = null;
+        $q.notify({ message: 'Nível enviado para avaliação!', icon: 'send', color: 'positive' });
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        sending.value = false;
+      }
+    };
+
+    // O certificado fica no disco público da API.
+    const certificateUrl = (uri) => `${process.env.API_URL}/storage/certificates/${uri}`;
 
     const openCertificate = async (stage, collaboratorId) => {
       try {
@@ -293,6 +403,11 @@ export default defineComponent({
       selectedCollaboratorId,
       openStage,
       openLevel,
+      certificateFile,
+      sending,
+      submit,
+      notifyRejected,
+      certificateUrl,
       periodCaption,
       PERIODS,
       SKILLS,
