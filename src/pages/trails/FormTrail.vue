@@ -299,7 +299,7 @@
                 filled
                 emit-value
                 map-options
-                :options="levelTypes"
+                :options="typesForSkill"
                 label="Tipo *"
               />
               <q-select
@@ -362,7 +362,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { computed, defineComponent, ref, onMounted, watch } from 'vue';
 import trailsService from 'src/services/trails';
 import teamsService from 'src/services/teams';
 import { api } from 'boot/axios';
@@ -370,12 +370,19 @@ import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 import { SKILLS } from 'src/support/trails/states';
 
+// `skills` diz em qual competência o tipo faz sentido: teste técnico não existe
+// para soft skill, mentoria e dinâmica não existem para hard. O formulário
+// filtra a lista por isso; a API valida só o valor em si.
 const LEVEL_TYPES = [
-  { value: 'task', label: 'Tarefa' },
-  { value: 'course', label: 'Curso' },
-  { value: 'platform', label: 'Plataforma' },
-  { value: 'technical_test', label: 'Teste técnico' },
-  { value: 'other', label: 'Outro' },
+  { value: 'task', label: 'Tarefa', skills: ['soft', 'hard'] },
+  { value: 'course', label: 'Curso', skills: ['soft', 'hard'] },
+  { value: 'platform', label: 'Plataforma', skills: ['soft', 'hard'] },
+  { value: 'technical_test', label: 'Teste técnico', skills: ['hard'] },
+  { value: 'mentoring', label: 'Mentoria', skills: ['soft'] },
+  { value: 'presentation', label: 'Apresentação', skills: ['soft'] },
+  { value: 'dynamic', label: 'Dinâmica', skills: ['soft'] },
+  { value: 'reading', label: 'Leitura', skills: ['soft'] },
+  { value: 'other', label: 'Outro', skills: ['soft', 'hard'] },
 ];
 
 const LEVEL_SKILLS = [
@@ -647,13 +654,29 @@ export default defineComponent({
     const levelTypeLabel = (type) =>
       LEVEL_TYPES.find((option) => option.value === type)?.label ?? 'Tarefa';
 
+    const typesForSkill = computed(() =>
+      LEVEL_TYPES.filter((option) => option.skills.includes(levelForm.value.skill ?? 'hard'))
+    );
+
+    // Trocar a competência pode invalidar o tipo já escolhido (teste técnico
+    // em soft, mentoria em hard). Volta para "Tarefa", que serve nas duas, em
+    // vez de deixar o select com um valor que a lista não oferece mais.
+    watch(
+      () => levelForm.value.skill,
+      () => {
+        if (!typesForSkill.value.some((option) => option.value === levelForm.value.type)) {
+          levelForm.value.type = 'task';
+        }
+      }
+    );
+
     return {
       form,
       stages,
       teams,
       jobPlans,
-      levelTypes: LEVEL_TYPES,
       levelSkills: LEVEL_SKILLS,
+      typesForSkill,
       SKILLS,
       materialTypes: MATERIAL_TYPES,
       stageDialog,
