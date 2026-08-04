@@ -202,15 +202,17 @@
           <q-banner dense class="bg-amber-1">
             <template #avatar><q-icon name="hourglass_top" color="amber-9" /></template>
             Enviado em {{ formatDate(selectedLevel.submitted_at) }}
-            <a
+            <q-btn
               v-if="selectedLevel.certificate_uri"
-              :href="certificateUrl(selectedLevel.certificate_uri)"
-              target="_blank"
-              rel="noopener"
+              dense
+              flat
+              no-caps
+              color="primary"
+              icon="attach_file"
+              label="Abrir certificado"
               class="q-ml-sm"
-            >
-              Abrir certificado
-            </a>
+              @click="openLevelCertificate(selectedLevel)"
+            />
             <span v-else class="text-grey-7"> · sem certificado anexado</span>
           </q-banner>
         </q-card-section>
@@ -232,7 +234,43 @@
             <div v-if="selectedLevel.evaluation_note" class="text-body2">
               {{ selectedLevel.evaluation_note }}
             </div>
+            <!-- Corrigir a nota sem desfazer a conclusão: desfazer devolveria o
+                 nível para a fila e tiraria o quórum da etapa. -->
+            <template v-if="canAdvance" #action>
+              <q-btn
+                dense
+                flat
+                color="primary"
+                icon="edit"
+                label="Editar nota"
+                @click="openEvaluation(selectedLevel)"
+              />
+              <q-btn
+                dense
+                flat
+                color="grey-8"
+                icon="delete_outline"
+                label="Remover nota"
+                :loading="saving"
+                @click="removeEvaluation"
+              />
+            </template>
           </q-banner>
+        </q-card-section>
+
+        <!-- Concluído sem nota: dá para avaliar depois, sem desfazer nada. -->
+        <q-card-section
+          v-else-if="canAdvance && selectedLevel.completed"
+          class="q-pt-none"
+        >
+          <q-btn
+            dense
+            flat
+            color="primary"
+            icon="grading"
+            label="Avaliar nível"
+            @click="openEvaluation(selectedLevel)"
+          />
         </q-card-section>
 
         <!-- Prazo por matrícula: é deste colaborador, não do nível. -->
@@ -282,8 +320,11 @@
               icon="event_available"
               label="Salvar prazo"
               :loading="savingPeriod"
+              :disable="!periodComplete"
               @click="savePeriod"
-            />
+            >
+              <q-tooltip v-if="!periodComplete">Selecione as duas datas</q-tooltip>
+            </q-btn>
             <q-btn
               v-if="selectedLevel.starts_at"
               dense
@@ -327,36 +368,41 @@
           <div class="text-h6">Avaliar nível</div>
           <div class="text-caption text-grey-7">{{ evaluationForm.level.description }}</div>
         </q-card-section>
-        <q-card-section class="q-gutter-md q-pt-none">
-          <q-input
-            v-model.number="evaluationForm.score"
-            filled
-            type="number"
-            min="0"
-            max="100"
-            label="Nota (0 a 100)"
-            :hint="`Abaixo de ${evaluationForm.level.cut_score}% o nível fica reprovado, mas a etapa não trava`"
-            suffix="%"
-          />
-          <q-input
-            v-model="evaluationForm.note"
-            filled
-            type="textarea"
-            rows="3"
-            label="Resposta ao colaborador"
-          />
-        </q-card-section>
-        <q-card-actions align="right">
-          <q-btn flat label="Cancelar" color="blue-10" v-close-popup />
-          <q-btn
-            push
-            color="primary"
-            icon="grading"
-            label="Concluir nível"
-            :loading="saving"
-            @click="saveEvaluation"
-          />
-        </q-card-actions>
+        <q-form @submit="saveEvaluation">
+          <q-card-section class="q-gutter-md q-pt-none">
+            <q-input
+              v-model.number="evaluationForm.score"
+              filled
+              type="number"
+              min="0"
+              max="100"
+              step="1"
+              label="Nota (0 a 100) *"
+              :hint="`Abaixo de ${evaluationForm.level.cut_score}% o nível fica reprovado, mas a etapa não trava`"
+              suffix="%"
+              :rules="requiredScoreRules"
+            />
+            <q-input
+              v-model="evaluationForm.note"
+              filled
+              type="textarea"
+              rows="3"
+              label="Resposta ao colaborador *"
+              :rules="answerRules"
+            />
+          </q-card-section>
+          <q-card-actions align="right">
+            <q-btn flat label="Cancelar" color="blue-10" v-close-popup />
+            <q-btn
+              push
+              color="primary"
+              icon="grading"
+              label="Concluir nível"
+              :loading="saving"
+              type="submit"
+            />
+          </q-card-actions>
+        </q-form>
       </q-card>
     </q-dialog>
 
@@ -432,6 +478,7 @@ import {
   toIsoDate,
 } from 'src/support/trails/states';
 import { levelTotals, trailComplete, trailPercent, trailRatio } from 'src/support/trails/progress';
+import { answerRules, requiredScoreRules } from 'src/support/trails/rules';
 import can from 'src/middleware/authMiddleware';
 import { useQuasar } from 'quasar';
 import { useRoute } from 'vue-router';
@@ -446,10 +493,12 @@ export default defineComponent({
       progress: fetchProgress,
       completeLevel,
       undoLevel,
+      clearLevelEvaluation,
       advanceStage,
       undoStage,
       enroll,
       certificate,
+      levelCertificate,
       setLevelPeriod,
     } = trailsService();
     const { list: listCollaborators } = collaboratorsService();
@@ -544,18 +593,23 @@ export default defineComponent({
       }
     };
 
+    // Vem pré-preenchido para a edição da nota: reavaliar é o mesmo diálogo.
+    const openEvaluation = (level) => {
+      evaluationForm.value = {
+        level,
+        score: level.score ?? null,
+        note: level.evaluation_note ?? null,
+      };
+      evaluationDialog.value = true;
+    };
+
     /**
      * Marcar o nível abre a avaliação em vez de concluir na hora: concluir é o
      * ato de dar a nota e a resposta (R9). Desmarcar continua desfazendo direto.
      */
     const toggleLevel = async (level, value) => {
       if (value) {
-        evaluationForm.value = {
-          level,
-          score: level.score ?? null,
-          note: level.evaluation_note ?? null,
-        };
-        evaluationDialog.value = true;
+        openEvaluation(level);
 
         return;
       }
@@ -575,15 +629,11 @@ export default defineComponent({
       saving.value = true;
 
       try {
-        progress.value = await completeLevel(
-          level.id,
-          collaboratorId.value,
-          note,
-          // String vazia do input viraria 0, que é nota de reprovação; nula é
-          // "concluído sem avaliar".
-          score === '' || score === null ? null : Number(score),
-        );
+        // As regras do formulário garantem nota inteira de 0 a 100 e resposta
+        // preenchida: concluir o nível é avaliá-lo (R9).
+        progress.value = await completeLevel(level.id, collaboratorId.value, note, Number(score));
         await badgesStore.refresh();
+        syncSelectedLevel();
         evaluationDialog.value = false;
         $q.notify({ message: 'Nível avaliado!', icon: 'grading', color: 'positive' });
       } catch (error) {
@@ -592,6 +642,33 @@ export default defineComponent({
       } finally {
         saving.value = false;
       }
+    };
+
+    // Só a avaliação sai; o nível continua concluído e contando no quórum, então
+    // não há badge nem etapa para reavaliar aqui. Confirma porque a resposta
+    // escrita ao colaborador vai junto e não tem como voltar.
+    const removeEvaluation = () => {
+      const level = selectedLevel.value;
+
+      $q.dialog({
+        title: 'Remover nota',
+        message: `Apagar a nota e a resposta de "${level.description}"? O nível continua concluído.`,
+        cancel: true,
+        persistent: true,
+      }).onOk(async () => {
+        saving.value = true;
+
+        try {
+          progress.value = await clearLevelEvaluation(level.id, collaboratorId.value);
+          syncSelectedLevel();
+          $q.notify({ message: 'Nota removida!', icon: 'grading', color: 'positive' });
+        } catch (error) {
+          notifyError(error);
+          await loadProgress();
+        } finally {
+          saving.value = false;
+        }
+      });
     };
 
     // Concluir a etapa também pede uma resposta do líder (R9).
@@ -655,6 +732,17 @@ export default defineComponent({
       }
     };
 
+    // O anexo do colaborador vem pela API, e não do /storage público: assim vale
+    // o auth:sanctum e não depende de `php artisan storage:link`.
+    const openLevelCertificate = async (level) => {
+      try {
+        const blob = await levelCertificate(level.id, collaboratorId.value);
+        window.open(URL.createObjectURL(blob), '_blank');
+      } catch (error) {
+        notifyError(error);
+      }
+    };
+
     const openStageDetail = (stage) => {
       selectedStage.value = stage;
       stageDialog.value = true;
@@ -669,6 +757,17 @@ export default defineComponent({
       levelDialog.value = true;
     };
 
+    // O diálogo do nível segue aberto depois de salvar: recarrego o nível do
+    // payload novo para o que está na tela acompanhar o que acabou de ser salvo.
+    const syncSelectedLevel = () => {
+      if (!selectedLevel.value) return;
+
+      selectedLevel.value =
+        progress.value.stages
+          .flatMap((stage) => stage.levels)
+          .find((level) => level.id === selectedLevel.value.id) ?? selectedLevel.value;
+    };
+
     const applyPeriod = async (startsAt, endsAt) => {
       savingPeriod.value = true;
 
@@ -679,12 +778,7 @@ export default defineComponent({
           startsAt,
           endsAt
         );
-        // O diálogo segue aberto: recarrego o nível do payload novo para o
-        // rótulo do estado acompanhar o que acabou de ser salvo.
-        selectedLevel.value =
-          progress.value.stages
-            .flatMap((stage) => stage.levels)
-            .find((level) => level.id === selectedLevel.value.id) ?? selectedLevel.value;
+        syncSelectedLevel();
         period.value = {
           starts_at: formatDate(selectedLevel.value.starts_at),
           ends_at: formatDate(selectedLevel.value.ends_at),
@@ -696,6 +790,13 @@ export default defineComponent({
         savingPeriod.value = false;
       }
     };
+
+    // Duas datas nulas são como o back entende "limpar prazo", então salvar com
+    // os campos vazios respondia "Prazo salvo!" sem prazo nenhum. Limpar é o
+    // outro botão.
+    const periodComplete = computed(
+      () => !!toIsoDate(period.value.starts_at) && !!toIsoDate(period.value.ends_at)
+    );
 
     const savePeriod = () =>
       applyPeriod(toIsoDate(period.value.starts_at), toIsoDate(period.value.ends_at));
@@ -724,15 +825,20 @@ export default defineComponent({
       evaluationDialog,
       evaluationForm,
       saveEvaluation,
+      openEvaluation,
+      removeEvaluation,
+      requiredScoreRules,
+      answerRules,
       stageAnswerDialog,
       stageAnswerForm,
       saveStageAnswer,
       LEVEL_STATES,
       savePeriod,
+      periodComplete,
       clearPeriod,
       periodCaption,
       formatDate,
-      certificateUrl: (uri) => `${process.env.API_URL}/storage/certificates/${uri}`,
+      openLevelCertificate,
       PERIODS,
       SKILLS,
       completionRatio,

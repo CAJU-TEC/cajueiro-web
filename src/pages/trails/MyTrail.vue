@@ -231,14 +231,16 @@
           <q-banner v-if="selectedLevel.level_state === 'submitted'" dense class="bg-amber-1">
             <template #avatar><q-icon name="hourglass_top" color="amber-9" /></template>
             Enviado, aguardando a avaliação do seu líder.
-            <a
+            <q-btn
               v-if="selectedLevel.certificate_uri"
-              :href="certificateUrl(selectedLevel.certificate_uri)"
-              target="_blank"
-              rel="noopener"
-            >
-              Ver certificado enviado
-            </a>
+              dense
+              flat
+              no-caps
+              color="primary"
+              icon="attach_file"
+              label="Ver certificado enviado"
+              @click="openLevelCertificate(selectedLevel)"
+            />
           </q-banner>
 
           <q-file
@@ -288,7 +290,7 @@ export default defineComponent({
   name: 'MyTrailPage',
   components: { CollaboratorAvatar, TrailFlow, TrailStageList },
   setup() {
-    const { mine, certificate, submitLevel } = trailsService();
+    const { mine, certificate, levelCertificate, submitLevel } = trailsService();
     const $q = useQuasar();
 
     const trails = ref([]);
@@ -351,16 +353,20 @@ export default defineComponent({
       });
     };
 
+    // "Minha trilha" lista uma trilha por matrícula e o diálogo do nível não
+    // guarda a matrícula: o colaborador vem da entrada que contém o nível.
+    const collaboratorOf = (level) =>
+      trails.value.find((entry) =>
+        entry.stages.some((stage) => stage.levels.some((each) => each.id === level.id))
+      )?.collaborator?.id;
+
     const submit = async (level) => {
       sending.value = true;
 
       try {
         const certificate = certificateFile.value ? await toDataUri(certificateFile.value) : null;
-        const item = trails.value.find((entry) =>
-          entry.stages.some((stage) => stage.levels.some((each) => each.id === level.id))
-        );
 
-        const updated = await submitLevel(level.id, item.collaborator.id, certificate);
+        const updated = await submitLevel(level.id, collaboratorOf(level), certificate);
 
         // Recarrega só a trilha afetada, no lugar dela na lista.
         trails.value = trails.value.map((entry) =>
@@ -376,8 +382,16 @@ export default defineComponent({
       }
     };
 
-    // O certificado fica no disco público da API.
-    const certificateUrl = (uri) => `${process.env.API_URL}/storage/certificates/${uri}`;
+    // O anexo vem pela API, e não do /storage público: assim vale o
+    // auth:sanctum e não depende de `php artisan storage:link`.
+    const openLevelCertificate = async (level) => {
+      try {
+        const blob = await levelCertificate(level.id, collaboratorOf(level));
+        window.open(URL.createObjectURL(blob), '_blank');
+      } catch (error) {
+        notifyError(error);
+      }
+    };
 
     const openCertificate = async (stage, collaboratorId) => {
       try {
@@ -407,7 +421,7 @@ export default defineComponent({
       sending,
       submit,
       notifyRejected,
-      certificateUrl,
+      openLevelCertificate,
       periodCaption,
       PERIODS,
       SKILLS,

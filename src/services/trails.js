@@ -12,6 +12,19 @@ export default function trailsService() {
     return error?.message ?? 'Ops! Ocorreu um erro.';
   };
 
+  // Com responseType blob o corpo do erro também chega como Blob, então a
+  // mensagem do back precisa ser lida do arquivo: sem isso um 404 de certificado
+  // apareceria como "Ops! Ocorreu um erro".
+  const toBlobMessage = async (error) => {
+    if (!(error instanceof Blob)) return toMessage(error);
+
+    try {
+      return JSON.parse(await error.text());
+    } catch (parseError) {
+      return 'Ops! Ocorreu um erro.';
+    }
+  };
+
   const request = async (method, url, payload) => {
     try {
       const { data } = await api[method](url, payload);
@@ -86,6 +99,12 @@ export default function trailsService() {
     });
   const undoLevel = (levelId, collaboratorId) =>
     request('delete', `${endpoint}/levels/${levelId}/complete`, { data: { collaborator_id: collaboratorId } });
+
+  // apaga só a nota e a resposta; o nível segue concluído e contando no quórum
+  const clearLevelEvaluation = (levelId, collaboratorId) =>
+    request('delete', `${endpoint}/levels/${levelId}/evaluation`, {
+      data: { collaborator_id: collaboratorId },
+    });
   const advanceStage = (stageId, collaboratorId, note) =>
     request('post', `${endpoint}/stages/${stageId}/advance`, { collaborator_id: collaboratorId, note });
   const undoStage = (stageId, collaboratorId) =>
@@ -101,7 +120,21 @@ export default function trailsService() {
       );
       return new Blob([data], { type: 'application/pdf' });
     } catch (error) {
-      throw new Error(toMessage(error));
+      throw new Error(await toBlobMessage(error));
+    }
+  };
+
+  // Certificado que o colaborador anexou no nível. Também por blob: a rota fica
+  // atrás do auth:sanctum e o tipo vem do arquivo, que pode ser PDF ou imagem.
+  const levelCertificate = async (levelId, collaboratorId) => {
+    try {
+      const response = await api.get(
+        `${endpoint}/levels/${levelId}/certificate/${collaboratorId}`,
+        { responseType: 'blob' }
+      );
+      return new Blob([response.data], { type: response.headers['content-type'] });
+    } catch (error) {
+      throw new Error(await toBlobMessage(error));
     }
   };
 
@@ -130,9 +163,11 @@ export default function trailsService() {
     progress,
     completeLevel,
     undoLevel,
+    clearLevelEvaluation,
     advanceStage,
     undoStage,
     certificate,
+    levelCertificate,
     myCajueiro,
   };
 }

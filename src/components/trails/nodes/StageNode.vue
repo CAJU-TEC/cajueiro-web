@@ -39,7 +39,7 @@
         color="primary"
         icon="done_all"
         label="Concluir"
-        :disable="!quorumMet"
+        :disable="!quorumMet || pending > 0"
         @click.stop="data.onAdvance?.(data.stage)"
       >
         <!-- Desabilitado com o motivo, em vez de esconder: some sem explicação
@@ -47,6 +47,9 @@
         <q-tooltip v-if="!quorumMet">
           Faltam {{ required - (data.completed_levels_count ?? 0) }} de
           {{ required }} níveis
+        </q-tooltip>
+        <q-tooltip v-else-if="pending > 0">
+          Avalie {{ pending }} nível(is) aguardando avaliação
         </q-tooltip>
       </q-btn>
       <q-btn
@@ -94,10 +97,15 @@ export default defineComponent({
       () => !props.data.levels_count || (props.data.completed_levels_count ?? 0) >= required.value
     );
 
+    // Envio sem resposta do líder trava o fechamento da etapa (R9): o back
+    // recusa, e aqui é para não oferecer o clique.
+    const pending = computed(() => props.data.submitted_levels_count ?? 0);
+
     return {
       Position,
       required,
       quorumMet,
+      pending,
       stateLabel: computed(() => STATES[props.data.state]?.label ?? props.data.state),
     };
   },

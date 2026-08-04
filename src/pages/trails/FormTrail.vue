@@ -319,9 +319,11 @@
               type="number"
               min="0"
               max="100"
+              step="1"
               suffix="%"
               label="Nota de corte"
               hint="Abaixo disso o nível fica reprovado, mas a etapa não trava"
+              :rules="scoreRules"
             />
             <q-input v-model="levelForm.note" filled type="textarea" label="Observações" />
           </q-card-section>
@@ -379,6 +381,7 @@ import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 import { SKILLS } from 'src/support/trails/states';
+import { scoreRules } from 'src/support/trails/rules';
 
 // O Tipo quer dizer coisas diferentes nas duas competências, de propósito: em
 // hard skill é a natureza da atividade, em soft skill é o tema da competência.
@@ -722,6 +725,7 @@ export default defineComponent({
       saveMaterial,
       deleteMaterial,
       levelTypeLabel,
+      scoreRules,
     };
   },
 });
