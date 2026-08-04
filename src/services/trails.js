@@ -47,6 +47,14 @@ export default function trailsService() {
   const updateLevel = (levelId, form) => request('put', `${endpoint}/levels/${levelId}`, form);
   const removeLevel = (levelId) => request('delete', `${endpoint}/levels/${levelId}`);
 
+  // prazo do nível, por matrícula: as duas datas nulas limpam o período
+  const setLevelPeriod = (levelId, collaboratorId, startsAt, endsAt) =>
+    request('put', `${endpoint}/levels/${levelId}/period`, {
+      collaborator_id: collaboratorId,
+      starts_at: startsAt,
+      ends_at: endsAt,
+    });
+
   // materiais de apoio
   const storeMaterial = (form) => request('post', `${endpoint}/materials`, form);
   const updateMaterial = (materialId, form) => request('put', `${endpoint}/materials/${materialId}`, form);
@@ -102,6 +110,7 @@ export default function trailsService() {
     storeMaterial,
     updateMaterial,
     removeMaterial,
+    setLevelPeriod,
     enroll,
     unenroll,
     progress,

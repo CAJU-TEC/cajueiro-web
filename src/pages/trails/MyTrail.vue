@@ -168,7 +168,14 @@
             size="26px"
             class="q-mr-sm"
           />
-          <div class="text-h6">{{ selectedLevel.description }}</div>
+          <div>
+            <div class="text-h6">{{ selectedLevel.description }}</div>
+            <!-- Prazo é por matrícula: aqui é sempre o do próprio colaborador. -->
+            <q-badge
+              :color="PERIODS[selectedLevel.period_state]?.color"
+              :label="periodCaption(selectedLevel)"
+            />
+          </div>
         </q-card-section>
 
         <q-card-section v-if="selectedLevel.note" class="q-pt-none text-body2 text-grey-8">
@@ -206,7 +213,7 @@ import trailsService from 'src/services/trails';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import TrailFlow from 'src/components/trails/TrailFlow.vue';
 import TrailStageList from 'src/components/trails/TrailStageList.vue';
-import { STATES } from 'src/support/trails/states';
+import { PERIODS, STATES, periodCaption } from 'src/support/trails/states';
 import { levelTotals, trailComplete, trailPercent, trailRatio } from 'src/support/trails/progress';
 import { useQuasar } from 'quasar';
 
@@ -280,6 +287,8 @@ export default defineComponent({
       selectedCollaboratorId,
       openStage,
       openLevel,
+      periodCaption,
+      PERIODS,
       openCertificate,
       ratioOf: trailRatio,
       percentOf: trailPercent,

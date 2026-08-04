@@ -1,5 +1,11 @@
 <template>
-  <div class="level-node" :class="{ 'level-node--done': data.completed }">
+  <div
+    class="level-node"
+    :class="{
+      'level-node--done': data.completed,
+      'level-node--late': data.period_state === 'late',
+    }"
+  >
     <Handle type="target" :position="Position.Left" />
 
     <q-checkbox
@@ -29,15 +35,29 @@
       class="level-node__link"
     />
 
-    <q-tooltip>{{ data.description }}</q-tooltip>
+    <!-- Prazo: só ícone, que o nó tem 280px e o rótulo já briga por espaço.
+         O texto vai no tooltip. -->
+    <q-icon
+      v-if="period && data.period_state !== 'not_started' && data.period_state !== 'done'"
+      :name="period.icon"
+      :color="period.color"
+      size="15px"
+      class="level-node__period"
+    />
+
+    <q-tooltip>
+      {{ data.description }}
+      <template v-if="deadline"><br />{{ deadline }}</template>
+    </q-tooltip>
 
     <Handle type="source" :position="Position.Right" />
   </div>
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import { Handle, Position } from '@vue-flow/core';
+import { PERIODS, formatDate } from 'src/support/trails/states';
 
 export default defineComponent({
   name: 'LevelNode',
@@ -48,8 +68,20 @@ export default defineComponent({
       required: true,
     },
   },
-  setup() {
-    return { Position };
+  setup(props) {
+    const period = computed(() => PERIODS[props.data.period_state]);
+
+    const deadline = computed(() => {
+      const { period_state: state, starts_at: from, ends_at: to } = props.data;
+
+      if (state === 'late') return `Atrasado desde ${formatDate(to)}`;
+      if (state === 'running') return `Prazo até ${formatDate(to)}`;
+      if (state === 'scheduled') return `Inicia em ${formatDate(from)}`;
+
+      return null;
+    });
+
+    return { Position, period, deadline };
   },
 });
 </script>
@@ -72,6 +104,13 @@ export default defineComponent({
   background: #e8f5e9;
 }
 
+/* Atrasado só pinta o que ainda não foi concluído: nível entregue fora do
+   prazo já era, não interessa mais cobrar. */
+.level-node--late:not(.level-node--done) {
+  border-color: #c62828;
+  background: #ffebee;
+}
+
 .level-node__check {
   flex: 0 0 auto;
 }
@@ -90,7 +129,8 @@ export default defineComponent({
   color: #2e7d32;
 }
 
-.level-node__link {
+.level-node__link,
+.level-node__period {
   flex: 0 0 auto;
 }
 </style>

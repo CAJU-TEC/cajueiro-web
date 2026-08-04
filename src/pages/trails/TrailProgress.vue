@@ -178,11 +178,79 @@
             size="26px"
             class="q-mr-sm"
           />
-          <div class="text-h6">{{ selectedLevel.description }}</div>
+          <div>
+            <div class="text-h6">{{ selectedLevel.description }}</div>
+            <q-badge
+              :color="PERIODS[selectedLevel.period_state]?.color"
+              :label="periodCaption(selectedLevel)"
+            />
+          </div>
         </q-card-section>
 
         <q-card-section v-if="selectedLevel.note" class="q-pt-none text-body2 text-grey-8">
           {{ selectedLevel.note }}
+        </q-card-section>
+
+        <!-- Prazo por matrícula: é deste colaborador, não do nível. -->
+        <q-card-section v-if="canEdit" class="q-pt-none">
+          <div class="text-subtitle2 q-mb-sm">
+            Prazo de {{ progress?.collaborator?.full_name }}
+          </div>
+          <div class="row q-col-gutter-sm">
+            <q-input
+              v-model="period.starts_at"
+              class="col"
+              dense
+              filled
+              mask="##/##/####"
+              label="Início"
+            >
+              <template #append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-date v-model="period.starts_at" mask="DD/MM/YYYY" minimal />
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+            <q-input
+              v-model="period.ends_at"
+              class="col"
+              dense
+              filled
+              mask="##/##/####"
+              label="Fim"
+            >
+              <template #append>
+                <q-icon name="event" class="cursor-pointer">
+                  <q-popup-proxy cover transition-show="scale" transition-hide="scale">
+                    <q-date v-model="period.ends_at" mask="DD/MM/YYYY" minimal />
+                  </q-popup-proxy>
+                </q-icon>
+              </template>
+            </q-input>
+          </div>
+          <div class="row items-center q-gutter-sm q-mt-sm">
+            <q-btn
+              dense
+              unelevated
+              color="primary"
+              icon="event_available"
+              label="Salvar prazo"
+              :loading="savingPeriod"
+              @click="savePeriod"
+            />
+            <q-btn
+              v-if="selectedLevel.starts_at"
+              dense
+              flat
+              color="grey-8"
+              icon="event_busy"
+              label="Limpar"
+              :loading="savingPeriod"
+              @click="clearPeriod"
+            />
+          </div>
         </q-card-section>
 
         <q-card-section v-if="selectedLevel.materials?.length" class="q-pt-none">
@@ -240,7 +308,7 @@ import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import TrailFlow from 'src/components/trails/TrailFlow.vue';
 import TrailStageList from 'src/components/trails/TrailStageList.vue';
 import { useBadgesStore } from 'src/stores/badges/badges-store';
-import { STATES } from 'src/support/trails/states';
+import { PERIODS, STATES, formatDate, periodCaption, toIsoDate } from 'src/support/trails/states';
 import { levelTotals, trailComplete, trailPercent, trailRatio } from 'src/support/trails/progress';
 import can from 'src/middleware/authMiddleware';
 import { useQuasar } from 'quasar';
@@ -260,6 +328,7 @@ export default defineComponent({
       undoStage,
       enroll,
       certificate,
+      setLevelPeriod,
     } = trailsService();
     const { list: listCollaborators } = collaboratorsService();
 
@@ -280,6 +349,11 @@ export default defineComponent({
     const enrollCollaboratorId = ref(null);
 
     const canAdvance = computed(() => !!can(['super-admin', 'trails.advance', 'trails.*']));
+    // Quem edita a trilha é quem planeja o prazo (mesma permissão da matrícula).
+    const canEdit = computed(() => !!can(['super-admin', 'trails.update', 'trails.*']));
+
+    const period = ref({ starts_at: null, ends_at: null });
+    const savingPeriod = ref(false);
 
     const completionRatio = computed(() => trailRatio(progress.value));
     const completionPercent = computed(() => trailPercent(progress.value));
@@ -410,8 +484,45 @@ export default defineComponent({
 
     const openLevelDetail = (level) => {
       selectedLevel.value = level;
+      period.value = {
+        starts_at: formatDate(level.starts_at),
+        ends_at: formatDate(level.ends_at),
+      };
       levelDialog.value = true;
     };
+
+    const applyPeriod = async (startsAt, endsAt) => {
+      savingPeriod.value = true;
+
+      try {
+        progress.value = await setLevelPeriod(
+          selectedLevel.value.id,
+          collaboratorId.value,
+          startsAt,
+          endsAt
+        );
+        // O diálogo segue aberto: recarrego o nível do payload novo para o
+        // rótulo do estado acompanhar o que acabou de ser salvo.
+        selectedLevel.value =
+          progress.value.stages
+            .flatMap((stage) => stage.levels)
+            .find((level) => level.id === selectedLevel.value.id) ?? selectedLevel.value;
+        period.value = {
+          starts_at: formatDate(selectedLevel.value.starts_at),
+          ends_at: formatDate(selectedLevel.value.ends_at),
+        };
+        $q.notify({ message: 'Prazo salvo!', icon: 'event_available', color: 'positive' });
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        savingPeriod.value = false;
+      }
+    };
+
+    const savePeriod = () =>
+      applyPeriod(toIsoDate(period.value.starts_at), toIsoDate(period.value.ends_at));
+
+    const clearPeriod = () => applyPeriod(null, null);
 
     return {
       trail,
@@ -428,6 +539,13 @@ export default defineComponent({
       enrollDialog,
       enrollCollaboratorId,
       canAdvance,
+      canEdit,
+      period,
+      savingPeriod,
+      savePeriod,
+      clearPeriod,
+      periodCaption,
+      PERIODS,
       completionRatio,
       completionPercent,
       isComplete,
