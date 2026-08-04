@@ -188,7 +188,14 @@
                 <q-item v-for="level in stage.levels" :key="level.id">
                   <q-item-section>
                     <q-item-label>{{ level.description }}</q-item-label>
-                    <q-item-label caption>{{ levelTypeLabel(level.type) }}</q-item-label>
+                    <q-item-label caption>
+                      <q-badge
+                        :color="SKILLS[level.skill]?.color"
+                        :label="SKILLS[level.skill]?.label"
+                        class="q-mr-xs"
+                      />
+                      {{ levelTypeLabel(level.type) }}
+                    </q-item-label>
                     <q-item-label v-if="level.materials?.length" class="q-mt-xs">
                       <q-chip
                         v-for="material in level.materials"
@@ -285,14 +292,27 @@
               label="Descrição *"
               :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
             />
-            <q-select
-              v-model="levelForm.type"
-              filled
-              emit-value
-              map-options
-              :options="levelTypes"
-              label="Tipo *"
-            />
+            <div class="row q-col-gutter-sm">
+              <q-select
+                v-model="levelForm.type"
+                class="col"
+                filled
+                emit-value
+                map-options
+                :options="levelTypes"
+                label="Tipo *"
+              />
+              <q-select
+                v-model="levelForm.skill"
+                class="col"
+                filled
+                emit-value
+                map-options
+                :options="levelSkills"
+                label="Competência *"
+                hint="Soft aparece acima, hard abaixo"
+              />
+            </div>
             <q-input v-model="levelForm.note" filled type="textarea" label="Observações" />
           </q-card-section>
           <q-card-actions align="right">
@@ -348,6 +368,7 @@ import teamsService from 'src/services/teams';
 import { api } from 'boot/axios';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
+import { SKILLS } from 'src/support/trails/states';
 
 const LEVEL_TYPES = [
   { value: 'task', label: 'Tarefa' },
@@ -355,6 +376,11 @@ const LEVEL_TYPES = [
   { value: 'platform', label: 'Plataforma' },
   { value: 'technical_test', label: 'Teste técnico' },
   { value: 'other', label: 'Outro' },
+];
+
+const LEVEL_SKILLS = [
+  { value: 'soft', label: 'Soft skill' },
+  { value: 'hard', label: 'Hard skill' },
 ];
 
 const MATERIAL_TYPES = [
@@ -547,8 +573,9 @@ export default defineComponent({
           description: level.description,
           note: level.note,
           type: level.type,
+          skill: level.skill,
         }
-        : { stage_id: stageId, description: '', note: '', type: 'task' };
+        : { stage_id: stageId, description: '', note: '', type: 'task', skill: 'hard' };
       levelDialog.value = true;
     };
 
@@ -626,6 +653,8 @@ export default defineComponent({
       teams,
       jobPlans,
       levelTypes: LEVEL_TYPES,
+      levelSkills: LEVEL_SKILLS,
+      SKILLS,
       materialTypes: MATERIAL_TYPES,
       stageDialog,
       levelDialog,

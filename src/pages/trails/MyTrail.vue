@@ -172,6 +172,12 @@
             <div class="text-h6">{{ selectedLevel.description }}</div>
             <!-- Prazo é por matrícula: aqui é sempre o do próprio colaborador. -->
             <q-badge
+              v-if="SKILLS[selectedLevel.skill]"
+              :color="SKILLS[selectedLevel.skill].color"
+              :label="SKILLS[selectedLevel.skill].label"
+              class="q-mr-xs"
+            />
+            <q-badge
               :color="PERIODS[selectedLevel.period_state]?.color"
               :label="periodCaption(selectedLevel)"
             />
@@ -213,7 +219,7 @@ import trailsService from 'src/services/trails';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import TrailFlow from 'src/components/trails/TrailFlow.vue';
 import TrailStageList from 'src/components/trails/TrailStageList.vue';
-import { PERIODS, STATES, periodCaption } from 'src/support/trails/states';
+import { PERIODS, SKILLS, STATES, periodCaption } from 'src/support/trails/states';
 import { levelTotals, trailComplete, trailPercent, trailRatio } from 'src/support/trails/progress';
 import { useQuasar } from 'quasar';
 
@@ -289,6 +295,7 @@ export default defineComponent({
       openLevel,
       periodCaption,
       PERIODS,
+      SKILLS,
       openCertificate,
       ratioOf: trailRatio,
       percentOf: trailPercent,

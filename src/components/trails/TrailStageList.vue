@@ -38,7 +38,7 @@
           </div>
 
           <q-list bordered separator class="rounded-borders">
-            <q-item v-for="level in stage.levels" :key="level.id">
+            <q-item v-for="level in orderedLevels(stage)" :key="level.id">
               <q-item-section side>
                 <q-icon
                   :name="level.completed ? 'check_circle' : 'radio_button_unchecked'"
@@ -49,7 +49,21 @@
                 <q-item-label :class="level.completed ? 'text-strike text-grey-6' : ''">
                   {{ level.description }}
                 </q-item-label>
-                <q-item-label caption>{{ level.note }}</q-item-label>
+                <q-item-label caption>
+                  <q-badge
+                    v-if="SKILLS[level.skill]"
+                    :color="SKILLS[level.skill].color"
+                    :label="SKILLS[level.skill].label"
+                    class="q-mr-xs"
+                  />
+                  <q-badge
+                    v-if="level.period_state === 'late' && !level.completed"
+                    color="negative"
+                    label="Atrasado"
+                    class="q-mr-xs"
+                  />
+                  {{ level.note }}
+                </q-item-label>
                 <q-item-label v-if="level.materials?.length" class="q-mt-xs">
                   <q-chip
                     v-for="material in level.materials"
@@ -83,7 +97,7 @@
 
 <script>
 import { defineComponent } from 'vue';
-import { STATES } from 'src/support/trails/states';
+import { SKILLS, STATES } from 'src/support/trails/states';
 
 export default defineComponent({
   name: 'TrailStageList',
@@ -95,7 +109,20 @@ export default defineComponent({
     },
   },
   setup() {
+    // No celular não há grafo para posicionar acima/abaixo, então a separação
+    // soft/hard aparece como ordem: soft primeiro, na sequência da etapa.
+    const orderedLevels = (stage) => {
+      const levels = stage.levels ?? [];
+
+      return [
+        ...levels.filter((level) => level.skill === 'soft'),
+        ...levels.filter((level) => level.skill !== 'soft'),
+      ];
+    };
+
     return {
+      orderedLevels,
+      SKILLS,
       stateLabel: (state) => STATES[state]?.label ?? state,
       stateColor: (state) => STATES[state]?.color ?? 'grey',
       stateIcon: (state) => STATES[state]?.icon ?? 'help',

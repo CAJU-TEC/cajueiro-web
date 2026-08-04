@@ -25,6 +25,13 @@ export function formatDate(date) {
   return `${day}/${month}/${year}`;
 }
 
+// Competência do nível. Dimensão separada do `type` (tarefa, curso, teste...):
+// um curso pode ser de comunicação (soft) ou de Docker (hard).
+export const SKILLS = {
+  soft: { label: 'Soft skill', color: 'purple-8', hex: '#7b1fa2', icon: 'psychology' },
+  hard: { label: 'Hard skill', color: 'blue-8', hex: '#1565c0', icon: 'build' },
+};
+
 // Rótulo do prazo com as datas, usado no diálogo do nível nas duas visões
 // (líder e colaborador).
 export function periodCaption(level) {

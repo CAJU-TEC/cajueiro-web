@@ -25,6 +25,14 @@
       class="level-node__check"
     />
 
+    <q-icon
+      v-if="skill"
+      :name="skill.icon"
+      :color="skill.color"
+      size="14px"
+      class="level-node__skill"
+    />
+
     <span class="level-node__label">{{ data.description }}</span>
 
     <q-icon
@@ -47,6 +55,7 @@
 
     <q-tooltip>
       {{ data.description }}
+      <template v-if="skill"><br />{{ skill.label }}</template>
       <template v-if="deadline"><br />{{ deadline }}</template>
     </q-tooltip>
 
@@ -57,7 +66,7 @@
 <script>
 import { computed, defineComponent } from 'vue';
 import { Handle, Position } from '@vue-flow/core';
-import { PERIODS, formatDate } from 'src/support/trails/states';
+import { PERIODS, SKILLS, formatDate } from 'src/support/trails/states';
 
 export default defineComponent({
   name: 'LevelNode',
@@ -70,6 +79,7 @@ export default defineComponent({
   },
   setup(props) {
     const period = computed(() => PERIODS[props.data.period_state]);
+    const skill = computed(() => SKILLS[props.data.skill]);
 
     const deadline = computed(() => {
       const { period_state: state, starts_at: from, ends_at: to } = props.data;
@@ -81,7 +91,7 @@ export default defineComponent({
       return null;
     });
 
-    return { Position, period, deadline };
+    return { Position, period, skill, deadline };
   },
 });
 </script>
@@ -130,7 +140,8 @@ export default defineComponent({
 }
 
 .level-node__link,
-.level-node__period {
+.level-node__period,
+.level-node__skill {
   flex: 0 0 auto;
 }
 </style>

@@ -191,6 +191,28 @@ export default defineComponent({
 
       dagre.layout(g);
 
+      // Soft skill acima, hard skill abaixo, dentro de cada etapa.
+      //
+      // Em vez de calcular posição nova, as faixas verticais que o dagre já
+      // reservou para os níveis da etapa são redistribuídas: os mesmos Y, na
+      // ordem soft primeiro. Assim nada passa a se sobrepor e a altura do
+      // desenho não muda — só a ordem de quem ocupa cada faixa.
+      props.stages.forEach((stage) => {
+        const levels = stage.levels ?? [];
+
+        if (levels.length < 2) return;
+
+        const slots = levels.map((level) => g.node(`level-${level.id}`).y).sort((a, b) => a - b);
+        const ordered = [
+          ...levels.filter((level) => level.skill === 'soft'),
+          ...levels.filter((level) => level.skill !== 'soft'),
+        ];
+
+        ordered.forEach((level, index) => {
+          g.node(`level-${level.id}`).y = slots[index];
+        });
+      });
+
       // O dagre devolve o centro do nó; o Vue Flow espera o canto superior esquerdo.
       nodes.forEach((node) => {
         const { x, y, width, height } = g.node(node.id);
