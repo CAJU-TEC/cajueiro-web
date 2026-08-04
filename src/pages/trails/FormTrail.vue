@@ -370,18 +370,24 @@ import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 import { SKILLS } from 'src/support/trails/states';
 
-// `skills` diz em qual competência o tipo faz sentido: teste técnico não existe
-// para soft skill, mentoria e dinâmica não existem para hard. O formulário
-// filtra a lista por isso; a API valida só o valor em si.
+// O Tipo quer dizer coisas diferentes nas duas competências, de propósito: em
+// hard skill é a natureza da atividade, em soft skill é o tema da competência.
+// Níveis de soft são comportamento do dia a dia — "responder a dúvida de um
+// colega com clareza" não é atividade agendável, é postura observada. O `skills`
+// diz onde cada tipo aparece, e o select filtra por ele, então as duas listas
+// nunca aparecem juntas.
 const LEVEL_TYPES = [
-  { value: 'task', label: 'Tarefa', skills: ['soft', 'hard'] },
-  { value: 'course', label: 'Curso', skills: ['soft', 'hard'] },
-  { value: 'platform', label: 'Plataforma', skills: ['soft', 'hard'] },
+  { value: 'task', label: 'Tarefa', skills: ['hard'] },
+  { value: 'course', label: 'Curso', skills: ['hard'] },
+  { value: 'platform', label: 'Plataforma', skills: ['hard'] },
   { value: 'technical_test', label: 'Teste técnico', skills: ['hard'] },
-  { value: 'mentoring', label: 'Mentoria', skills: ['soft'] },
-  { value: 'presentation', label: 'Apresentação', skills: ['soft'] },
-  { value: 'dynamic', label: 'Dinâmica', skills: ['soft'] },
-  { value: 'reading', label: 'Leitura', skills: ['soft'] },
+  { value: 'communication', label: 'Comunicação', skills: ['soft'] },
+  { value: 'empathy', label: 'Empatia', skills: ['soft'] },
+  { value: 'emotional_intelligence', label: 'Inteligência emocional', skills: ['soft'] },
+  { value: 'collaboration', label: 'Colaboração', skills: ['soft'] },
+  { value: 'proactivity', label: 'Proatividade', skills: ['soft'] },
+  { value: 'organization', label: 'Organização', skills: ['soft'] },
+  { value: 'leadership', label: 'Liderança', skills: ['soft'] },
   { value: 'other', label: 'Outro', skills: ['soft', 'hard'] },
 ];
 
@@ -658,14 +664,14 @@ export default defineComponent({
       LEVEL_TYPES.filter((option) => option.skills.includes(levelForm.value.skill ?? 'hard'))
     );
 
-    // Trocar a competência pode invalidar o tipo já escolhido (teste técnico
-    // em soft, mentoria em hard). Volta para "Tarefa", que serve nas duas, em
-    // vez de deixar o select com um valor que a lista não oferece mais.
+    // As duas listas são disjuntas (fora "Outro"), então trocar a competência
+    // quase sempre invalida o tipo escolhido. Cai para o primeiro da lista
+    // nova, em vez de deixar o select exibindo um valor que ele não oferece.
     watch(
       () => levelForm.value.skill,
       () => {
         if (!typesForSkill.value.some((option) => option.value === levelForm.value.type)) {
-          levelForm.value.type = 'task';
+          levelForm.value.type = typesForSkill.value[0]?.value ?? 'other';
         }
       }
     );
