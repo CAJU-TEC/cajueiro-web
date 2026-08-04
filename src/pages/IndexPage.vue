@@ -33,11 +33,11 @@
                 </h5>
                 <div v-if="ticketsInDevelop">
                   <div
-                    class="row text-grey-8 q-gutter-xs"
+                    class="row text-grey-8 q-gutter-xs q-mb-xs"
                     v-for="ticket in ticketsInDevelop"
                     :key="ticket?.id"
                   >
-                    <q-chip size="sm" v-if="ticket?.collaborator">
+                    <q-chip size="sm" v-if="ticket?.collaborator" class="q-mb-xs">
                       <q-avatar v-if="ticket?.collaborator?.image">
                         <img
                           :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"

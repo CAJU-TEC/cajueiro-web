@@ -47,9 +47,12 @@
         style="height: 150px"
       >
         <div class="absolute-bottom bg-transparent">
-          <q-avatar size="56px" class="q-mb-sm">
-            <img :src="getImage()" />
-          </q-avatar>
+          <CollaboratorAvatar
+            class="q-mb-sm"
+            size="64px"
+            :collaborator="user.collaborator"
+            fallback-image="https://cdn.quasar.dev/img/boy-avatar.png"
+          />
           <div class="text-weight-bold">{{ user.name }}</div>
           <div>{{ user.email }}</div>
         </div>
@@ -66,6 +69,7 @@
 import { defineComponent, onMounted, ref } from 'vue';
 import EssentialLink from 'components/EssentialLink.vue';
 import NavBarPerfil from 'components/buttons/users/NavBarPerfil.vue';
+import CollaboratorAvatar from 'components/avatar/CollaboratorAvatar.vue';
 import usersService from 'src/services/users';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -75,6 +79,7 @@ export default defineComponent({
   components: {
     EssentialLink,
     NavBarPerfil,
+    CollaboratorAvatar,
   },
 
   setup() {
@@ -203,6 +208,50 @@ export default defineComponent({
         route: { name: 'jobPlans.list', permissions: ['jobplans.*'] },
       },
       {
+        title: 'Times',
+        caption: '',
+        icon: 'groups',
+        route: { name: 'teams.list', permissions: ['teams.*', 'teams.index'] },
+      },
+      {
+        title: 'Trilhas',
+        caption: '',
+        icon: 'timeline',
+        route: {
+          name: 'trails.list',
+          permissions: ['trails.*', 'trails.index', 'trails.mine'],
+        },
+        submenu: [
+          {
+            title: 'Ver Todas',
+            caption: '',
+            icon: 'timeline',
+            route: {
+              name: 'trails.list',
+              permissions: ['trails.*', 'trails.index'],
+            },
+          },
+          {
+            title: 'Minha trilha',
+            caption: '',
+            icon: 'military_tech',
+            route: {
+              name: 'trails.mine',
+              permissions: ['trails.*', 'trails.mine', 'trails.index'],
+            },
+          },
+          {
+            title: 'Meu Cajueiro',
+            caption: '',
+            icon: 'park',
+            route: {
+              name: 'trails.cajueiro',
+              permissions: ['trails.*', 'trails.mine', 'trails.index'],
+            },
+          },
+        ],
+      },
+      {
         title: 'Métricas',
         caption: '',
         icon: 'bar_chart',
@@ -233,19 +282,10 @@ export default defineComponent({
       user.value = dados.data.user;
     };
 
-    const getImage = () => {
-      if (!user.value.collaborator?.image?.uri) {
-        return 'https://cdn.quasar.dev/img/boy-avatar.png';
-      }
-
-      return `https://cajueiroapi.cajutec.com.br/storage/images/${user.value.collaborator?.image?.uri}`;
-    };
-
     return {
       essentialLinks: linksList,
       leftDrawerOpen,
       user,
-      getImage,
       router,
       route,
       toggleLeftDrawer() {

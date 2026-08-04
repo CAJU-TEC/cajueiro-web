@@ -211,11 +211,10 @@
                         <span class="text-caption">Desenvolvedor</span>
                         <p class="text-caption">
                           <q-chip v-if="ticket.collaborator?.image">
-                            <q-avatar>
-                              <img
-                                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator?.image?.uri}`"
-                              />
-                            </q-avatar>
+                            <CollaboratorAvatar
+                              size="34px"
+                              :collaborator="ticket.collaborator"
+                            />
                             {{ ticket.collaborator?.first_name }}
                           </q-chip>
                           <span v-else>{{
@@ -232,11 +231,10 @@
                         <span class="text-caption">Analista de Qualidade</span>
                         <p class="text-caption">
                           <q-chip v-if="ticket.tester?.image">
-                            <q-avatar>
-                              <img
-                                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.tester?.image?.uri}`"
-                              />
-                            </q-avatar>
+                            <CollaboratorAvatar
+                              size="34px"
+                              :collaborator="ticket.tester"
+                            />
                             {{ ticket.tester?.first_name }}
                           </q-chip>
                           <span v-else>{{ ticket.tester?.first_name }}</span>
@@ -249,11 +247,10 @@
                         <span class="text-caption">Criador do Protocolo</span>
                         <p class="text-caption">
                           <q-chip v-if="ticket.user?.collaborator?.image">
-                            <q-avatar>
-                              <img
-                                :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.user?.collaborator?.image?.uri}`"
-                              />
-                            </q-avatar>
+                            <CollaboratorAvatar
+                              size="34px"
+                              :collaborator="ticket.user?.collaborator"
+                            />
                             {{ ticket.user?.collaborator?.first_name }}
                           </q-chip>
                           <span v-else>{{
@@ -292,6 +289,7 @@ import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
 import { useRouter } from 'vue-router';
 import platform from 'src/support/tickets/platform';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
 
 const state = reactive({
@@ -301,6 +299,7 @@ const tickets = ref([]);
 
 export default {
   name: 'TicketSearch',
+  components: { CollaboratorAvatar },
   props: {
     modelValue: {
       type: Boolean,

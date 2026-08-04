@@ -5,6 +5,8 @@ import impacts from './impacts.js';
 import collaborators from './collaborators.js';
 import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
+import teams from './teams.js';
+import trails from './trails.js';
 import tickets from './tickets.js';
 import reports from './reports.js';
 import users from './users.js';
@@ -35,6 +37,8 @@ const routes = [
       ...impacts,
       ...collaborators,
       ...jobPlans,
+      ...teams,
+      ...trails,
       ...corporates,
       ...tickets,
       ...reports,

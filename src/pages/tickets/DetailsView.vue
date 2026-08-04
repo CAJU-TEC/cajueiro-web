@@ -109,11 +109,10 @@
               <span class="text-caption">Desenvolvedor</span>
               <p class="text-subtitle2">
                 <q-chip v-if="form.collaborator?.image">
-                  <q-avatar>
-                    <img
-                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.collaborator?.image?.uri}`"
-                    />
-                  </q-avatar>
+                  <CollaboratorAvatar
+                    size="34px"
+                    :collaborator="form.collaborator"
+                  />
                   {{ form.collaborator?.first_name }}
                 </q-chip>
                 <span v-else>{{ form.collaborator?.first_name }}</span>
@@ -149,11 +148,10 @@
               <span class="text-caption">Analista de Qualidade</span>
               <p class="text-subtitle2">
                 <q-chip v-if="form.tester?.image">
-                  <q-avatar>
-                    <img
-                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.tester?.image?.uri}`"
-                    />
-                  </q-avatar>
+                  <CollaboratorAvatar
+                    size="34px"
+                    :collaborator="form.tester"
+                  />
                   {{ form.tester?.first_name }}
                 </q-chip>
                 <span v-else>{{ form.tester?.first_name }}</span>
@@ -189,11 +187,10 @@
               <span class="text-caption">Criador do Protocolo</span>
               <p class="text-subtitle2">
                 <q-chip v-if="form.user?.collaborator?.image">
-                  <q-avatar>
-                    <img
-                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${form.user?.collaborator?.image?.uri}`"
-                    />
-                  </q-avatar>
+                  <CollaboratorAvatar
+                    size="34px"
+                    :collaborator="form.user?.collaborator"
+                  />
                   {{ form.user?.collaborator?.first_name }}
                 </q-chip>
                 <span v-else>{{ form.user?.collaborator?.first_name }}</span>
@@ -396,11 +393,10 @@
               <span class="text-caption">Atribuição</span>
               <p class="text-subtitle2">
                 <q-chip v-if="comment.collaborator?.image">
-                  <q-avatar>
-                    <img
-                      :src="`https://cajueiroapi.cajutec.com.br/storage/images/${comment.collaborator?.image?.uri}`"
-                    />
-                  </q-avatar>
+                  <CollaboratorAvatar
+                    size="34px"
+                    :collaborator="comment.collaborator"
+                  />
                   {{ comment.collaborator?.full_name }}
                 </q-chip>
                 <span v-else>{{ comment.collaborator?.full_name }}</span>
@@ -590,10 +586,12 @@ import commentsService from 'src/services/comments';
 import { useQuasar, useMeta } from 'quasar';
 import collaboratorsService from 'src/services/collaborators';
 import { useRoute } from 'vue-router';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
 
 export default defineComponent({
   name: 'DetailsView',
+  components: { CollaboratorAvatar },
   watch: {
     form: {
       handler(newVal) {

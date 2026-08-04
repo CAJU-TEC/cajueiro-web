@@ -600,11 +600,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -768,11 +768,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -938,11 +938,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -1110,11 +1110,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -1279,11 +1279,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -1439,11 +1439,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -1599,11 +1599,11 @@
                 <div class="text-grey-8 q-gutter-xs">
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
-                      <q-avatar v-if="ticket?.collaborator?.image">
-                        <img
-                          :src="`https://cajueiroapi.cajutec.com.br/storage/images/${ticket.collaborator.image.uri}`"
-                        />
-                      </q-avatar>
+                      <CollaboratorAvatar
+                        v-if="ticket?.collaborator"
+                        size="32px"
+                        :collaborator="ticket.collaborator"
+                      />
                       {{ ticket.collaborator?.first_name }}
                     </q-chip>
                   </template>
@@ -1659,10 +1659,12 @@ import ticketsService from 'src/services/tickets';
 import types from 'src/support/tickets/types';
 import platform from 'src/support/tickets/platform';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
+import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
 
 export default defineComponent({
   name: 'TicketsOpen',
+  components: { CollaboratorAvatar },
   emits: [
     'handleListClient',
     'addUserTicker',

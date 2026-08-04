@@ -1,14 +1,14 @@
 <template>
   <div>
     <q-expansion-item
-      v-if="submenus.length > 0 && can(permissions)"
+      v-if="visibleSubmenus.length > 0 && can(permissions)"
       :icon="icon"
       :label="title"
       expand-icon="keyboard_arrow_down"
     >
       <q-item
-        v-for="sub in submenus"
-        :key="sub"
+        v-for="sub in visibleSubmenus"
+        :key="sub.title"
         clickable
         :to="sub.route"
         exact
@@ -44,7 +44,7 @@
 </template>
 
 <script>
-import { defineComponent } from 'vue';
+import { computed, defineComponent } from 'vue';
 import can from 'src/middleware/authMiddleware';
 
 export default defineComponent({
@@ -85,9 +85,26 @@ export default defineComponent({
     },
   },
 
-  setup() {
+  setup(props) {
+    /**
+     * O submenu também precisa passar por can().
+     *
+     * Antes só o item pai era verificado e os filhos eram renderizados
+     * direto, então quem enxergava "Trilhas" pelo trails.mine também via
+     * "Ver Todas", que é de trails.index. Valia para todos os menus com
+     * submenu, não só o de trilhas.
+     *
+     * Filho sem `permissions` declarado herda o pai — que já foi verificado —
+     * em vez de sumir: can(undefined) devolve undefined, e esconder por
+     * omissão apagaria item de menu que hoje funciona.
+     */
+    const visibleSubmenus = computed(() =>
+      props.submenus.filter((sub) => !sub.route?.permissions || can(sub.route.permissions))
+    );
+
     return {
       can,
+      visibleSubmenus,
     };
   },
 });

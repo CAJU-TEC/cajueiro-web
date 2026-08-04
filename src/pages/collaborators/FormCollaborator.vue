@@ -45,6 +45,20 @@
 
       <q-select
         filled
+        label="Time"
+        v-model="form.team_id"
+        clearable
+        emit-value
+        map-options
+        option-value="id"
+        option-label="name"
+        :options="teams"
+        class="col-lg-4 col-xs-12"
+        hint="Define a trilha que o colaborador pode seguir"
+      />
+
+      <q-select
+        filled
         label="Plano de Trabalho *"
         v-model="form.jobplan_id"
         use-input
@@ -184,18 +198,22 @@ import { useRouter, useRoute } from 'vue-router';
 import collaboratorsService from 'src/services/collaborators';
 import CajuDate from 'src/components/CajuDate.vue';
 import jobPlansService from 'src/services/jobPlans';
+import teamsService from 'src/services/teams';
 
 export default defineComponent({
   name: 'FormCollaborator',
   setup() {
     const { post, getById, update } = collaboratorsService();
     const { list } = jobPlansService();
+    const { list: listTeams } = teamsService();
+    const teams = ref([]);
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
     const title = ref('Colaboradores');
     const form = ref({
       jobplan_id: '',
+      team_id: null,
       first_name: '',
       last_name: '',
       formation: '',
@@ -217,6 +235,7 @@ export default defineComponent({
 
     onMounted(async () => {
       getJobPlan();
+      getTeams();
       if (route.params.id) {
         getClient(route.params.id);
       } else {
@@ -264,6 +283,18 @@ export default defineComponent({
         });
       }
     };
+    const getTeams = async () => {
+      try {
+        teams.value = await listTeams();
+      } catch (error) {
+        $q.notify({
+          message: 'Não foi possível carregar os times.',
+          caption: error.message,
+          icon: 'block',
+          color: 'warning',
+        });
+      }
+    };
     const filterFn = (val, update, abort) => {
       update(() => {
         const needle = val.toLowerCase();
@@ -303,6 +334,7 @@ export default defineComponent({
     };
     return {
       options,
+      teams,
       filterFn,
       stringOptions,
       form,
