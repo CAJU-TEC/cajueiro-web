@@ -29,8 +29,16 @@
         color="primary"
         icon="done_all"
         label="Concluir"
+        :disable="!quorumMet"
         @click.stop="data.onAdvance?.(data.stage)"
-      />
+      >
+        <!-- Desabilitado com o motivo, em vez de esconder: some sem explicação
+             o líder fica sem saber por que não consegue fechar a etapa. -->
+        <q-tooltip v-if="!quorumMet">
+          Faltam {{ required - (data.completed_levels_count ?? 0) }} de
+          {{ required }} níveis
+        </q-tooltip>
+      </q-btn>
       <q-btn
         v-if="data.state === 'completed'"
         dense
@@ -64,8 +72,22 @@ export default defineComponent({
     },
   },
   setup(props) {
+    // Limitado aos níveis existentes, igual ao back: uma etapa que exige 3 e
+    // tem 2 cadastrados não pode ficar impossível de fechar.
+    const required = computed(() =>
+      Math.min(props.data.required_count ?? 0, props.data.levels_count ?? 0)
+    );
+
+    // Etapa sem nível cadastrado não tem quórum a exigir: o líder fecha na mão.
+    // O back valida a mesma coisa; aqui é só para não oferecer o clique.
+    const quorumMet = computed(
+      () => !props.data.levels_count || (props.data.completed_levels_count ?? 0) >= required.value
+    );
+
     return {
       Position,
+      required,
+      quorumMet,
       stateLabel: computed(() => STATES[props.data.state]?.label ?? props.data.state),
     };
   },
