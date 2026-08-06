@@ -124,6 +124,22 @@ export default function trailsService() {
     }
   };
 
+  // Relatório em PDF. Sem colaborador vem o geral, com todos os matriculados;
+  // com colaborador vem o individual. Mesmo padrão de blob: a rota fica atrás
+  // do auth:sanctum.
+  const report = async (trailId, collaboratorId = null) => {
+    const url = collaboratorId
+      ? `${endpoint}/${trailId}/collaborators/${collaboratorId}/report`
+      : `${endpoint}/${trailId}/report`;
+
+    try {
+      const { data } = await api.get(url, { responseType: 'blob' });
+      return new Blob([data], { type: 'application/pdf' });
+    } catch (error) {
+      throw new Error(await toBlobMessage(error));
+    }
+  };
+
   // Certificado que o colaborador anexou no nível. Também por blob: a rota fica
   // atrás do auth:sanctum e o tipo vem do arquivo, que pode ser PDF ou imagem.
   const levelCertificate = async (levelId, collaboratorId) => {
@@ -168,6 +184,7 @@ export default function trailsService() {
     undoStage,
     certificate,
     levelCertificate,
+    report,
     myCajueiro,
   };
 }

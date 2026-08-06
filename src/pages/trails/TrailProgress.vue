@@ -28,7 +28,18 @@
         />
       </div>
 
-      <div class="col-lg-4 col-xs-12 text-right">
+      <div class="col-lg-4 col-xs-12 text-right q-gutter-sm">
+        <q-btn
+          v-if="canReport"
+          push
+          color="blue-9"
+          icon="picture_as_pdf"
+          label="Relatório geral"
+          :loading="downloadingGeneral"
+          @click="openReport()"
+        >
+          <q-tooltip>PDF com todos os matriculados nesta trilha</q-tooltip>
+        </q-btn>
         <q-btn
           push
           color="primary"
@@ -57,6 +68,19 @@
               </template>
             </div>
           </div>
+
+          <q-btn
+            v-if="canReport"
+            push
+            class="trail-header__action"
+            color="blue-9"
+            icon="picture_as_pdf"
+            label="Relatório"
+            :loading="downloadingReport"
+            @click="openReport(collaboratorId)"
+          >
+            <q-tooltip>Relatório desta trilha para este colaborador</q-tooltip>
+          </q-btn>
 
           <q-btn
             v-if="lastCompletedStage"
@@ -500,6 +524,7 @@ export default defineComponent({
       certificate,
       levelCertificate,
       setLevelPeriod,
+      report,
     } = trailsService();
     const { list: listCollaborators } = collaboratorsService();
 
@@ -723,6 +748,26 @@ export default defineComponent({
       }
     };
 
+    const canReport = computed(() => !!can(['super-admin', 'trails.report', 'trails.*']));
+    const downloadingReport = ref(false);
+    const downloadingGeneral = ref(false);
+
+    // Sem colaborador sai o geral; o loading é separado para o botão certo
+    // girar, já que os dois chamam isto.
+    const openReport = async (collaborator = null) => {
+      const flag = collaborator ? downloadingReport : downloadingGeneral;
+      flag.value = true;
+
+      try {
+        const blob = await report(route.params.id, collaborator);
+        window.open(URL.createObjectURL(blob), '_blank');
+      } catch (error) {
+        notifyError(error);
+      } finally {
+        flag.value = false;
+      }
+    };
+
     const openCertificate = async (stage) => {
       try {
         const blob = await certificate(stage.id, collaboratorId.value);
@@ -852,6 +897,10 @@ export default defineComponent({
       undo,
       doEnroll,
       openCertificate,
+      canReport,
+      downloadingReport,
+      downloadingGeneral,
+      openReport,
       stateLabel: (state) => STATES[state]?.label ?? state,
       stateColor: (state) => STATES[state]?.color ?? 'grey',
       stateIcon: (state) => STATES[state]?.icon ?? 'help',

@@ -1,5 +1,5 @@
 <template>
-  <div class="trail-flow">
+  <div class="trail-flow" :style="{ height: `${frameHeight}px` }">
     <VueFlow
       :id="flowId"
       :nodes="nodes"
@@ -104,7 +104,10 @@ export default defineComponent({
     const graph = computed(() => {
       const g = new dagre.graphlib.Graph();
       g.setDefaultEdgeLabel(() => ({}));
-      g.setGraph({ rankdir: 'LR', nodesep: 18, ranksep: 90, marginx: 20, marginy: 20 });
+      // nodesep 18 deixava os cards quase encostados (têm borda de 2px); 26 dá
+      // respiro sem esticar o desenho. ranksep menor aproxima as colunas e o
+      // grafo fica mais largo do que alto, que é a proporção da moldura.
+      g.setGraph({ rankdir: 'LR', nodesep: 26, ranksep: 76, marginx: 20, marginy: 20 });
 
       const nodes = [];
       const edges = [];
@@ -222,11 +225,26 @@ export default defineComponent({
         node.position = { x: x - width / 2, y: y - height / 2 };
       });
 
-      return { nodes, edges };
+      // Dimensões que o dagre calculou, para a moldura acompanhar o desenho.
+      const { width, height } = g.graph();
+
+      return { nodes, edges, size: { width, height } };
     });
 
     const nodes = computed(() => graph.value.nodes);
     const edges = computed(() => graph.value.edges);
+
+    /**
+     * Altura da moldura acompanha o desenho.
+     *
+     * Com altura fixa, uma trilha de uma etapa deixava mais de 300px de faixa
+     * morta: o grafo tem ~124px de altura, o fitView para no maxZoom e o resto
+     * do quadro fica vazio. O piso evita moldura apertada demais para os
+     * controles de zoom, e o teto mantém o pan em trilha grande.
+     */
+    const frameHeight = computed(() =>
+      Math.min(620, Math.max(240, (graph.value.size.height ?? 0) + 72))
+    );
 
     // Depois de recalcular (avanço de etapa, por exemplo) reenquadra.
     watch(
@@ -243,7 +261,7 @@ export default defineComponent({
       if (node.type === 'level') emit('level-click', node.data.level);
     };
 
-    return { flowId, nodes, edges, nodeTypes, onNodeClick };
+    return { flowId, nodes, edges, frameHeight, nodeTypes, onNodeClick };
   },
 });
 </script>
@@ -252,7 +270,7 @@ export default defineComponent({
 /* Sem scoped: as regras precisam alcançar os elementos que a lib renderiza. */
 .trail-flow {
   width: 100%;
-  height: 520px;
+  /* A altura vem do componente, calculada a partir do tamanho do grafo. */
   background: linear-gradient(180deg, #f6fbf4 0%, #ffffff 100%);
   border-radius: 6px;
 }
