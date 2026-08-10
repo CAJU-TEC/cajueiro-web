@@ -707,6 +707,11 @@ export default defineComponent({
     });
 
     const onChange = (event) => {
+      if (!event || event.length === 0) {
+        formResponse.value.image = [];
+        return;
+      }
+
       createBase64Image(event);
     };
 
@@ -919,7 +924,6 @@ export default defineComponent({
     const createBase64Image = (fileObject) => {
       for (let i = 0; i < fileObject.length; i++) {
         const reader = new FileReader();
-        formResponse.value.imageInput = fileObject[i].name;
 
         reader.onloadend = () => {
           formResponse.value.image[i] = reader.result;
@@ -934,6 +938,7 @@ export default defineComponent({
         await post(formResponse.value);
         formResponse.value.description = null;
         formResponse.value.imageInput = null;
+        formResponse.value.image = [];
         await getTicket(route.params.id);
         $q.notify({
           message: 'Dados salvos com sucesso',
