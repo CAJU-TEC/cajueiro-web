@@ -36,6 +36,7 @@
             :options="[
               { label: 'WEB', value: 'web' },
               { label: 'MOBILE', value: 'mobile' },
+              { label: 'NOTIFIQ', value: 'notifiq' },
               { label: 'WEB E MOBILE', value: 'web_mobile' },
             ]"
           />
@@ -120,7 +121,6 @@
         </q-list>
       </div>
 
-      <h6 class="q-mt-lg q-mb-none">Siga no cadastro do protocolo</h6>
 
       <div class="col-12 q-gutter-sm q-mb-lg">
         <q-select
@@ -238,6 +238,7 @@
                   'arial',
                   'arial_black',
                   'comic_sans',
+                  'jetbrains_mono',
                   'courier_new',
                   'impact',
                   'lucida_grande',
@@ -257,6 +258,7 @@
             arial_black: 'Arial Black',
             comic_sans: 'Comic Sans MS',
             courier_new: 'Courier New',
+            jetbrains_mono: 'JetBrains Mono',
             impact: 'Impact',
             lucida_grande: 'Lucida Grande',
             times_new_roman: 'Times New Roman',

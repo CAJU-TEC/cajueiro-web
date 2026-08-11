@@ -1,4 +1,4 @@
-/* app global css */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');app global css
 
 /* Cabeçalho do card de trilha (Minha trilha e Acompanhamento).
    Flex explícito em vez de q-space + col-*: misturar o grid do Quasar com

@@ -15,12 +15,21 @@
       >
         <q-card-section :class="{ 'bg-green text-white': form?.dufy === 'yes' }"
           ><div class="row">
+
             <div class="col-md-8">
               Protocolo: #{{ form.code }} {{ form.subject }}
+              <q-badge
+                v-if="form.platform === 'notifiq'"
+                color="#cfda00"
+                text-color="white"
+                label="NOTIFIQ"
+                class="q-ml-sm"
+              />
               <span v-if="form.dufy === 'yes'" class="text-weight-bolder"
                 >&nbsp;(PLANTÃO)</span
               >&nbsp;
             </div>
+
             <div class="col-md-2 offset-md-2 text-right">
               <q-btn
                 unelevated
@@ -238,6 +247,7 @@
                 <span v-else-if="form.platform === 'mobile'"> (Mobile)</span>
                 <span v-else-if="form.platform === 'desktop'"> (Desktop)</span>
                 <span v-else-if="form.platform === 'api'"> (API)</span>
+                <span v-else-if="form.platform === 'notifiq'">(NOTIFIQ)</span>
                 <span v-else-if="form.platform === 'other'"> (Outro)</span>
                 <span v-else> ([- - -])</span>
               </p>
@@ -520,6 +530,7 @@
                         'arial_black',
                         'comic_sans',
                         'courier_new',
+                        'jetbrains_mono',
                         'impact',
                         'lucida_grande',
                         'times_new_roman',
@@ -538,6 +549,7 @@
                   arial_black: 'Arial Black',
                   comic_sans: 'Comic Sans MS',
                   courier_new: 'Courier New',
+                  jetbrains_mono: 'JetBrains Mono',
                   impact: 'Impact',
                   lucida_grande: 'Lucida Grande',
                   times_new_roman: 'Times New Roman',
