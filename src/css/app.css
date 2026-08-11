@@ -1,5 +1,5 @@
 /* app global css */
-
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap');
 /* Cabeçalho do card de trilha (Minha trilha e Acompanhamento).
    Flex explícito em vez de q-space + col-*: misturar o grid do Quasar com
    q-col-gutter dava espaçamento imprevisível e desalinhava o botão da barra. */

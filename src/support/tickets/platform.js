@@ -14,4 +14,9 @@ export default {
     'hex': '#6366F1',
     'title': 'WEB E MOBILE'
   },
+  'notifiq': {
+    'color': 'amber-6',
+    'hex': '#FFB300',
+    'title': 'NOTIFIQ',
+  },
 };
