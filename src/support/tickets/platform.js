@@ -16,7 +16,7 @@ export default {
   },
   'notifiq': {
     'color': 'amber-6',
-    'hex': '#cfda00',
+    'hex': '#FFB300',
     'title': 'NOTIFIQ',
   },
 };

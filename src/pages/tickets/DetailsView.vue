@@ -18,13 +18,6 @@
 
             <div class="col-md-8">
               Protocolo: #{{ form.code }} {{ form.subject }}
-              <q-badge
-                v-if="form.platform === 'notifiq'"
-                color="#cfda00"
-                text-color="white"
-                label="NOTIFIQ"
-                class="q-ml-sm"
-              />
               <span v-if="form.dufy === 'yes'" class="text-weight-bolder"
                 >&nbsp;(PLANTÃO)</span
               >&nbsp;
@@ -247,7 +240,7 @@
                 <span v-else-if="form.platform === 'mobile'"> (Mobile)</span>
                 <span v-else-if="form.platform === 'desktop'"> (Desktop)</span>
                 <span v-else-if="form.platform === 'api'"> (API)</span>
-                <span v-else-if="form.platform === 'notifiq'">(NOTIFIQ)</span>
+                <span v-else-if="form.platform === 'notifiq'">(Notifiq)</span>
                 <span v-else-if="form.platform === 'other'"> (Outro)</span>
                 <span v-else> ([- - -])</span>
               </p>
