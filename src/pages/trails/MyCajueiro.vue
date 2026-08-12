@@ -66,7 +66,7 @@
 import { computed, defineComponent, onMounted, ref } from 'vue';
 import trailsService from 'src/services/trails';
 import CajueiroPoster from 'src/components/trails/CajueiroPoster.vue';
-import { svgToPngBlob } from 'src/support/trails/exportSvg';
+import { svgToPngBlob } from 'src/support/images/exportSvg';
 import { useQuasar } from 'quasar';
 
 const SIZES = {

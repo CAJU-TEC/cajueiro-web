@@ -4,6 +4,12 @@ const dateFormat = (dateStr) => {
   return new Intl.DateTimeFormat('pt-BR').format(new Date(dateStr));
 };
 
+const dateOnlyFormat = (dateStr) => {
+  if(!(dateStr)) return;
+  const [year, month, day] = dateStr.slice(0, 10).split('-').map(Number);
+  return new Intl.DateTimeFormat('pt-BR').format(new Date(year, month - 1, day));
+};
+
 const dateTimeFormat = (dateStr) => {
   if(!(dateStr)) return;
   return new Intl.DateTimeFormat('pt-BR', {timeStyle: 'short'}).format(new Date(dateStr));
@@ -15,4 +21,4 @@ const betweenDates = (d1, d2) => {
   return Math.abs(diffInDays);
 };
 
-export {dateFormat, dateTimeFormat, betweenDates};
+export {dateFormat, dateOnlyFormat, dateTimeFormat, betweenDates};
