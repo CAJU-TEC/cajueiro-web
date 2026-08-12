@@ -214,6 +214,12 @@ export default defineComponent({
         route: { name: 'teams.list', permissions: ['teams.*', 'teams.index'] },
       },
       {
+        title: 'Escalas',
+        caption: '',
+        icon: 'schedule',
+        route: { name: 'schedules.list', permissions: ['schedules.*', 'schedules.list'] },
+      },
+      {
         title: 'Trilhas',
         caption: '',
         icon: 'timeline',

@@ -82,6 +82,12 @@
           </q-card>
         </div>
       </div>
+      <div class="row q-mt-lg">
+        <div class="col">
+          <h5 class="text-overline q-ma-none q-pb-sm">ESCALA DE HOJE:</h5>
+          <SchedulesTodayComponent></SchedulesTodayComponent>
+        </div>
+      </div>
       <apex-bar class="column q-mt-lg" :month="monthSelect"></apex-bar>
       <div class="row q-gutter-md justify-center items-center q-mt-lg">
         <q-card
@@ -160,6 +166,7 @@ import { defineComponent, onMounted, ref, reactive, provide, watch } from 'vue';
 import ApexBar from 'src/components/charts/apexBar.vue';
 import DutiesComponent from 'src/components/dashboard/DutiesComponent.vue';
 import BirthdaysComponent from 'src/components/dashboard/BirthdaysComponent.vue';
+import SchedulesTodayComponent from 'src/components/dashboard/SchedulesTodayComponent.vue';
 import ticketsService from 'src/services/tickets';
 import collaboratorsService from 'src/services/collaborators';
 import _ from 'lodash';
@@ -168,7 +175,7 @@ import priority from 'src/support/tickets/priority';
 
 export default defineComponent({
   name: 'IndexPage',
-  components: { ApexBar, DutiesComponent, BirthdaysComponent },
+  components: { ApexBar, DutiesComponent, BirthdaysComponent, SchedulesTodayComponent },
   setup() {
     onMounted(async () => {
       await getTickets();

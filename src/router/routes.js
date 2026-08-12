@@ -6,6 +6,7 @@ import collaborators from './collaborators.js';
 import corporates from './corporates.js';
 import jobPlans from './jobPlans.js';
 import teams from './teams.js';
+import schedules from './schedules.js';
 import trails from './trails.js';
 import tickets from './tickets.js';
 import reports from './reports.js';
@@ -38,6 +39,7 @@ const routes = [
       ...collaborators,
       ...jobPlans,
       ...teams,
+      ...schedules,
       ...trails,
       ...corporates,
       ...tickets,
