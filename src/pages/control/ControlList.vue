@@ -23,7 +23,7 @@
               clearable
               placeholder="Buscar por número, descrição, DEV ou Q.A..."
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="search" />
               </template>
             </q-input>
@@ -43,7 +43,7 @@
               map-options
               :loading="loadingCorporates"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="business" />
               </template>
             </q-select>
@@ -60,7 +60,7 @@
               emit-value
               map-options
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="event" />
               </template>
             </q-select>
@@ -76,7 +76,7 @@
               emit-value
               map-options
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="filter_list" />
               </template>
             </q-select>
@@ -96,11 +96,11 @@
       class="bg-blue-1 text-blue-9 q-mb-md"
       rounded
     >
-      <template v-slot:avatar>
+      <template #avatar>
         <q-icon name="search" color="blue-9" />
       </template>
       Exibindo {{ metricasTotais.total }} resultado(s) para "{{ filtros.pesquisa }}"
-      <template v-slot:action>
+      <template #action>
         <q-btn
           flat
           dense
@@ -187,7 +187,7 @@
         expand-icon-class="text-primary"
         default-opened
       >
-        <template v-slot:header>
+        <template #header>
           <q-item-section avatar>
             <q-avatar color="primary" text-color="white" icon="business" />
           </q-item-section>
@@ -227,7 +227,7 @@
               :pagination="{ rowsPerPage: 10 }"
               hide-bottom
             >
-              <template v-slot:body-cell-numero="props">
+              <template #body-cell-numero="props">
                 <q-td :props="props">
                   <div class="text-weight-bold text-primary">
                     #{{ props.row.numero }}
@@ -235,7 +235,7 @@
                 </q-td>
               </template>
 
-              <template v-slot:body-cell-status="props">
+              <template #body-cell-status="props">
                 <q-td :props="props">
                   <q-chip
                     :color="getStatusColor(props.row.status)"
@@ -248,7 +248,7 @@
                 </q-td>
               </template>
 
-              <template v-slot:body-cell-sla="props">
+              <template #body-cell-sla="props">
                 <q-td :props="props">
                   <div class="row items-center no-wrap">
                     <div
@@ -273,7 +273,7 @@
                 </q-td>
               </template>
 
-              <template v-slot:body-cell-acoes="props">
+              <template #body-cell-acoes="props">
                 <q-td :props="props">
                   <div class="row q-gutter-xs no-wrap">
                     <q-btn

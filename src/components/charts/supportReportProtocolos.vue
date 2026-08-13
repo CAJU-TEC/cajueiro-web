@@ -118,7 +118,7 @@
               hide-pagination
               separator="cell"
             >
-              <template v-slot:header="props">
+              <template #header="props">
                 <q-tr :props="props">
                   <q-th
                     v-for="col in props.cols"
@@ -131,7 +131,7 @@
                 </q-tr>
               </template>
 
-              <template v-slot:body="props">
+              <template #body="props">
                 <q-tr :props="props">
                   <q-td key="cliente" :props="props" class="text-weight-medium">
                     {{ props.row.cliente }}
