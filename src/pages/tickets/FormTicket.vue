@@ -123,51 +123,7 @@
             </section>
           </div>
 
-        <section class="protocol-card">
-          <div class="protocol-card-header">
-            <div class="protocol-icon">
-              <q-icon name="route" />
-            </div>
-            <div>
-              <div class="protocol-card-title">Status do Protocolo</div>
-              <div class="protocol-card-subtitle">
-                Como o protocolo está no momento?
-              </div>
-            </div>
-          </div>
-          <div class="status-track">
-            <template v-for="(opt, i) in optionsStatus" :key="opt.value">
-              <button
-                type="button"
-                class="status-step"
-                :class="{ active: form.status === opt.value }"
-                :style="
-                  form.status === opt.value
-                    ? {
-                        '--status-color':
-                          opt.value === 'done'
-                            ? '#607d8b'
-                            : opt.value === 'backlog'
-                              ? '#4caf50'
-                              : status[opt.value]?.hex,
-                      }
-                    : {}
-                "
-                @click="form.status = opt.value"
-              >
-                <span class="step-dot"></span>
-                <q-icon :name="statusIcons[opt.value]" class="step-icon" />
-                <span class="step-label">{{ opt.label }}</span>
-              </button>
-              <q-icon
-                v-if="i < optionsStatus.length - 1"
-                name="chevron_right"
-                class="step-arrow"
-              />
-            </template>
-          </div>
-        </section>
-      </div>
+        </div>
 
       <div class="protocol-col protocol-col-right">
       <section class="protocol-card">
@@ -411,7 +367,6 @@ import { useRouter, useRoute } from 'vue-router';
 import clientsService from 'src/services/clients';
 import AddClient from 'src/components/dialogs/clients/AddClient.vue';
 import impactsService from 'src/services/impacts';
-import status from 'src/support/tickets/status';
 import types from 'src/support/tickets/types';
 import priority from 'src/support/tickets/priority';
 import platform from 'src/support/tickets/platform';
@@ -431,16 +386,6 @@ export default defineComponent({
     const optionsImpacts = ref();
     const expandedImpacts = ref({});
     const detailsEls = ref({});
-    const optionsStatus = ref([
-      { value: 'backlog', label: 'Aguardando' },
-      { value: 'todo', label: 'A Fazer' },
-      { value: 'analyze', label: 'Análise' },
-      { value: 'development', label: 'Desenvolvimento' },
-      { value: 'test', label: 'Teste' },
-      { value: 'pending', label: 'Pendente' },
-      { value: 'done', label: 'Finalizado' },
-      { value: 'validation', label: 'Validação' },
-    ]);
     const validationOptions = ref([
       { label: 'Validar', value: 'yes' },
       { label: 'Não validar', value: 'no' },
@@ -449,16 +394,6 @@ export default defineComponent({
       { label: 'Implementação', value: 'implementation' },
       { label: 'Manutenção', value: 'maintenance' },
     ]);
-    const statusIcons = {
-      backlog: 'hourglass_top',
-      todo: 'checklist',
-      analyze: 'search',
-      development: 'code',
-      test: 'science',
-      pending: 'schedule',
-      done: 'check_circle',
-      validation: 'verified',
-    };
 
     const form = ref({
       client_id: ref(''),
@@ -471,7 +406,7 @@ export default defineComponent({
       validated: ref('no'),
       subject: ref(''),
       message: ref(''),
-      status: ref('backlog'),
+      status: ref('todo'),
       image: ref([]),
       imageName: ref([]),
     });
@@ -611,7 +546,6 @@ export default defineComponent({
 
     return {
       form,
-      status,
       priority,
       platform,
       types,
@@ -619,10 +553,8 @@ export default defineComponent({
       optionsClient,
       optionsImpacts,
       expandedImpacts,
-      optionsStatus,
       validationOptions,
       typeOptions,
-      statusIcons,
       stringOptionsClient,
       filterFn,
       setDetailsRef,
@@ -801,80 +733,6 @@ export default defineComponent({
 .plataform-segmented :deep(.q-btn) {
   letter-spacing: 1.8px;
 }
-/* ===== Status Track ===== */
-.status-track {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 4px;
-}
-
-.status-step {
-  text-align: center;
-  padding: 6px 4px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  border: 1.5px solid transparent;
-  position: relative;
-  background: transparent;
-  font-family: inherit;
-  overflow: hidden;
-}
-
-.status-step:hover {
-  background: #f2f2f7;
-}
-
-.status-step.active {
-  background: color-mix(in srgb, var(--status-color) 12%, transparent);
-  border-color: var(--status-color);
-}
-
-.status-step .step-icon {
-  font-size: 14px;
-  margin-bottom: 2px;
-  display: block;
-  color: #86868b;
-}
-
-.status-step.active .step-icon {
-  color: var(--status-color);
-}
-
-.status-step .step-label {
-  font-size: 10px;
-  font-weight: 600;
-  color: #6e6e73;
-  text-transform: uppercase;
-  letter-spacing: 0.2px;
-  display: block;
-  white-space: nowrap;
-}
-
-.status-step.active .step-label {
-  color: var(--status-color);
-}
-
-.status-step .step-dot {
-  position: absolute;
-  top: 4px;
-  right: 4px;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #34c759;
-  display: none;
-}
-
-.status-step.active .step-dot {
-  display: block;
-  background: var(--status-color);
-}
-
-.step-arrow {
-  display: none;
-}
-
 /* ===== Impact List ===== */
 .impact-list {
   display: grid;
@@ -1075,12 +933,6 @@ export default defineComponent({
 
   .protocol-col-right .protocol-card:last-child {
     flex: none;
-  }
-}
-
-@media (max-width: 768px) {
-  .status-track {
-    grid-template-columns: repeat(2, 1fr);
   }
 }
 
