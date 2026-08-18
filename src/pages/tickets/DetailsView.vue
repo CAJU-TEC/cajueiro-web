@@ -657,13 +657,13 @@ export default defineComponent({
     });
     const optionsStatus = ref([
       { value: 'backlog', label: 'Aguardando' },
-      { value: 'todo', label: 'a fazer' },
-      { value: 'analyze', label: 'analise' },
-      { value: 'development', label: 'desenvolvimento' },
-      { value: 'test', label: 'teste' },
-      { value: 'pending', label: 'pendente' },
-      { value: 'done', label: 'finalizado' },
-      { value: 'validation', label: 'validação' },
+      { value: 'todo', label: 'A Fazer' },
+      { value: 'analyze', label: 'Análise' },
+      { value: 'development', label: 'Desenvolvimento' },
+      { value: 'test', label: 'Teste' },
+      { value: 'pending', label: 'Pendente' },
+      { value: 'done', label: 'Finalizado' },
+      { value: 'validation', label: 'Validação' },
     ]);
     const formResponse = ref({
       ticket_id: ref(route.params.id ?? null),
