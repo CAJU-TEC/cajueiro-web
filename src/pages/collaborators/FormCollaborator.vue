@@ -273,7 +273,10 @@ export default defineComponent({
       try {
         const response = await list();
         options.value = response.map((m) => {
-          return { value: m.id, label: `${m.description} [${m.value}]` };
+          return {
+            value: m.id,
+            label: `${m.description} · ${m.team?.name ?? 'Sem time'} [${m.value}]`,
+          };
         });
       } catch (error) {
         $q.notify({

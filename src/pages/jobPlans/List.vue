@@ -10,7 +10,7 @@
       v-model="pagination"
       :rows="jobPlans"
       :columns="columns"
-      row-key="description"
+      row-key="id"
       no-data-label="Não existe dados no momento."
       rows-per-page-label="10"
       :rows-per-page-options="[10, 15, 20]"
