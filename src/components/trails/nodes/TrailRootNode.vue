@@ -6,7 +6,7 @@
       {{ data.completed }}/{{ data.total }} etapas
     </div>
 
-    <Handle type="source" :position="Position.Right" />
+    <Handle id="next" type="source" :position="Position.Right" />
   </div>
 </template>
 

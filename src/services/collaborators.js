@@ -23,6 +23,15 @@ export default function collaboratorsService() {
     }
   };
 
+  const anniversariesReport = async () => {
+    try {
+      const { data } = await api.get(`${endpoint}/anniversaries/report`, { responseType: 'blob' });
+      return new Blob([data], { type: 'application/pdf' });
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   return {
     list,
     getById,
@@ -30,6 +39,7 @@ export default function collaboratorsService() {
     update,
     remove,
     syncDuty,
-    birthdaysReport
+    birthdaysReport,
+    anniversariesReport
   };
 }

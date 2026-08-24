@@ -1,6 +1,9 @@
 <template>
   <div class="stage-node" :class="`stage-node--${data.state}`">
-    <Handle type="target" :position="Position.Left" />
+    <!-- Na altura do número da etapa, e não no meio do card: a altura varia com
+         o botão do líder e com a linha de "aguardando avaliação", e com o
+         handle centralizado a linha da sequência serpentearia entre as etapas. -->
+    <Handle type="target" :position="Position.Left" :style="chainAnchor" />
 
     <div class="stage-node__head">
       <div class="stage-node__mark">
@@ -66,7 +69,16 @@
 
     <q-tooltip>{{ stateLabel }}</q-tooltip>
 
-    <Handle type="source" :position="Position.Right" />
+    <Handle id="next" type="source" :position="Position.Right" :style="chainAnchor" />
+
+    <!-- Encostado na borda esquerda, e não no centro: assim a linha dos níveis
+         desce rente à lateral dos cartões em vez de cruzar por cima deles. -->
+    <Handle
+      id="levels"
+      type="source"
+      :position="Position.Bottom"
+      :style="{ left: '22px', transform: 'none' }"
+    />
   </div>
 </template>
 
@@ -103,6 +115,8 @@ export default defineComponent({
 
     return {
       Position,
+      // Precisa bater com o CHAIN_Y do TrailFlow, que posiciona a raiz.
+      chainAnchor: { top: '21px', transform: 'none' },
       required,
       quorumMet,
       pending,
