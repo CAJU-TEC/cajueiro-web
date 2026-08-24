@@ -32,6 +32,19 @@
           </div>
           <q-tooltip>Baixar o cartaz de aniversariantes em PDF</q-tooltip>
         </q-btn>
+        <q-btn
+          color="teal-7"
+          push
+          class="q-mr-sm"
+          :loading="downloadingAnniversaries"
+          @click="handleDownloadAnniversaries"
+        >
+          <div class="row items-center no-wrap">
+            <q-icon left name="workspace_premium" />
+            <div class="text-center">Aniversário de casa</div>
+          </div>
+          <q-tooltip>Baixar o cartaz de tempo de casa em PDF</q-tooltip>
+        </q-btn>
         <q-btn color="primary" push :to="{ name: 'collaborators.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
@@ -124,7 +137,7 @@ export default defineComponent({
   name: 'ListPage',
   setup() {
     const collaborators = ref([]);
-    const { list, remove, birthdaysReport } = collaboratorsService();
+    const { list, remove, birthdaysReport, anniversariesReport } = collaboratorsService();
     const pagination = ref({
       sortBy: 'description',
       descending: false,
@@ -133,6 +146,7 @@ export default defineComponent({
     });
     const loading = ref();
     const downloading = ref(false);
+    const downloadingAnniversaries = ref(false);
 
     const columns = [
       {
@@ -248,15 +262,38 @@ export default defineComponent({
       }
     };
 
+    const handleDownloadAnniversaries = async () => {
+      downloadingAnniversaries.value = true;
+      let url = null;
+      try {
+        url = URL.createObjectURL(await anniversariesReport());
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'aniversarios-de-casa-caju.pdf';
+        link.click();
+      } catch (error) {
+        $q.notify({
+          message: 'Ops! Não foi possível gerar o cartaz de tempo de casa',
+          icon: 'block',
+          color: 'negative',
+        });
+      } finally {
+        if (url) URL.revokeObjectURL(url);
+        downloadingAnniversaries.value = false;
+      }
+    };
+
     return {
       collaborators,
       columns,
       handleDeleteClient,
       handleEditClient,
       handleDownloadBirthdays,
+      handleDownloadAnniversaries,
       pagination,
       loading,
       downloading,
+      downloadingAnniversaries,
     };
   },
 });
