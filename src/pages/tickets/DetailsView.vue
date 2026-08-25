@@ -24,6 +24,16 @@
             </div>
 
             <div class="col-md-2 offset-md-2 text-right">
+              <div
+                v-if="form.testing === true"
+                class="q-mb-sm"
+              >
+                <q-badge
+                  color="purple"
+                  label="TESTANDO"
+                  style="font-size: 10px; padding: 4px 8px;"
+                />
+              </div>
               <q-btn
                 unelevated
                 size="xs"
@@ -175,6 +185,7 @@
                     }
                   "
                 >
+
                   <q-tooltip
                     :offset="[10, 10]"
                     anchor="top middle"
@@ -389,7 +400,14 @@
                     }}</span>
                   </q-tooltip>
                 </q-badge>
-                {{ `${status[comment.status ?? 'backlog'].title}` }}
+                {{ `${status[comment.status ?? 'backlog'].title}` }}                
+                <q-badge
+                  v-if="comment.status === 'test' && comment.testing === true"
+                  color="purple"
+                  label="TESTANDO"
+                  class="q-ml-sm"
+                  style="font-size: 10px; padding: 4px 8px;"
+                />
               </p>
             </div>
             <div class="col">
@@ -450,6 +468,19 @@
               :toggle-color="`${status[formResponse.status].color}`"
               :options="optionsStatus"
             />
+            <div
+                v-if="
+                  formResponse.status === 'test' &&
+                  canMarkTesting
+                "
+                class="q-mt-md"
+              >
+                <q-checkbox
+                  v-model="formResponse.testing"
+                  label="TESTANDO"
+                  color="orange"
+                />
+              </div>
             <h6 class="q-mt-lg q-mb-md">Comentário</h6>
             <div class="col-lg-12 col-xs-12 q-my-xs">
               <q-editor
@@ -576,7 +607,7 @@
   </q-page>
 </template>
 <script>
-import { defineComponent, ref, onMounted, onUnmounted, computed } from 'vue';
+import { defineComponent, ref, onMounted, onUnmounted, computed, watch} from 'vue';
 import usersService from 'src/services/users';
 import priority from 'src/support/tickets/priority';
 import status from 'src/support/tickets/status';
@@ -621,7 +652,6 @@ export default defineComponent({
     const { fetchUser } = usersService();
     const { list: listCollaborators } = collaboratorsService();
     const colaboradorList = ref([]);
-
     onUnmounted(() => {
       useMeta({ title: 'Cajueiro' });
     });
@@ -672,6 +702,20 @@ export default defineComponent({
       description: ref(''),
       image: ref([]),
       imageInput: ref([]),
+      testing: ref(false),
+    });
+
+    const canMarkTesting = computed(() =>
+      authUser.value?.permissions?.some(
+        (permission) => permission.name === 'tickets.testing'
+      ) ?? false
+    );
+
+
+    watch(() => formResponse.value.status, (newStatus) => {
+      if (newStatus !=='test') {
+        formResponse.value.testing = false;
+      }
     });
 
     const setTimeTicketOfDuty = (value) => {
@@ -980,6 +1024,7 @@ export default defineComponent({
       addUserTicker,
       addUserTickerQa,
       allowTickets,
+      canMarkTesting,
       allowTicketsQa,
       dateFormat,
       dateTimeFormat,
