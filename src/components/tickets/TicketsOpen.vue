@@ -766,6 +766,13 @@
 
               <q-item-section top side>
                 <div class="text-grey-8 q-gutter-xs">
+                  <q-badge
+                    v-if="ticket?.testing === true"
+                    color="purple"
+                    label="TESTANDO"
+                    class="q-mr-md"
+                    style="font-size: 10px; padding: 4px 8px;"
+                  />                                
                   <template v-if="ticket?.collaborator">
                     <q-chip size="sm">
                       <CollaboratorAvatar
