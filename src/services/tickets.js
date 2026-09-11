@@ -66,6 +66,21 @@ export default function ticketsService() {
     }
   };
 
+  const dutyTickets = async () => {
+    try {
+      const query = [
+        'include=collaborator,tester,user',
+        'fields[tickets]=id,code,subject,status,dufy,created_at,collaborator_id,tester_id,created_id',
+        'filter[dufy]=yes',
+        'filter[status_not]=done',
+      ].join('&');
+      const { data } = await api.get(`${endpoint}?${query}`);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const findStatus = async (params) => {
     try {
       const url = `${endpoint}`;
@@ -100,6 +115,7 @@ export default function ticketsService() {
     addUserPatchTicket,
     addTesterPatchTicket,
     findTicketsAtCode,
+    dutyTickets,
     ticketsGraphUsers,
     report,
     myTickets,

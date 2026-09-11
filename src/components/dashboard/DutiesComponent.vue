@@ -25,6 +25,9 @@
         </q-item-section>
       </q-item>
     </q-card>
+
+    <DutyTicketsDialog />
+
     <q-card class="text-caption" flat bordered>
       <div v-if="isLoading" class="q-pa-md text-primary text-center">
         <q-spinner-cube color="blue" size="3.5em" />
@@ -84,6 +87,7 @@ import ticketsService from 'src/services/tickets';
 import dutiesService from 'src/services/duties';
 import collaboratorsService from 'src/services/collaborators';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
+import DutyTicketsDialog from 'src/components/dashboard/DutyTicketsDialog.vue';
 import _ from 'loadsh';
 
 const model = ref('');
