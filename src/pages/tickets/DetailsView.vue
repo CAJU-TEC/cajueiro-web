@@ -408,6 +408,13 @@
                   class="q-ml-sm"
                   style="font-size: 10px; padding: 4px 8px;"
                 />
+                <q-badge
+                  v-if="comment.status === 'pending' && comment.recorrencia === true"
+                  color="negative"
+                  label="RECORRÊNCIA"
+                  class="q-ml-sm"
+                  style="font-size: 10px; padding: 4px 8px;"
+                />
               </p>
             </div>
             <div class="col">
@@ -481,6 +488,16 @@
                   color="orange"
                 />
               </div>
+            <div v-if="formResponse.status === 'pending'" class="q-mt-md">
+              <h6 class="q-mt-xs q-mb-sm">Recorrência?</h6>
+              <div class="row items-center">
+                <q-toggle
+                  v-model="formResponse.recorrencia"
+                  :color="formResponse.recorrencia ? 'negative' : 'grey'"
+                />
+                <span class="q-ml-sm">{{ formResponse.recorrencia ? 'Sim' : 'Não' }}</span>
+              </div>
+            </div>
             <h6 class="q-mt-lg q-mb-md">Comentário</h6>
             <div class="col-lg-12 col-xs-12 q-my-xs">
               <q-editor
@@ -703,6 +720,7 @@ export default defineComponent({
       image: ref([]),
       imageInput: ref([]),
       testing: ref(false),
+      recorrencia: ref(false),
     });
 
     const canMarkTesting = computed(() =>
@@ -715,6 +733,9 @@ export default defineComponent({
     watch(() => formResponse.value.status, (newStatus) => {
       if (newStatus !=='test') {
         formResponse.value.testing = false;
+      }
+      if (newStatus !== 'pending') {
+        formResponse.value.recorrencia = false;
       }
     });
 
