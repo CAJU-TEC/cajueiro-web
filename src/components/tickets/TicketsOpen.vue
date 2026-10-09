@@ -146,10 +146,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -243,19 +243,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsOpenYesPriorityLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsOpenYesPriorityLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsOpenYesPriorityLocal.data?.length ?? 0"
+          :total="ticketsOpenYesPriorityLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsOpenYesPriorityLocal'"
+          @more="addTickets('ticketsOpenYesPriorityLocal')"
+        />
 
         <q-item-label header>OUTROS</q-item-label>
         <template v-if="ticketsOpenNoPriorityLocal.data">
@@ -328,10 +322,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -424,19 +418,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsOpenNoPriorityLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsOpenNoPriorityLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsOpenNoPriorityLocal.data?.length ?? 0"
+          :total="ticketsOpenNoPriorityLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsOpenNoPriorityLocal'"
+          @more="addTickets('ticketsOpenNoPriorityLocal')"
+        />
       </q-list>
     </template>
 
@@ -504,10 +492,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -572,19 +560,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInDevelopLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInDevelopLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInDevelopLocal.data?.length ?? 0"
+          :total="ticketsInDevelopLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInDevelopLocal'"
+          @more="addTickets('ticketsInDevelopLocal')"
+        />
       </q-list>
     </template>
 
@@ -652,10 +634,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -728,19 +710,13 @@
           </q-banner>
         </div>
 
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInTestsLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInTestsLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInTestsLocal.data?.length ?? 0"
+          :total="ticketsInTestsLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInTestsLocal'"
+          @more="addTickets('ticketsInTestsLocal')"
+        />
       </q-list>
     </template>
 
@@ -808,10 +784,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -876,19 +852,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInBacklogLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInBacklogLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInBacklogLocal.data?.length ?? 0"
+          :total="ticketsInBacklogLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInBacklogLocal'"
+          @more="addTickets('ticketsInBacklogLocal')"
+        />
       </q-list>
     </template>
 
@@ -959,10 +929,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -1027,19 +997,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInValidationLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInValidationLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInValidationLocal.data?.length ?? 0"
+          :total="ticketsInValidationLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInValidationLocal'"
+          @more="addTickets('ticketsInValidationLocal')"
+        />
       </q-list>
     </template>
 
@@ -1107,10 +1071,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -1175,19 +1139,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInPendingLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInPendingLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInPendingLocal.data?.length ?? 0"
+          :total="ticketsInPendingLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInPendingLocal'"
+          @more="addTickets('ticketsInPendingLocal')"
+        />
       </q-list>
     </template>
 
@@ -1255,10 +1213,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -1314,19 +1272,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInDoneLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInDoneLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInDoneLocal.data?.length ?? 0"
+          :total="ticketsInDoneLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInDoneLocal'"
+          @more="addTickets('ticketsInDoneLocal')"
+        />
       </q-list>
     </template>
 
@@ -1394,10 +1346,10 @@
                 <q-item-label caption lines="1">
                   <q-badge
                     rounded
-                    :style="`background:${types[ticket?.type].hex}`"
+                    :style="`background:${types[ticket?.type]?.hex}`"
                   >
                   </q-badge>
-                  {{ types[ticket?.type].title }}
+                  {{ types[ticket?.type]?.title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
@@ -1453,19 +1405,13 @@
             </div>
           </q-banner>
         </div>
-        <div
-          class="q-pb-md q-gutter-sm"
+        <load-more-tickets
           v-if="ticketsInMyTicketsLocal.next_page_url"
-        >
-          <q-banner
-            inline-actions
-            rounded
-            class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInMyTicketsLocal')"
-          >
-            Veja mais protocolos, clicando aqui!
-          </q-banner>
-        </div>
+          :loaded="ticketsInMyTicketsLocal.data?.length ?? 0"
+          :total="ticketsInMyTicketsLocal.total ?? 0"
+          :loading="loadingMore === 'ticketsInMyTicketsLocal'"
+          @more="addTickets('ticketsInMyTicketsLocal')"
+        />
       </q-list>
     </template>
   </div>
@@ -1480,12 +1426,13 @@ import types from 'src/support/tickets/types';
 import platform from 'src/support/tickets/platform';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
+import LoadMoreTickets from 'src/components/tickets/LoadMoreTickets.vue';
 import _ from 'lodash';
 import { rememberListTab, savedListTab } from 'src/support/tickets/listTab';
 
 export default defineComponent({
   name: 'TicketsOpen',
-  components: { CollaboratorAvatar },
+  components: { CollaboratorAvatar, LoadMoreTickets },
   emits: [
     'handleListClient',
     'addUserTicker',
@@ -1630,7 +1577,10 @@ export default defineComponent({
       ticketsInMyTicketsLocal,
     };
 
+    const loadingMore = ref(null);
     const addTickets = async (model) => {
+      if (loadingMore.value) return;
+      loadingMore.value = model;
       try {
         const list = localLists[model];
         const queryString = _.split(list.value.next_page_url, '?')[1];
@@ -1643,6 +1593,8 @@ export default defineComponent({
         };
       } catch (error) {
         console.log(error);
+      } finally {
+        loadingMore.value = null;
       }
     };
 
@@ -1688,6 +1640,7 @@ export default defineComponent({
       ticketsInDoneLocal,
       ticketsInMyTicketsLocal,
       allowTickets,
+      loadingMore,
       status,
       priority,
       types,
@@ -1719,7 +1672,4 @@ export default defineComponent({
   animation: animate 1.5s linear infinite;
 }
 
-.clickable-banner {
-  cursor: pointer;
-}
 </style>
