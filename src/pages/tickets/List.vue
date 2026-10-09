@@ -124,6 +124,7 @@ import authService from 'src/services/auth';
 import { useQuasar } from 'quasar';
 import { useRouter } from 'vue-router';
 import status from 'src/support/tickets/status';
+import { savedListTab } from 'src/support/tickets/listTab';
 import priority from 'src/support/tickets/priority';
 import Pusher from 'pusher-js';
 import TicketReport from 'src/components/dialogs/tickets/TicketReport.vue';
@@ -236,15 +237,26 @@ export default defineComponent({
       loading.value = true;
       getPusher();
       getFetchUser();
-      getTicketsOpenMyTickets();
-      getTicketsOpenNoPriority();
-      getTicketsOpenYesPriority();
-      getTicketsInDevelop();
-      getTicketsInValidation();
-      getTicketsInTests();
-      getTicketsInBacklog();
-      getTicketsInPending();
-      getTicketsInDone();
+
+      // carrega primeiro a aba que o usuário estava vendo; as demais em seguida
+      const loaders = {
+        ticketsOpen: [getTicketsOpenNoPriority, getTicketsOpenYesPriority],
+        ticketsDevelop: [getTicketsInDevelop],
+        ticketsTests: [getTicketsInTests],
+        ticketsBacklog: [getTicketsInBacklog],
+        ticketsValidation: [getTicketsInValidation],
+        ticketsPending: [getTicketsInPending],
+        ticketsDone: [getTicketsInDone],
+        myTickets: [getTicketsOpenMyTickets],
+      };
+      const first = loaders[savedListTab(Object.keys(loaders))];
+      const rest = Object.values(loaders)
+        .flat()
+        .filter((fn) => !first.includes(fn));
+
+      Promise.allSettled(first.map((fn) => fn())).then(() => {
+        rest.forEach((fn) => fn());
+      });
     });
 
     const getFetchUser = async () => {
@@ -300,7 +312,7 @@ export default defineComponent({
     const getTicketsOpenNoPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,platform,type,dufy,subject,validated,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no&paginate=50'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,platform,type,dufy,subject,validated,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=no&paginate=25'
         );
         openNoPriority.value = data;
       } catch (error) {
@@ -311,7 +323,7 @@ export default defineComponent({
     const getTicketsOpenYesPriority = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,platform,type,dufy,subject,validated,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes&paginate=50'
+          '?include=collaborator,impact,user.collaborator,client.corporate.image&fields[tickets]=id,client_id,created_id,collaborator_id,impact_id,code,priority,platform,type,dufy,subject,validated,status,date_attribute_ticket,created_at,updated_at,deleted_at&filter[collaborator_id]=null&filter[priority]=yes&paginate=25'
         );
         openYesPriority.value = data;
       } catch (error) {
@@ -322,7 +334,7 @@ export default defineComponent({
     const getTicketsInDevelop = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&include=collaborator.image&filter[collaborator_id]=&filter[status]=development&paginate=50'
+          '?include=collaborator.image&include=collaborator.image&filter[collaborator_id]=&filter[status]=development&paginate=25'
         );
         ticketsInDevelop.value = data;
       } catch (error) {
@@ -333,7 +345,7 @@ export default defineComponent({
     const getTicketsInTests = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test&paginate=50'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test&paginate=25'
         );
         ticketsInTests.value = data;
       } catch (error) {
@@ -344,7 +356,7 @@ export default defineComponent({
     const getTicketsInBacklog = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=backlog&paginate=50'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=backlog&paginate=25'
         );
         ticketsInBacklog.value = data;
       } catch (error) {
@@ -355,7 +367,7 @@ export default defineComponent({
     const getTicketsInValidation = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=validation&paginate=50'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=validation&paginate=25'
         );
         ticketsInValidation.value = data;
       } catch (error) {
@@ -366,7 +378,7 @@ export default defineComponent({
     const getTicketsInPending = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=pending&paginate=50'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=pending&paginate=25'
         );
         ticketsInPending.value = data;
       } catch (error) {
@@ -377,7 +389,7 @@ export default defineComponent({
     const getTicketsInDone = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=done&paginate=50'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=done&paginate=25'
         );
         ticketsInDone.value = data;
       } catch (error) {
