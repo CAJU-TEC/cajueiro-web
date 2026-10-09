@@ -3,7 +3,11 @@
     <div class="q-pb-md q-gutter-sm">
       <q-breadcrumbs>
         <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
-        <q-breadcrumbs-el label="Protocolos" :to="{ name: 'tickets.list' }" />
+        <q-breadcrumbs-el
+          label="Protocolos"
+          :to="{ name: 'tickets.list' }"
+          @click="markListRestore"
+        />
         <q-breadcrumbs-el label="Detalhes" />
       </q-breadcrumbs>
     </div>
@@ -641,6 +645,7 @@ import collaboratorsService from 'src/services/collaborators';
 import { useRoute } from 'vue-router';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
+import { markListRestore } from 'src/support/tickets/listTab';
 
 export default defineComponent({
   name: 'DetailsView',
@@ -1042,6 +1047,7 @@ export default defineComponent({
     });
 
     return {
+      markListRestore,
       addUserTicker,
       addUserTickerQa,
       allowTickets,

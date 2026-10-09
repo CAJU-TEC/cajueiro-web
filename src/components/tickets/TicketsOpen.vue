@@ -11,7 +11,7 @@
         name="ticketsOpen"
         icon="mdi-ticket-outline"
         label="Abertos"
-        @click="() => $emit('updateTicketsOpen', true)"
+        @click="() => refreshTab('updateTicketsOpen')"
       >
       </q-tab>
       <q-tab
@@ -19,7 +19,7 @@
         name="ticketsDevelop"
         icon="mdi-ticket-account"
         label="Desenvolvimento"
-        @click="() => $emit('updateTicketsDevelop', true)"
+        @click="() => refreshTab('updateTicketsDevelop')"
       >
       </q-tab>
       <q-tab
@@ -27,7 +27,7 @@
         name="ticketsTests"
         icon="fa fa-bugs"
         label="Teste"
-        @click="() => $emit('updateTicketsTests', true)"
+        @click="() => refreshTab('updateTicketsTests')"
       >
       </q-tab>
       <q-tab
@@ -35,7 +35,7 @@
         name="ticketsBacklog"
         icon="fa fa-cubes"
         label="Aguardando"
-        @click="() => $emit('updateTicketsBacklog', true)"
+        @click="() => refreshTab('updateTicketsBacklog')"
       >
       </q-tab>
       <q-tab
@@ -43,7 +43,7 @@
         name="ticketsValidation"
         icon="fa fa-fire-extinguisher"
         label="Validação"
-        @click="() => $emit('updateTicketsValidation', true)"
+        @click="() => refreshTab('updateTicketsValidation')"
       >
       </q-tab>
       <q-tab
@@ -51,7 +51,7 @@
         name="ticketsPending"
         icon="fa fa-hourglass"
         label="Pendentes"
-        @click="() => $emit('updateTicketsPending', true)"
+        @click="() => refreshTab('updateTicketsPending')"
       >
       </q-tab>
       <q-tab
@@ -59,7 +59,7 @@
         name="ticketsDone"
         icon="mdi-check"
         label="Finalizados"
-        @click="() => $emit('updateTicketsDone', true)"
+        @click="() => refreshTab('updateTicketsDone')"
       >
       </q-tab>
       <q-tab
@@ -67,10 +67,11 @@
         name="myTickets"
         icon="mdi-ticket"
         label="Meus protocolos"
-        @click="() => $emit('updateTicketsMy', true)"
+        @click="() => refreshTab('updateTicketsMy')"
       >
       </q-tab>
     </q-tabs>
+    <q-linear-progress v-if="refreshing" indeterminate color="primary" />
 
     <template v-if="tab === 'ticketsOpen'">
       <q-toolbar class="bg-primary text-white shadow-2">
@@ -138,13 +139,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -154,26 +148,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -342,13 +322,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -357,26 +330,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -539,13 +498,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -554,26 +506,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -641,7 +579,8 @@
           <q-banner
             inline-actions
             rounded
-            class="bg-grey-2 text-grey text-center clickable-banner => addTickets('ticketsInDevelopLocal')"
+            class="bg-grey-2 text-grey text-center clickable-banner"
+            @click="() => addTickets('ticketsInDevelopLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -707,13 +646,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -722,26 +654,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -884,13 +802,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -899,26 +810,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -1056,13 +953,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -1071,26 +961,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -1225,13 +1101,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -1240,26 +1109,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Criado em: {{ dateFormat(ticket?.created_at) }}
@@ -1394,13 +1249,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -1409,26 +1257,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
@@ -1554,13 +1388,6 @@
                     :style="`background:${platform[ticket.platform]?.hex}`"
                     class="q-ml-sm"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ platform[ticket.platform]?.title }}
-                    </q-tooltip>
                     {{ platform[ticket.platform]?.title }}
                   </q-badge>
                 </q-item-label>
@@ -1569,26 +1396,12 @@
                     rounded
                     :style="`background:${types[ticket?.type].hex}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ types[ticket?.type].title }}
-                    </q-tooltip>
                   </q-badge>
                   {{ types[ticket?.type].title }}
                   <q-badge
                     rounded
                     :style="`background:${ticket?.impact?.color}`"
                   >
-                    <q-tooltip
-                      :offset="[10, 10]"
-                      anchor="top middle"
-                      self="bottom middle"
-                    >
-                      {{ ticket?.impact?.description }}
-                    </q-tooltip>
                   </q-badge>
                   {{ ticket?.impact?.description }}
                   | Finalizado em: {{ dateFormat(ticket?.updated_at) }}
@@ -1648,7 +1461,7 @@
             inline-actions
             rounded
             class="bg-grey-2 text-grey text-center clickable-banner"
-            @click="() => addTickets('ticketsInDoneLocal')"
+            @click="() => addTickets('ticketsInMyTicketsLocal')"
           >
             Veja mais protocolos, clicando aqui!
           </q-banner>
@@ -1668,6 +1481,7 @@ import platform from 'src/support/tickets/platform';
 import { betweenDates, dateFormat } from 'src/support/dates/dateFormat';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
+import { rememberListTab, savedListTab } from 'src/support/tickets/listTab';
 
 export default defineComponent({
   name: 'TicketsOpen',
@@ -1722,12 +1536,31 @@ export default defineComponent({
       default: null,
     },
   },
-  setup(props) {
+  setup(props, { emit }) {
     const allowTickets = (roles) => {
       const statusRole = ['backlog', 'todo', 'analyze'];
       return _.includes(statusRole, roles);
     };
     const { myTickets } = ticketsService();
+
+    const validTabs = [
+      'ticketsOpen',
+      'ticketsDevelop',
+      'ticketsTests',
+      'ticketsBacklog',
+      'ticketsValidation',
+      'ticketsPending',
+      'ticketsDone',
+      'myTickets',
+    ];
+    const targetTab = savedListTab(validTabs);
+    const tab = ref('ticketsOpen');
+    watch(tab, (value, old) => {
+      if (!restored && value !== targetTab && old === 'ticketsOpen') {
+        userPickedTab = true;
+      }
+      rememberListTab(value);
+    });
 
     const ticketsOpenYesPriorityLocal = ref(props.ticketsOpenYesPriority);
     const ticketsOpenNoPriorityLocal = ref(props.ticketsOpenNoPriority);
@@ -1739,84 +1572,111 @@ export default defineComponent({
     const ticketsInDoneLocal = ref(props.ticketsInDone);
     const ticketsInMyTicketsLocal = ref(props.ticketsInMyTickets);
 
-    // ticketsOpenYesPriority
-    watch(
-      () => props.ticketsOpenYesPriority,
-      (newVal) => {
-        ticketsOpenYesPriorityLocal.value = newVal;
-      }
-    );
-    // ticketsOpenNoPriority
-    watch(
-      () => props.ticketsOpenNoPriority,
-      (newVal) => {
-        ticketsOpenNoPriorityLocal.value = newVal;
-      }
-    );
-    // ticketsInDevelop
-    watch(
-      () => props.ticketsInDevelop,
-      (newVal) => {
-        ticketsInDevelopLocal.value = newVal;
-      }
-    );
-    // ticketsInTests
-    watch(
-      () => props.ticketsInTests,
-      (newVal) => {
-        ticketsInTestsLocal.value = newVal;
-      }
-    );
-    // ticketsInBacklog
-    watch(
-      () => props.ticketsInBacklog,
-      (newVal) => {
-        ticketsInBacklogLocal.value = newVal;
-      }
-    );
-    // ticketsInBacklog
-    watch(
-      () => props.ticketsInValidation,
-      (newVal) => {
-        ticketsInValidationLocal.value = newVal;
-      }
-    );
-    // ticketsInBacklog
-    watch(
-      () => props.ticketsInPending,
-      (newVal) => {
-        ticketsInPendingLocal.value = newVal;
-      }
-    );
-    // ticketsInBacklog
-    watch(
-      () => props.ticketsInDone,
-      (newVal) => {
-        ticketsInDoneLocal.value = newVal;
-      }
-    );
-    // ticketsInMyTickets
-    watch(
-      () => props.ticketsInMyTickets,
-      (newVal) => {
-        ticketsInMyTicketsLocal.value = newVal;
-      }
-    );
+    // Ao voltar de um protocolo a aba salva é restaurada assim que a lista dessa aba
+    // chega. As demais listas são aplicadas em lote (debounce) enquanto isso: cada
+    // resposta isolada re-renderizava a aba pesada e travava a tela.
+    let restored = targetTab === 'ticketsOpen';
+    let userPickedTab = false;
+    const listMap = [
+      ['ticketsOpenYesPriority', ticketsOpenYesPriorityLocal, 'ticketsOpen'],
+      ['ticketsOpenNoPriority', ticketsOpenNoPriorityLocal, 'ticketsOpen'],
+      ['ticketsInDevelop', ticketsInDevelopLocal, 'ticketsDevelop'],
+      ['ticketsInTests', ticketsInTestsLocal, 'ticketsTests'],
+      ['ticketsInBacklog', ticketsInBacklogLocal, 'ticketsBacklog'],
+      ['ticketsInValidation', ticketsInValidationLocal, 'ticketsValidation'],
+      ['ticketsInPending', ticketsInPendingLocal, 'ticketsPending'],
+      ['ticketsInDone', ticketsInDoneLocal, 'ticketsDone'],
+      ['ticketsInMyTickets', ticketsInMyTicketsLocal, 'myTickets'],
+    ];
+    const applyAll = () => {
+      listMap.forEach(([prop, local]) => {
+        local.value = props[prop];
+      });
+    };
+    const applyAllDebounced = _.debounce(applyAll, 400);
+    let restoreTimer = null;
+    const restoreTab = () => {
+      if (restored) return;
+      restored = true;
+      clearTimeout(restoreTimer);
+      if (!userPickedTab) tab.value = targetTab;
+      applyAllDebounced();
+    };
+    if (!restored) restoreTimer = setTimeout(restoreTab, 10000);
+
+    listMap.forEach(([prop, local, listTab]) => {
+      watch(
+        () => props[prop],
+        (newVal) => {
+          if (restored || listTab === targetTab) {
+            local.value = newVal;
+            if (!restored && newVal?.data) restoreTab();
+          } else {
+            applyAllDebounced();
+          }
+        }
+      );
+    });
+
+    const localLists = {
+      ticketsOpenYesPriorityLocal,
+      ticketsOpenNoPriorityLocal,
+      ticketsInDevelopLocal,
+      ticketsInTestsLocal,
+      ticketsInBacklogLocal,
+      ticketsInValidationLocal,
+      ticketsInPendingLocal,
+      ticketsInDoneLocal,
+      ticketsInMyTicketsLocal,
+    };
 
     const addTickets = async (model) => {
       try {
-        const url = eval(`${model}.value.next_page_url`);
-        const queryString = _.split(url, '?')[1];
+        const list = localLists[model];
+        const queryString = _.split(list.value.next_page_url, '?')[1];
         const data = await myTickets(`?${queryString}`);
 
-        eval(`${model}.value.data = [...${model}.value.data, ...data.data]`);
-        eval(`${model}.value.next_page_url = data.next_page_url`);
+        list.value = {
+          ...list.value,
+          data: [...list.value.data, ...data.data],
+          next_page_url: data.next_page_url,
+        };
       } catch (error) {
         console.log(error);
       }
     };
 
+    // indicador de carregamento enquanto a lista da aba é atualizada
+    const refreshing = ref(false);
+    let refreshTimer = null;
+    const stopRefreshing = () => {
+      refreshing.value = false;
+      clearTimeout(refreshTimer);
+    };
+    const refreshTab = (eventName) => {
+      refreshing.value = true;
+      clearTimeout(refreshTimer);
+      refreshTimer = setTimeout(stopRefreshing, 15000);
+      emit(eventName, true);
+    };
+    watch(
+      () => [
+        props.ticketsOpenYesPriority,
+        props.ticketsOpenNoPriority,
+        props.ticketsInDevelop,
+        props.ticketsInTests,
+        props.ticketsInBacklog,
+        props.ticketsInValidation,
+        props.ticketsInPending,
+        props.ticketsInDone,
+        props.ticketsInMyTickets,
+      ],
+      stopRefreshing
+    );
+
     return {
+      refreshing,
+      refreshTab,
       addTickets,
       ticketsOpenYesPriorityLocal,
       ticketsOpenNoPriorityLocal,
@@ -1834,7 +1694,7 @@ export default defineComponent({
       platform,
       betweenDates,
       dateFormat,
-      tab: ref('ticketsOpen'),
+      tab,
     };
   },
 });
