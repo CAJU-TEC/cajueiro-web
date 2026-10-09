@@ -1,42 +1,28 @@
-import useApi from 'src/composables/UseApi';
 import { api } from 'boot/axios';
 
 export default function controlService() {
   const endpoint = 'api/tickets';
-  const { getById, post, update, remove } = useApi(endpoint);
+  // Resumo por empresa (contagens) com filtros
+  const listByClient = async (params = {}, config = {}) => {
+    const { data } = await api.get(`${endpoint}/control/by-client`, { params, ...config });
+    return data;
+  };
 
-  // Buscar tickets agrupados por cliente com filtros
-  const listByClient = async (params = {}) => {
-    const { data } = await api.get(`${endpoint}/control/by-client`, { params });
+  // Buscar protocolos paginados de uma empresa (carregado ao expandir)
+  const listProtocols = async (params = {}, config = {}) => {
+    const { data } = await api.get(`${endpoint}/control/protocols`, { params, ...config });
     return data;
   };
 
   // Buscar métricas dos tickets
-  const getMetrics = async (params = {}) => {
-    const { data } = await api.get(`${endpoint}/control/metrics`, { params });
-    return data;
-  };
-
-  // Reatribuir responsável (usando PATCH do ticket)
-  const reassign = async (ticketId, form) => {
-    const { data } = await api.patch(`${endpoint}/${ticketId}`, form);
-    return data;
-  };
-
-  // Atualizar ticket (exemplo para validação)
-  const validate = async (ticketId, form) => {
-    const { data } = await api.put(`${endpoint}/${ticketId}`, form);
+  const getMetrics = async (params = {}, config = {}) => {
+    const { data } = await api.get(`${endpoint}/control/metrics`, { params, ...config });
     return data;
   };
 
   return {
-    getById,
-    post,
-    update,
-    remove,
     listByClient,
+    listProtocols,
     getMetrics,
-    reassign,
-    validate,
   };
 }
