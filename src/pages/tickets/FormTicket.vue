@@ -244,6 +244,17 @@
       </section>
 
       <section class="protocol-card">
+        <div class="protocol-card-header">
+          <div class="protocol-icon">
+            <q-icon name="edit_note" />
+          </div>
+          <div>
+            <div class="protocol-card-title">Descrição</div>
+            <div class="protocol-card-subtitle">
+              Descreva a situaçãoj
+            </div>
+          </div>
+        </div>
         <q-editor
           v-model="form.message"
           :toolbar="[
@@ -255,12 +266,6 @@
                 list: 'only-icons',
                 options: ['left', 'center', 'right', 'justify'],
               },
-              {
-                label: $q.lang.editor.align,
-                icon: $q.iconSet.editor.align,
-                fixedLabel: true,
-                options: ['left', 'center', 'right', 'justify'],
-              },
             ],
             [
               'bold',
@@ -270,7 +275,7 @@
               'subscript',
               'superscript',
             ],
-            ['token', 'hr', 'link', 'custom_btn'],
+            ['hr', 'link'],
             ['print', 'fullscreen'],
             [
               {
@@ -574,6 +579,7 @@ export default defineComponent({
   background: #f5f5f7;
   color: #1d1d1f;
   min-height: 100vh;
+  container-type: inline-size;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
@@ -633,10 +639,30 @@ export default defineComponent({
 .protocol-col-third .protocol-card:last-of-type {
   display: flex;
   flex-direction: column;
+  --editor-inset: clamp(16px, calc(12cqw - 100px), 240px);
+  width: calc(100cqw - 2 * var(--editor-inset));
+  margin-inline: calc(50% - 50cqw + var(--editor-inset));
 }
 
 .protocol-col-third .protocol-card:last-of-type :deep(.q-editor) {
-  min-height: 24rem;
+  width: 100%;
+  max-width: 100%;
+  min-height: clamp(16rem, 45vh, 40rem);
+  border: 1px solid #e5e5ea;
+  border-radius: 8px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.protocol-col-third .protocol-card:last-of-type :deep(.q-editor:focus-within) {
+  border-color: #0071e3;
+  box-shadow: 0 0 0 3px rgba(0, 113, 227, 0.08);
+}
+
+.protocol-col-third .protocol-card:last-of-type :deep(.q-editor__toolbars-container),
+.protocol-col-third .protocol-card:last-of-type :deep(.q-editor__toolbar) {
+  background: #f9f9fb;
+  border-bottom-color: #e5e5ea;
+  border-radius: 8px 8px 0 0;
 }
 
 .protocol-col-third .protocol-actions {
@@ -951,6 +977,10 @@ export default defineComponent({
 
   .protocol-grid-two {
     grid-template-columns: 1fr;
+  }
+
+  .protocol-col-third .protocol-card:last-of-type :deep(.q-editor) {
+    min-height: 14rem;
   }
 
   .protocol-actions {
