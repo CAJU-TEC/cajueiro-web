@@ -486,7 +486,7 @@ export default {
 
     const cardsMetricas = [
       { chave: 'total', titulo: 'Total de Protocolos', icone: 'description', cor: 'blue' },
-      { chave: 'aguardandoValidacao', titulo: 'Aguardando Validação', icone: 'hourglass_empty', cor: 'amber' },
+      { chave: 'aguardandoValidacao', titulo: 'Aguardando', icone: 'hourglass_empty', cor: 'amber' },
       { chave: 'emAnalise', titulo: 'Em Análise', icone: 'search', cor: 'indigo' },
       { chave: 'todo', titulo: 'A Fazer', icone: 'assignment', cor: 'yellow' },
       { chave: 'development', titulo: 'Desenvolvimento', icone: 'code', cor: 'light-blue' },
