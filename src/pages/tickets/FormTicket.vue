@@ -251,7 +251,7 @@
           <div>
             <div class="protocol-card-title">Descrição</div>
             <div class="protocol-card-subtitle">
-              Descreva a situaçãoj
+              Descreva a situação
             </div>
           </div>
         </div>
