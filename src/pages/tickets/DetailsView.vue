@@ -620,7 +620,7 @@
             </div>
           </q-card-section>
           <q-card-actions>
-            <q-btn flat type="submit">Enviar resposta</q-btn>
+            <q-btn flat type="submit" :loading="submitting" :disable="submitting">Enviar resposta</q-btn>
           </q-card-actions>
         </q-form>
       </q-card>
@@ -1008,7 +1008,11 @@ export default defineComponent({
       }
     };
 
+    const submitting = ref(false);
+
     const onSubmit = async () => {
+      if (submitting.value) return;
+      submitting.value = true;
       try {
         await post(formResponse.value);
         formResponse.value.description = null;
@@ -1027,6 +1031,8 @@ export default defineComponent({
           caption: error.message,
           color: 'negative',
         });
+      } finally {
+        submitting.value = false;
       }
     };
 
@@ -1057,6 +1063,7 @@ export default defineComponent({
       dateTimeFormat,
       comments,
       onSubmit,
+      submitting,
       onChange,
       formResponse,
       optionsStatus,
