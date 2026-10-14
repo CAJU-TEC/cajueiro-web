@@ -28,6 +28,43 @@
             </div>
 
             <div class="col-md-2 offset-md-2 text-right">
+              <q-btn
+                unelevated
+                size="xs"
+                round
+                color="white"
+                text-color="primary"
+                class="q-mr-sm"
+                icon="edit"
+                :to="{ name: 'tickets.form', params: { id: form.id } }"
+              >
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <div>Editar protocolo</div>
+                </q-tooltip>
+              </q-btn>
+              <q-btn
+                v-if="canDestroy"
+                unelevated
+                size="xs"
+                round
+                color="white"
+                text-color="negative"
+                class="q-mr-sm"
+                icon="delete"
+                @click="confirmDelete"
+              >
+                <q-tooltip
+                  :offset="[10, 10]"
+                  anchor="top middle"
+                  self="bottom middle"
+                >
+                  <div>Apagar protocolo</div>
+                </q-tooltip>
+              </q-btn>
               <div
                 v-if="form.testing === true"
                 class="q-mb-sm"
@@ -359,6 +396,21 @@
               <p v-html="form.message"></p>
             </div>
           </div>
+          <div
+            v-if="form.audit_notes?.edited || form.audit_notes?.restored"
+            class="text-caption text-grey-6 q-mb-sm"
+          >
+            <div v-if="form.audit_notes.edited">
+              Editado por {{ form.audit_notes.edited.user ?? 'usuário não identificado' }}
+              em {{ dateFormat(form.audit_notes.edited.at) }}
+              {{ dateTimeFormat(form.audit_notes.edited.at) }}
+            </div>
+            <div v-if="form.audit_notes.restored">
+              Restaurado por {{ form.audit_notes.restored.user ?? 'usuário não identificado' }}
+              em {{ dateFormat(form.audit_notes.restored.at) }}
+              {{ dateTimeFormat(form.audit_notes.restored.at) }}
+            </div>
+          </div>
           <span class="text-caption" v-if="form.images?.length > 0"
             >Arquivos</span
           >
@@ -642,7 +694,7 @@ import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
 import { useQuasar, useMeta } from 'quasar';
 import collaboratorsService from 'src/services/collaborators';
-import { useRoute } from 'vue-router';
+import { useRoute, useRouter } from 'vue-router';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
 import _ from 'lodash';
 import { markListRestore } from 'src/support/tickets/listTab';
@@ -664,11 +716,18 @@ export default defineComponent({
     },
   },
   setup() {
-    const { getById, addUserPatchTicket, addTesterPatchTicket, timeAlterDuty } =
+    const {
+      getById,
+      addUserPatchTicket,
+      addTesterPatchTicket,
+      timeAlterDuty,
+      remove,
+    } =
       ticketsService();
     const { post } = commentsService();
     const $q = useQuasar();
     const route = useRoute();
+    const router = useRouter();
     const comments = ref([{}]);
     const authUser = ref();
     const { fetchUser } = usersService();
@@ -727,6 +786,40 @@ export default defineComponent({
       testing: ref(false),
       recorrencia: ref(false),
     });
+
+    // botão de apagar: só com a permissão tickets.trash (super-admin sempre pode); a API também valida
+    const canDestroy = computed(() =>
+      (authUser.value?.roles?.some((role) => role.name === 'super-admin')
+        || authUser.value?.permissions?.some((permission) => permission.name === 'tickets.trash'))
+      ?? false
+    );
+
+    const confirmDelete = () => {
+      $q.dialog({
+        title: 'Apagar protocolo',
+        message: `Tem certeza que deseja apagar o protocolo #${form.value.code}? Ele deixará de aparecer na lista.`,
+        persistent: true,
+        cancel: { label: 'Cancelar', flat: true },
+        ok: { label: 'Apagar', color: 'negative' },
+      }).onOk(async () => {
+        try {
+          await remove(form.value.id);
+          $q.notify({
+            message: 'Protocolo apagado com sucesso',
+            icon: 'check',
+            color: 'positive',
+          });
+          markListRestore();
+          router.push({ name: 'tickets.list' });
+        } catch (error) {
+          $q.notify({
+            message: 'Não foi possível apagar o protocolo.',
+            icon: 'block',
+            color: 'negative',
+          });
+        }
+      });
+    };
 
     const canMarkTesting = computed(() =>
       authUser.value?.permissions?.some(
@@ -1069,6 +1162,8 @@ export default defineComponent({
       setTimeTicketOfDuty,
       authUser,
       transferUserTicker,
+      canDestroy,
+      confirmDelete,
     };
   },
 });

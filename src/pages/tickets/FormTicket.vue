@@ -5,10 +5,16 @@
         <q-breadcrumbs>
           <q-breadcrumbs-el label="Home" :to="{ name: 'home' }" />
           <q-breadcrumbs-el label="Protocolos" :to="{ name: 'tickets.list' }" />
-          <q-breadcrumbs-el label="Adicionar" />
+          <q-breadcrumbs-el :label="isEdit ? 'Editar' : 'Adicionar'" />
         </q-breadcrumbs>
       </div>
-      <h3 class="protocol-title">Adicionar Protocolo</h3>
+      <h3 class="protocol-title">
+        <q-icon
+          :name="isEdit ? 'edit_note' : 'add_circle_outline'"
+          class="q-mr-sm"
+        />
+        {{ isEdit ? `Editar Protocolo #${form.code ?? ''}` : 'Adicionar Protocolo' }}
+      </h3>
 
       <q-form
         enctype="multipart/form-data"
@@ -70,12 +76,7 @@
             class="protocol-segmented plataform-segmented"
             push
             :toggle-color="`${platform[form.platform].color}`"
-            :options="[
-              { label: 'WEB', value: 'web' },
-              { label: 'MOBILE', value: 'mobile' },
-              { label: 'NOTIFIQ', value: 'notifiq' },
-              { label: 'WEB E MOBILE', value: 'web_mobile' },
-            ]"
+            :options="platformOptions"
           />
         </section>
         <div class="protocol-grid protocol-grid-two">
@@ -349,8 +350,8 @@
         />
         <q-btn
           class="btn btn-primary"
-          label="Salvar Protocolo"
-          icon="check"
+          :label="isEdit ? 'Salvar Alterações' : 'Salvar Protocolo'"
+          :icon="isEdit ? 'save' : 'check'"
           type="submit"
         />
       </div>
@@ -365,7 +366,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, computed, onMounted } from 'vue';
 import ticketsService from 'src/services/tickets';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
@@ -416,6 +417,18 @@ export default defineComponent({
       imageName: ref([]),
     });
 
+    const isEdit = computed(() => !!route.params.id);
+    const platformOptions = computed(() => {
+      const options = [
+        { label: 'WEB', value: 'web' },
+        { label: 'MOBILE', value: 'mobile' },
+        { label: 'NOTIFIQ', value: 'notifiq' },
+      ];
+      // web_mobile gera 2 protocolos: na edição, o atual muda de plataforma e um novo é criado
+      options.push({ label: 'WEB E MOBILE', value: 'web_mobile' });
+      return options;
+    });
+
     onMounted(async () => {
       if (route.params.id) {
         getClient(route.params.id);
@@ -429,6 +442,8 @@ export default defineComponent({
         const response = await getById(id);
         form.value = response;
         form.value.email = response.email?.description;
+        form.value.image = [];
+        form.value.imageName = [];
       } catch (error) {
         $q.notify({
           message: 'Ops! Ocorreu algum erro.',
@@ -525,16 +540,35 @@ export default defineComponent({
       }
     };
 
+    // na edição, WEB E MOBILE cria um protocolo novo: pede confirmação para não duplicar sem querer
+    const confirmSplit = () => new Promise((resolve) => {
+      $q.dialog({
+        title: 'Criar novo protocolo',
+        message: 'Ao salvar com WEB E MOBILE, este protocolo ficará em uma plataforma e um novo protocolo será criado na outra. Deseja continuar?',
+        persistent: true,
+        cancel: { label: 'Cancelar', flat: true },
+        ok: { label: 'Continuar' },
+      })
+        .onOk(() => resolve(true))
+        .onCancel(() => resolve(false))
+        .onDismiss(() => resolve(false));
+    });
+
     const onSubmit = async () => {
       try {
+        if (form.value.id && form.value.platform === 'web_mobile' && !(await confirmSplit())) return;
+
+        let saved;
         if (form.value.id) {
-          await update(form.value);
+          saved = await update(form.value);
         } else {
           await post(form.value);
         }
 
         $q.notify({
-          message: 'Dados salvos com sucesso',
+          message: saved?.clone
+            ? `Dados salvos. Novo protocolo #${saved.clone.code} criado (${saved.clone.platform}).`
+            : 'Dados salvos com sucesso',
           icon: 'check',
           color: 'positive',
         });
@@ -551,6 +585,8 @@ export default defineComponent({
 
     return {
       form,
+      isEdit,
+      platformOptions,
       priority,
       platform,
       types,

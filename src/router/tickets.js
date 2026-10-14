@@ -9,6 +9,13 @@ export default [
     beforeEnter: [can]
   },
   {
+    path: 'tickets/trashed',
+    name: 'tickets.trashed',
+    meta: {permissions: ['super-admin', 'tickets.trash']},
+    component: () => import('src/pages/tickets/Trashed.vue'),
+    beforeEnter: [can]
+  },
+  {
     path: 'tickets/form-ticket/:id?',
     name: 'tickets.form',
     meta: {permissions: ['tickets.create', 'tickets.edit', 'tickets.*']},

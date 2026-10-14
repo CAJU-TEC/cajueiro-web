@@ -26,6 +26,24 @@ export default function ticketsService() {
     }
   };
 
+  const listTrashed = async () => {
+    try {
+      const { data } = await api.get(`${endpoint}/trashed`);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
+  const restore = async (id) => {
+    try {
+      const { data } = await api.patch(`${endpoint}/${id}/restore`);
+      return data;
+    } catch (error) {
+      throw (new Error(error.message));
+    }
+  };
+
   const myTickets = async (id) => {
     try {
       const url = `${endpoint}`;
@@ -123,6 +141,8 @@ export default function ticketsService() {
     post,
     update,
     remove,
+    listTrashed,
+    restore,
     notifications,
     findStatus,
     timeAlterDuty

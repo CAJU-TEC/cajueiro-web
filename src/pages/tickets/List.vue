@@ -10,6 +10,19 @@
     <div class="row">
       <div class="col text-right">
         <q-btn
+          v-if="canRestore"
+          push
+          color="white"
+          text-color="negative"
+          icon="delete_sweep"
+          size="sm"
+          class="q-mr-sm"
+          :to="{ name: 'tickets.trashed' }"
+        >
+          <q-tooltip> Ver e restaurar protocolos apagados </q-tooltip>
+          Protocolos apagados
+        </q-btn>
+        <q-btn
           push
           color="white"
           text-color="primary"
@@ -118,7 +131,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from 'vue';
+import { defineComponent, ref, onMounted, computed } from 'vue';
 import ticketsService from 'src/services/tickets';
 import authService from 'src/services/auth';
 import { useQuasar } from 'quasar';
@@ -152,6 +165,12 @@ export default defineComponent({
     const loading = ref();
     const pusherMessage = ref([]);
     const user = ref({});
+    // botão "Protocolos apagados": só com a permissão tickets.trash (super-admin sempre pode); a API também valida
+    const canRestore = computed(() =>
+      (user.value?.user?.roles?.some((role) => role.name === 'super-admin')
+        || user.value?.user?.permissions?.some((permission) => permission.name === 'tickets.trash'))
+      ?? false
+    );
     const recoverTickets = ref(false);
     const openNoPriority = ref([]);
     const openYesPriority = ref([]);
@@ -483,6 +502,7 @@ export default defineComponent({
       reportPdf,
       myTickets,
       user,
+      canRestore,
       recoverTickets,
       openNoPriority,
       openYesPriority,
