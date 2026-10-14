@@ -352,6 +352,8 @@
           label="Salvar Protocolo"
           icon="check"
           type="submit"
+          :loading="submitting"
+          :disable="submitting"
         />
       </div>
       </div>
@@ -525,7 +527,11 @@ export default defineComponent({
       }
     };
 
+    const submitting = ref(false);
+
     const onSubmit = async () => {
+      if (submitting.value) return;
+      submitting.value = true;
       try {
         if (form.value.id) {
           await update(form.value);
@@ -540,6 +546,7 @@ export default defineComponent({
         });
         router.push({ name: 'tickets.list' });
       } catch (error) {
+        submitting.value = false;
         $q.notify({
           icon: 'block',
           message: 'Ops! Ocorreu um erro.',
@@ -565,6 +572,7 @@ export default defineComponent({
       setDetailsRef,
       toggleExpand,
       onSubmit,
+      submitting,
       onChange,
     };
   },
