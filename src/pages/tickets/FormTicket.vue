@@ -353,6 +353,8 @@
           :label="isEdit ? 'Salvar Alterações' : 'Salvar Protocolo'"
           :icon="isEdit ? 'save' : 'check'"
           type="submit"
+          :loading="submitting"
+          :disable="submitting"
         />
       </div>
       </div>
@@ -553,8 +555,11 @@ export default defineComponent({
         .onCancel(() => resolve(false))
         .onDismiss(() => resolve(false));
     });
+    const submitting = ref(false);
 
     const onSubmit = async () => {
+      if (submitting.value) return;
+      submitting.value = true;
       try {
         if (form.value.id && form.value.platform === 'web_mobile' && !(await confirmSplit())) return;
 
@@ -574,6 +579,7 @@ export default defineComponent({
         });
         router.push({ name: 'tickets.list' });
       } catch (error) {
+        submitting.value = false;
         $q.notify({
           icon: 'block',
           message: 'Ops! Ocorreu um erro.',
@@ -601,6 +607,7 @@ export default defineComponent({
       setDetailsRef,
       toggleExpand,
       onSubmit,
+      submitting,
       onChange,
     };
   },
