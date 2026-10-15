@@ -29,6 +29,7 @@
 
             <div class="col-md-2 offset-md-2 text-right">
               <q-btn
+                v-if="canDestroy"
                 unelevated
                 size="xs"
                 round
@@ -787,7 +788,7 @@ export default defineComponent({
       recorrencia: ref(false),
     });
 
-    // botão de apagar: só com a permissão tickets.trash (super-admin sempre pode); a API também valida
+    // botões de editar e apagar: só com a permissão tickets.trash (super-admin sempre pode); a API também valida
     const canDestroy = computed(() =>
       (authUser.value?.roles?.some((role) => role.name === 'super-admin')
         || authUser.value?.permissions?.some((permission) => permission.name === 'tickets.trash'))
