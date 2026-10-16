@@ -364,7 +364,7 @@ export default defineComponent({
     const getTicketsInTests = async () => {
       try {
         const data = await myTicketsService(
-          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test&paginate=25'
+          '?include=collaborator.image&filter[collaborator_id]=&filter[status]=test&testing_first=1&paginate=25'
         );
         ticketsInTests.value = data;
       } catch (error) {
