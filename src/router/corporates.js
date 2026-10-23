@@ -15,4 +15,11 @@ export default [
     component: () => import('src/pages/corporates/FormCorporate.vue'),
     beforeEnter: [can]
   },
+  {
+    path: 'corporates/groups',
+    name: 'corporates.groups',
+    meta: {permissions: ['corporates.index', 'corporates.*']},
+    component: () => import('src/pages/corporates/Groups.vue'),
+    beforeEnter: [can]
+  },
 ];

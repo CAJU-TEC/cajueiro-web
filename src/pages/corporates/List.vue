@@ -19,6 +19,7 @@
       <template #top>
         <span class="text-h4">Organizações</span>
         <q-space />
+        <q-btn outline color="primary" class="q-mr-sm" icon="folder_open" label="Grupos" :to="{ name: 'corporates.groups' }" />
         <q-btn color="primary" push :to="{ name: 'corporates.form' }">
           <div class="row items-center no-wrap">
             <q-icon left name="add" />
@@ -121,6 +122,13 @@ export default defineComponent({
         align: 'center',
         label: 'Me chamam!',
         field: 'full_name',
+      },
+      {
+        name: 'grupo',
+        align: 'center',
+        label: 'Grupo',
+        field: (row) => row.group?.nome || '-',
+        sortable: true,
       },
       {
         name: 'actions',

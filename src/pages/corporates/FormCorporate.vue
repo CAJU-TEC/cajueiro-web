@@ -50,6 +50,19 @@
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
+      <q-select
+        v-model="form.corporate_group_id"
+        filled
+        clearable
+        emit-value
+        map-options
+        :options="grupos"
+        option-value="id"
+        option-label="nome"
+        label="Grupo (ex.: estado)"
+        class="col-lg-6 col-xs-12"
+      />
+
       <q-file
         filled
         @update:model-value="onChange($event)"
@@ -97,6 +110,7 @@
 <script>
 import { defineComponent, ref, onMounted, watchEffect } from 'vue';
 import corporatesService from 'src/services/corporate';
+import corporateGroupsService from 'src/services/corporateGroups';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -104,6 +118,8 @@ export default defineComponent({
   name: 'FormClient',
   setup() {
     const { post, getById, update } = corporatesService();
+    const { list: listGroups } = corporateGroupsService();
+    const grupos = ref([]);
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
@@ -115,9 +131,16 @@ export default defineComponent({
       email: '',
       image: '',
       address: '',
+      corporate_group_id: null,
     });
 
     onMounted(async () => {
+      try {
+        grupos.value = await listGroups();
+      } catch (error) {
+        grupos.value = [];
+      }
+
       if (route.params.id) {
         getClient(route.params.id);
       }
@@ -181,6 +204,7 @@ export default defineComponent({
 
     return {
       form,
+      grupos,
       onSubmit,
       onChange,
     };
