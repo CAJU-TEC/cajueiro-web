@@ -50,6 +50,19 @@
         :rules="[(val) => (val && val.length > 0) || 'Preencha o campo acima']"
       />
 
+      <q-select
+        v-model="form.corporate_group_id"
+        filled
+        clearable
+        emit-value
+        map-options
+        :options="grupos"
+        option-value="id"
+        option-label="nome"
+        label="Grupo (ex.: estado)"
+        class="col-lg-6 col-xs-12"
+      />
+
       <q-file
         filled
         @update:model-value="onChange($event)"
@@ -71,6 +84,34 @@
           type="textarea"
         />
       </div>
+
+      <div class="col-12 q-mt-md">
+        <div class="text-subtitle1 text-weight-medium">Banco de dados</div>
+        <div class="text-caption text-grey-7">
+          Usado pela atualização de DEV/HMG a partir de PROD. A organização só aparece lá se estiver ativa e com o
+          banco de produção preenchido.
+        </div>
+      </div>
+
+      <div class="col-12">
+        <q-toggle v-model="form.ativo" label="Ativo" />
+      </div>
+
+      <template v-for="amb in ambientes" :key="amb.chave">
+        <q-input
+          v-model="form['host_' + amb.chave]"
+          filled
+          :label="`Host ${amb.rotulo}`"
+          class="col-lg-6 col-xs-12"
+        />
+        <q-input
+          v-model="form['banco_' + amb.chave]"
+          filled
+          :label="`Banco ${amb.rotulo}`"
+          class="col-lg-6 col-xs-12"
+          :rules="[(val) => !val || /^[A-Za-z0-9_]+$/.test(val) || 'Use só letras, números e _']"
+        />
+      </template>
 
       <div class="col-12 q-gutter-sm">
         <q-btn-group push class="float-right">
@@ -97,6 +138,7 @@
 <script>
 import { defineComponent, ref, onMounted, watchEffect } from 'vue';
 import corporatesService from 'src/services/corporate';
+import corporateGroupsService from 'src/services/corporateGroups';
 import { useQuasar } from 'quasar';
 import { useRouter, useRoute } from 'vue-router';
 
@@ -104,6 +146,8 @@ export default defineComponent({
   name: 'FormClient',
   setup() {
     const { post, getById, update } = corporatesService();
+    const { list: listGroups } = corporateGroupsService();
+    const grupos = ref([]);
     const $q = useQuasar();
     const router = useRouter();
     const route = useRoute();
@@ -115,9 +159,29 @@ export default defineComponent({
       email: '',
       image: '',
       address: '',
+      ativo: false,
+      corporate_group_id: null,
+      host_prod: '',
+      banco_prod: '',
+      host_dev: '',
+      banco_dev: '',
+      host_hmg: '',
+      banco_hmg: '',
     });
 
+    const ambientes = [
+      { chave: 'prod', rotulo: 'PROD' },
+      { chave: 'dev', rotulo: 'DEV' },
+      { chave: 'hmg', rotulo: 'HMG' },
+    ];
+
     onMounted(async () => {
+      try {
+        grupos.value = await listGroups();
+      } catch (error) {
+        grupos.value = [];
+      }
+
       if (route.params.id) {
         getClient(route.params.id);
       }
@@ -181,6 +245,8 @@ export default defineComponent({
 
     return {
       form,
+      ambientes,
+      grupos,
       onSubmit,
       onChange,
     };

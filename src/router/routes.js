@@ -13,6 +13,7 @@ import reports from './reports.js';
 import users from './users.js';
 import auth from './auth.js';
 import groups from './groups.js';
+import apps from './apps.js';
 
 const routes = [
   // path for login
@@ -46,6 +47,7 @@ const routes = [
       ...reports,
       ...users,
       ...groups,
+      ...apps,
     ],
   },
 
