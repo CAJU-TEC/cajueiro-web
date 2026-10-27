@@ -220,6 +220,12 @@ export default defineComponent({
         route: { name: 'schedules.list', permissions: ['schedules.*', 'schedules.list'] },
       },
       {
+        title: 'Atualizar bancos',
+        caption: 'DEV/HMG a partir de PROD',
+        icon: 'storage',
+        route: { name: 'apps.list', permissions: [true] },
+      },
+      {
         title: 'Trilhas',
         caption: '',
         icon: 'timeline',
