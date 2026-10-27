@@ -223,7 +223,7 @@ export default defineComponent({
         title: 'Atualizar bancos',
         caption: 'DEV/HMG a partir de PROD',
         icon: 'storage',
-        route: { name: 'apps.list', permissions: ['corporates.*'] },
+        route: { name: 'apps.list', permissions: [true] },
       },
       {
         title: 'Trilhas',
