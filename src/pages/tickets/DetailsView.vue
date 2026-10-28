@@ -434,7 +434,18 @@
 
     <div class="row items-start q-my-md">
       <q-card class="my-card col bg-grey-3">
-        <q-card-section> <strong>Histórico</strong> (Kanban) </q-card-section>
+        <q-card-section class="row items-center">
+          <div class="col"><strong>Histórico</strong> (Kanban)</div>
+          <q-btn
+            v-if="pendingComments.length > 0"
+            unelevated
+            size="sm"
+            color="negative"
+            icon="content_copy"
+            :label="`Copiar pendências (${pendingComments.length})`"
+            @click="copyPendingComments"
+          />
+        </q-card-section>
         <q-separator />
         <q-card-section v-if="form.comments.length === 0"
           >Não existe comentários no momento</q-card-section
@@ -693,7 +704,7 @@ import {
 import { formatTimeDescription } from 'src/support/times/timeFormat';
 import ticketsService from 'src/services/tickets';
 import commentsService from 'src/services/comments';
-import { useQuasar, useMeta } from 'quasar';
+import { useQuasar, useMeta, copyToClipboard } from 'quasar';
 import collaboratorsService from 'src/services/collaborators';
 import { useRoute, useRouter } from 'vue-router';
 import CollaboratorAvatar from 'src/components/avatar/CollaboratorAvatar.vue';
@@ -1102,6 +1113,51 @@ export default defineComponent({
       }
     };
 
+    // comments vêm do mais novo pro mais antigo: pega só as pendências após o último status diferente de pendente
+    const pendingComments = computed(() =>
+      _.takeWhile(form.value.comments ?? [], (comment) => comment.status === 'pending')
+    );
+
+    // o q-editor salva HTML: troca as quebras por \n e tira as tags
+    const htmlToText = (html) => {
+      const withBreaks = (html ?? '').replace(/<br\s*\/?>|<\/(div|p|li)>/gi, '\n');
+      return new DOMParser().parseFromString(withBreaks, 'text/html').body.textContent.trim();
+    };
+
+    const formatPending = (comment, i) => {
+      const date = `${dateFormat(comment.created_at)} ${dateTimeFormat(comment.created_at)}`;
+      let text = `## Pendência ${i + 1} (${date})\n\n${htmlToText(comment.description)}`;
+
+      const files = (comment.images ?? []).map(
+        (image) => `- https://cajueiroapi.cajutec.com.br/storage/images/${image.uri}`
+      );
+      if (files.length > 0) {
+        text += `\n\nArquivos:\n${files.join('\n')}`;
+      }
+
+      return text;
+    };
+
+    const copyPendingComments = async () => {
+      const title = `# Protocolo #${form.value.code} ${form.value.subject}`;
+      const pendings = pendingComments.value.map(formatPending).join('\n\n---\n\n');
+
+      try {
+        await copyToClipboard(`${title}\n\n${pendings}`);
+        $q.notify({
+          message: `${pendingComments.value.length} pendência(s) copiada(s)`,
+          icon: 'check',
+          color: 'positive',
+        });
+      } catch (error) {
+        $q.notify({
+          message: 'Não foi possível copiar as pendências.',
+          icon: 'block',
+          color: 'negative',
+        });
+      }
+    };
+
     const submitting = ref(false);
 
     const onSubmit = async () => {
@@ -1172,6 +1228,8 @@ export default defineComponent({
       transferUserTicker,
       canDestroy,
       confirmDelete,
+      pendingComments,
+      copyPendingComments,
     };
   },
 });
